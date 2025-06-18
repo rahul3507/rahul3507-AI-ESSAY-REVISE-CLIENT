@@ -54,7 +54,7 @@ const PricingCards = () => {
   const [selected, setSelected] = useState("halfyear");
 
   return (
-    <div className="flex flex-col md:flex-row justify-center gap-6 px-4 py-10 bg-gradient-to-br from-gray-100 to-white">
+    <div className="flex flex-col md:flex-row justify-center gap-6 px-4 py-10 bg-gradient-to-br from-gray-100 to-white rounded-2xl">
       {pricingPlans.map((plan) => {
         const isActive = selected === plan.id;
 
@@ -62,7 +62,7 @@ const PricingCards = () => {
           <div
             key={plan.id}
             onClick={() => setSelected(plan.id)}
-            className={`w-full max-w-sm rounded-xl shadow-md cursor-pointer transition-all duration-300 ${
+            className={`w-full max-w-sm rounded-xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl ${
               isActive ? "bg-[#0F172A] text-white" : "bg-white text-black"
             }`}
           >
@@ -108,7 +108,7 @@ const PricingCards = () => {
               <ul className="mt-6 space-y-2 text-sm">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-center gap-2">
-                    <span className="text-blue-600">●</span>
+                    <span className="text-blue-500">●</span>
                     {feature}
                   </li>
                 ))}

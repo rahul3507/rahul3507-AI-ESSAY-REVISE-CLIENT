@@ -11,6 +11,7 @@ import {
   RiPieChart2Line,
   RiShareBoxLine,
 } from "react-icons/ri";
+import { Link } from "react-router-dom";
 
 const ComparisonFile = () => {
   return (
@@ -22,10 +23,10 @@ const ComparisonFile = () => {
         </p>
       </div>
 
-      <button className="w-full flex items-center justify-center gap-2 bg-[#394553] text-white font-medium py-2.5 rounded-md mb-6 transition">
+      <Link to='/upload_comparison' className="w-full flex items-center justify-center gap-2 bg-[#394553] text-white font-medium py-2.5 rounded-md mb-6 transition">
         <RiShareBoxLine className="text-white" />
         Compare New Essay
-      </button>
+      </Link>
 
       <h3 className="text-sm font-semibold text-gray-800 mb-3">
         Premium Features

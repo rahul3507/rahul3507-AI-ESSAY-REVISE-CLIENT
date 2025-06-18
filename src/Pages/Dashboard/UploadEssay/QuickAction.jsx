@@ -11,6 +11,7 @@ import {
   RiSendPlaneFill,
   RiFileList2Line,
 } from "react-icons/ri";
+import { Link } from "react-router-dom";
 
 const QuickAction = () => {
   return (
@@ -22,10 +23,10 @@ const QuickAction = () => {
         </p>
       </div>
 
-      <button className="w-full flex items-center justify-center gap-2 bg-[#1E2839] cursor-pointer text-white font-medium py-2.5 rounded-md mb-6 transition">
+      <Link to="/upload_one" className="w-full flex items-center justify-center gap-2 bg-[#1E2839] cursor-pointer text-white font-medium py-2.5 rounded-md mb-6 transition">
         <RiShare2Line className="text-white" />
         Upload New Essay
-      </button>
+      </Link>
 
       <h3 className="text-sm font-semibold text-gray-700 mb-3">
         Features We Provide
