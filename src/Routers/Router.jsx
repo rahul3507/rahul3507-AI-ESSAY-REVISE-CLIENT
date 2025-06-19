@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import Dashboard from "../Layouts/Dashboard";
 import Signup from "../Pages/Authentication/Signup";
 import SignIn from "../Pages/Authentication/SignIn";
+import OtpVerification from "../Pages/Authentication/OtpVerification";
 import ProfilePage from "../Pages/Authentication/Profile/ProfilePage";
 import HomePage from "../Pages/Dashboard/HomePage/HomePage";
 import UploadEssay from "../Pages/Dashboard/UploadEssay/UploadEssay";
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <Signup />,
+  },
+  {
+    path: "/otp",
+    element: <OtpVerification />,
   },
 ]);
 

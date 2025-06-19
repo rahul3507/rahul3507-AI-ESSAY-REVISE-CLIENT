@@ -24,31 +24,30 @@ const Signup = () => {
   };
 
   return (
-    <div className="grid grid-cols-7 min-h-screen bg-base-200">
-      {/* Left Side */}
-      <div className="col-span-3 bg-blue-500 flex items-center p-8">
+    <div className="grid grid-cols-1 md:grid-cols-7 min-h-screen bg-base-200">
+      {/* Left Side - Hidden on mobile, visible on md and up */}
+      <div className="hidden md:col-span-3 md:flex items-center justify-center bg-[#1E2839] p-8">
         <h2 className="text-white text-4xl font-bold leading-relaxed">
-          Welcome Back! Verify Your <br /> Email to Access Your <br /> Learning
-          Portal!
+          Confirm Your Email to <br /> Access Incredible <br /> Learning Tools!
         </h2>
       </div>
 
       {/* Right Side */}
-      <div className="col-span-4 flex items-center justify-center ">
-        <div className="max-w-lg w-full bg-white rounded-3xl border border-blue-200 shadow-md p-16">
+      <div className="col-span-4 md:col-span-4 flex items-center justify-center">
+        <div className="max-w-lg w-full bg-white rounded-3xl border border-gray-200 shadow-md p-6 md:p-16">
           <h2 className="text-2xl font-bold text-center mb-2">
             Sign Up Account
           </h2>
           <p className="text-center text-sm mb-6">
             Already have an Account?{" "}
-            <Link to="/signup" className="text-blue-500 hover:underline">
+            <Link to="/signin" className="text-blue-500 hover:underline">
               Sign In
             </Link>
           </p>
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">
                   First name
@@ -57,16 +56,16 @@ const Signup = () => {
                   <input
                     type="text"
                     {...register("firstName", {
-                      required: "First is required",
+                      required: "First name is required",
                     })}
-                    placeholder="first name"
-                    className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="First name"
+                    className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-slate-700"
                   />
                   <FaUser className="absolute inset-y-3 right-3 flex items-center text-gray-500" />
                 </div>
-                {errors.username && (
+                {errors.firstName && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.username.message}
+                    {errors.firstName.message}
                   </p>
                 )}
               </div>
@@ -78,16 +77,16 @@ const Signup = () => {
                   <input
                     type="text"
                     {...register("lastName", {
-                      required: "Last is required",
+                      required: "Last name is required",
                     })}
                     placeholder="Last name"
-                    className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-slate-700"
                   />
                   <FaUser className="absolute inset-y-3 right-3 flex items-center text-gray-500" />
                 </div>
-                {errors.username && (
+                {errors.lastName && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.username.message}
+                    {errors.lastName.message}
                   </p>
                 )}
               </div>
@@ -103,13 +102,13 @@ const Signup = () => {
                     required: "Email or phone number is required",
                   })}
                   placeholder="Email or Phone Number"
-                  className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-slate-700"
                 />
                 <FaMailBulk className="absolute inset-y-3 right-3 flex items-center text-gray-500" />
               </div>
-              {errors.username && (
+              {errors.email && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.username.message}
+                  {errors.email.message}
                 </p>
               )}
             </div>
@@ -123,7 +122,7 @@ const Signup = () => {
                     required: "Password is required",
                   })}
                   placeholder="Enter your Password"
-                  className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-slate-700"
                 />
                 <button
                   type="button"
@@ -159,7 +158,7 @@ const Signup = () => {
 
             <button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md"
+              className="w-full bg-[#1E2839] hover:bg-slate-700 text-white font-semibold py-2 rounded-md"
             >
               Sign Up
             </button>
@@ -187,7 +186,6 @@ const Signup = () => {
             </button>
           </div>
 
-          
           <p className="text-center text-sm mt-6">
             Already have an account?{" "}
             <Link to="/signin" className="text-blue-500 hover:underline">
