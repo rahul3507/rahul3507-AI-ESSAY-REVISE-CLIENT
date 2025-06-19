@@ -8,6 +8,7 @@ import UploadEssay from "../Pages/Dashboard/UploadEssay/UploadEssay";
 import Upgrade from "../Pages/Dashboard/Upgrade/Upgrade";
 import UploadOneFile from "../Pages/Dashboard/HomePage/UploadOneFile";
 import UploadComparison from "../Pages/Dashboard/UploadEssay/UploadComparison";
+import ComparisonResult from "../Pages/Dashboard/UploadEssay/ComparisonResult";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "/upload_comparison",
         element: <UploadComparison/>
+      },
+      {
+        path: "/result",
+        element: <ComparisonResult/>
       },
       {
         path: "/upgrade",
