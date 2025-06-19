@@ -1,6 +1,7 @@
 
 import { useState } from "react"
 import { Upload, FileText, File } from "lucide-react"
+import ComparisonResult from "./ComparisonResult"
 
 const UploadComparison = () => {
   const [draft1Label, setDraft1Label] = useState("Draft 01")
@@ -217,6 +218,8 @@ const UploadComparison = () => {
             </div>
           </div>
         )}
+
+        <ComparisonResult/>
       </div>
     </div>
   )
