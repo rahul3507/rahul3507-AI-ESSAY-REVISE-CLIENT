@@ -1,7 +1,6 @@
-// src/lib/api-client.js
 import axios from "axios";
 import { getCookie, setCookie, removeAuthTokens } from "./cookie-utils";
-const API_URL = import.meta.env.VITE_API_URL || "http://192.168.10.18:5001/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://192.168.10.145:9000/api";
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -13,7 +12,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const accessToken = getCookie("accessToken");
+    const accessToken = getCookie("access_token");
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

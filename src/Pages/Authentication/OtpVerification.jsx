@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect, useRef } from "react";
 import { FaLeftLong } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import apiClient from "../../lib/api-client";
 
 const OtpVerification = () => {
   const {
@@ -9,27 +10,41 @@ const OtpVerification = () => {
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm({
-    mode: "onChange", // Validate on change to update errors in real-time
-  });
+  } = useForm({ mode: "onChange" });
 
   const [timer, setTimer] = useState(60);
   const [resendEnabled, setResendEnabled] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // New state for submission status
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    setIsSubmitting(true); // Set submitting state to true
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
     const finalOtp = Object.values(data).join("");
-    console.log("Final OTP:", finalOtp);
-    // Perform OTP verification API call
+    const signupData = JSON.parse(localStorage.getItem("pendingSignupData"));
 
-    // Redirect after short delay
-    setTimeout(() => {
-      setIsSubmitting(false); // Reset submitting state
-      navigate("/seller_overview"); // Redirect to admin overview
-    }, 2000);
+    if (!signupData || !signupData.email) {
+      alert("Missing signup data. Please try signing up again.");
+      return;
+    }
+
+    try {
+      // Verify OTP
+      const verifyRes = await apiClient.post("/auth/otp/verify/", {
+        email: signupData.email,
+        otp: finalOtp,
+      });
+
+      const registerRes = await apiClient.post("/auth/register/", signupData);
+
+      localStorage.removeItem("pendingSignupData");
+      navigate("/");
+    } catch (error) {
+      console.error("OTP verification or registration failed", error);
+      alert("Invalid OTP or registration failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -37,30 +52,35 @@ const OtpVerification = () => {
       const countdown = setInterval(() => {
         setTimer((prev) => prev - 1);
       }, 1000);
-
       return () => clearInterval(countdown);
     } else {
       setResendEnabled(true);
     }
   }, [timer]);
 
-  const handleResendOtp = () => {
+  const handleResendOtp = async () => {
     if (resendEnabled) {
-      console.log("Resend OTP triggered");
-      setTimer(60);
-      setResendEnabled(false);
-      // Call resend OTP API here
+      const signupData = JSON.parse(localStorage.getItem("pendingSignupData"));
+      if (!signupData || !signupData.email) {
+        alert("Missing email to resend OTP.");
+        return;
+      }
+      try {
+        await apiClient.post("/auth/otp/create/", { email: signupData.email });
+        setTimer(60);
+        setResendEnabled(false);
+        alert("OTP resent successfully");
+      } catch (error) {
+        console.error("Error resending OTP", error);
+        alert("Failed to resend OTP");
+      }
     }
   };
 
   const handleInputChange = (e, index) => {
     const value = e.target.value;
-
-    // Update form value for react-hook-form
     if (/^[0-9]?$/.test(value)) {
       setValue(`otp${index}`, value, { shouldValidate: true });
-
-      // Move to next input if a digit is entered
       if (index < 5 && value) {
         inputRefs.current[index + 1]?.focus();
       }
@@ -75,14 +95,12 @@ const OtpVerification = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 min-h-screen bg-base-200">
-      {/* Left Side - Hidden on mobile, visible on md and up */}
       <div className="hidden md:col-span-3 md:flex items-center justify-center bg-[#1E2839] p-8">
         <h2 className="text-white text-4xl font-bold leading-relaxed">
           Confirm Your Email to <br /> Access Educational <br /> Resources!
         </h2>
       </div>
 
-      {/* Right Side */}
       <div className="col-span-4 md:col-span-4 flex items-center justify-center p-8">
         <div className="max-w-xl w-full bg-white border border-gray-200 rounded-3xl shadow-md p-6 md:p-20 relative">
           <h2 className="text-2xl font-bold text-center mb-2">
@@ -92,7 +110,6 @@ const OtpVerification = () => {
             We have sent a 6-digit verification code to your email.
           </p>
 
-          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex space-x-4 justify-center">
               {[0, 1, 2, 3, 4, 5].map((index) => (
@@ -121,7 +138,6 @@ const OtpVerification = () => {
               </p>
             )}
 
-            {/* Resend OTP with Timer */}
             <p className="text-center text-sm mt-6">
               {resendEnabled ? (
                 <button
@@ -171,7 +187,6 @@ const OtpVerification = () => {
             </button>
           </form>
 
-          {/* Back Button */}
           <div className="flex items-center justify-center text-blue-500 mt-4 hover:underline">
             <button
               onClick={() => window.history.back()}

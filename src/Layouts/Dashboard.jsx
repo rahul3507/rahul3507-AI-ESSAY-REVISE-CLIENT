@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { IconContext } from "react-icons";
 import Swal from "sweetalert2";
 import {
@@ -10,10 +10,17 @@ import {
   RiHome9Line,
   RiFolderUploadLine,
 } from "react-icons/ri";
+import { removeAuthTokens } from "../lib/cookie-utils";
+import useLoggedUser from "../components/hook/useLoggedUser";
+import { FaSignInAlt } from "react-icons/fa";
 
 const Dashboard = () => {
+  const { user } = useLoggedUser([]);
   const [open, setOpen] = useState(true);
   const location = useLocation();
+
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -24,7 +31,12 @@ const Dashboard = () => {
       cancelButtonText: "No, Cancel!",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log("User logged out");
+        removeAuthTokens();
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("pendingSignupData");
+
+        navigate("/signin");
       }
     });
   };
@@ -126,30 +138,54 @@ const Dashboard = () => {
 
         {/* Profile + Logout */}
         <div className="mt-28 ms-3.5 md:ms-0 bottom-20 absolute w-full">
-          <Link
-            to="/profile"
-            className={`-ml-3.5 flex p-2 pl-4.5 cursor-pointer text-sm items-center w-full ${
-              location.pathname === "/profile" ? "bg-white" : "hover:bg-white"
-            }`}
-          >
-            <li className="flex items-center gap-x-4 w-full">
-              <RiMapPinUserLine className="text-xl" />
-              <span className={`${!open && "hidden"} origin-left duration-200`}>
-                Profile
-              </span>
-            </li>
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="flex text-red-400 mt-5 p-1 text-sm items-center cursor-pointer w-full"
-          >
-            <li className="flex items-center gap-x-4 w-full">
-              <RiLogoutBoxRLine className="text-xl"/>
-              <span className={`${!open && "hidden"} origin-left duration-200`}>
-                Logout
-              </span>
-            </li>
-          </button>
+          {user ? (
+            <>
+              <Link
+                to="/profile"
+                className={`-ml-3.5 flex p-2 pl-4.5 cursor-pointer text-sm items-center w-full ${
+                  location.pathname === "/profile"
+                    ? "bg-white"
+                    : "hover:bg-white"
+                }`}
+              >
+                <li className="flex items-center gap-x-4 w-full">
+                  <RiMapPinUserLine className="text-xl" />
+                  <span
+                    className={`${!open && "hidden"} origin-left duration-200`}
+                  >
+                    Profile
+                  </span>
+                </li>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex text-red-400 mt-5 p-1 text-sm items-center cursor-pointer w-full"
+              >
+                <li className="flex items-center gap-x-4 w-full">
+                  <RiLogoutBoxRLine className="text-xl" />
+                  <span
+                    className={`${!open && "hidden"} origin-left duration-200`}
+                  >
+                    Logout
+                  </span>
+                </li>
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/signin"
+              className="flex items-center -ms-4  w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 transition duration-300"
+            >
+              <li className="flex items-center justify-center gap-x-3 w-full">
+                <FaSignInAlt className="w-5 h-5" /> {/* Login Icon */}
+                <span
+                  className={`${!open && "hidden"} origin-left duration-200`}
+                >
+                  Log in
+                </span>
+              </li>
+            </Link>
+          )}
         </div>
       </div>
 

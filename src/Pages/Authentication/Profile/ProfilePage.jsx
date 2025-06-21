@@ -2,8 +2,11 @@ import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaTrashCan } from "react-icons/fa6";
 import { FiEdit2, FiExternalLink, FiLock } from "react-icons/fi";
+import useLoggedUser from "../../../components/hook/useLoggedUser";
 
 export default function ProfilePage() {
+  const { user, loading } = useLoggedUser([]);
+  console.log(user);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -48,6 +51,14 @@ export default function ProfilePage() {
     closeDeleteModal();
   };
 
+  if (!user) {
+    return <div>User not found.</div>;
+  }
+
+  if (loading) {
+    return <div>Loading..</div>;
+  }
+
   return (
     <div className="p-5">
       {/* Profile Header */}
@@ -65,24 +76,31 @@ export default function ProfilePage() {
           </div>
           <div className="text-center md:text-left">
             <span className="mt-2 text-sm font-bold bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-              Admin
+              {user?.user?.role}
             </span>
-            <h2 className="text-lg font-semibold mt-2">Mahdee Rashid</h2>
+            <h2 className="text-lg font-semibold mt-2">
+              {user?.user?.user_profile?.first_name}{" "}
+              {user?.user?.user_profile?.last_name}
+            </h2>
           </div>
         </div>
 
         <div className="text-sm md:text-end text-center space-y-3">
           <div>
             <p className="font-medium">E-mail</p>
-            <p className="text-gray-600">polash@gmail.com</p>
+            <p className="text-gray-600">{user?.user?.email ?? "N/A"}</p>
           </div>
           <div>
             <p className="font-medium">Phone</p>
-            <p className="text-gray-600">+880 1636 828200</p>
+            <p className="text-gray-600">
+              {user.user.user_profile?.phone_number ?? "N/A"}{" "}
+            </p>
           </div>
           <div>
             <p className="font-medium">Address</p>
-            <p className="text-gray-600">123 Main Street, Dhaka, Bangladesh</p>
+            <p className="text-gray-600">
+              {user.user.user_profile?.address ?? "N/A"}{" "}
+            </p>
           </div>
         </div>
       </div>
@@ -94,10 +112,13 @@ export default function ProfilePage() {
           <div className="relative">
             <input
               type="text"
-              value="Mahdee Rashid"
+              value={`${user?.user?.user_profile?.first_name || ""} ${
+                user?.user?.user_profile?.last_name || ""
+              }`.trim()}
               readOnly
               className="w-full bg-blue-100 text-blue-500 rounded-lg py-2 px-4 pr-10 outline-none"
             />
+
             <FiEdit2 className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400" />
           </div>
         </div>
@@ -107,7 +128,7 @@ export default function ProfilePage() {
           <div className="relative">
             <input
               type="email"
-              value="mahdeerashid@gmail.com"
+              value={user?.user?.email}
               readOnly
               className="w-full bg-blue-100 text-blue-500 rounded-lg py-2 px-4 pr-10 outline-none"
             />

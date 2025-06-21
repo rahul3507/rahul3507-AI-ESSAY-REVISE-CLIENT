@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaMailBulk } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import apiClient from "../../lib/api-client";
 
 const Signup = () => {
   const {
@@ -10,30 +11,37 @@ const Signup = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
-    // Perform signup API call here
-    // After successful signup, redirect to OTP route
-    window.location.href = "/otp";
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      await apiClient.post("/auth/otp/create/", { email: data.email });
+      localStorage.setItem("pendingSignupData", JSON.stringify(data));
+      navigate("/otp");
+    } catch (error) {
+      console.error("OTP Send Failed:", error);
+      alert("Failed to send OTP. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
-
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 min-h-screen bg-base-200">
-      {/* Left Side - Hidden on mobile, visible on md and up */}
       <div className="hidden md:col-span-3 md:flex items-center justify-center bg-[#1E2839] p-8">
         <h2 className="text-white text-4xl font-bold leading-relaxed">
           Confirm Your Email to <br /> Access Incredible <br /> Learning Tools!
         </h2>
       </div>
 
-      {/* Right Side */}
       <div className="col-span-4 md:col-span-4 flex items-center justify-center">
         <div className="max-w-lg w-full bg-white rounded-3xl border border-gray-200 shadow-md p-6 md:p-16">
           <h2 className="text-2xl font-bold text-center mb-2">
@@ -46,7 +54,6 @@ const Signup = () => {
             </Link>
           </p>
 
-          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -159,15 +166,14 @@ const Signup = () => {
 
             <button
               type="submit"
+              disabled={loading}
               className="w-full bg-[#1E2839] hover:bg-slate-700 text-white font-semibold py-2 rounded-md"
             >
-              Sign Up
+              {loading ? "Sending OTP..." : "Sign Up"}
             </button>
           </form>
 
-          {/* Divider */}
           <div className="divider">Or Sign Up with</div>
-          {/* Social SignUp */}
           <div className="flex space-x-4">
             <button className="flex-1 flex items-center justify-center border border-base-300 rounded-md py-2 hover:bg-gray-100">
               <img
