@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 
 const QuickAction = () => {
   return (
-    <div className="max-w-lg mx-auto bg-white rounded-xl shadow-md p-6 border border-base-300">
+    <div className="bg-white rounded-xl shadow-md p-5 border border-base-300">
       <div className="border-b border-gray-300 mb-4">
         <h2 className="text-xl font-semibold">Quick Actions</h2>
         <p className="text-sm text-gray-500 pb-3">

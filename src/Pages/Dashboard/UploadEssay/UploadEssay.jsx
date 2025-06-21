@@ -3,7 +3,7 @@ import ComparisonFile from "./ComparisonFile";
 
 const UploadEssay = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-10 p-6 overflow-hidden">
+    <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-10 p-5 overflow-hidden">
       <div className="w-full max-w-md overflow-hidden">
         <QuickAction />
       </div>

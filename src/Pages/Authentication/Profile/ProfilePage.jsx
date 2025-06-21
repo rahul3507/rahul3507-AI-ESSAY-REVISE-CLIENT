@@ -71,7 +71,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+        <div className="text-sm md:text-end text-center space-y-3">
           <div>
             <p className="font-medium">E-mail</p>
             <p className="text-gray-600">polash@gmail.com</p>
@@ -83,24 +83,6 @@ export default function ProfilePage() {
           <div>
             <p className="font-medium">Address</p>
             <p className="text-gray-600">123 Main Street, Dhaka, Bangladesh</p>
-          </div>
-          <div>
-            <p className="font-medium">LinkedIn</p>
-            <a
-              href="https://linkedin.com/in/polash"
-              className="text-blue-500 hover:underline"
-            >
-              linkedin.com/in/polash
-            </a>
-          </div>
-          <div>
-            <p className="font-medium">Website</p>
-            <a
-              href="https://polashportfolio.com"
-              className="text-blue-500 hover:underline"
-            >
-              polashportfolio.com
-            </a>
           </div>
         </div>
       </div>
@@ -180,7 +162,7 @@ export default function ProfilePage() {
 
       {/* Change Password Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
           <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-lg">
             <h2 className="text-2xl font-bold mb-6 text-center">
               Change Password
@@ -228,7 +210,7 @@ export default function ProfilePage() {
 
       {/* Delete Account Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black/50 border border-base-300 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 border border-base-300 flex items-center justify-center z-50 p-3">
           <div className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-lg">
             <div className="w-10 h-10 bg-red-100 rounded-lg mb-4 flex items-center justify-center">
               <FaTrashCan className="text-red-500 text-xl" />

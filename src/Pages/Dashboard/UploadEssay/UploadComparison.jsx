@@ -45,7 +45,7 @@ const UploadComparison = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen p-5">
       <div className="">
         {/* Header */}
         <div className="mb-8">
@@ -62,7 +62,7 @@ const UploadComparison = () => {
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Draft 1 */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0 overflow-hidden">
-            <div className="p-6 pb-4 border-b border-slate-100">
+            <div className="p-5 pb-4 border-b border-slate-100">
               <h3 className="text-lg font-semibold text-slate-800 mb-1">
                 First Document
               </h3>

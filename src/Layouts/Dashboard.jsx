@@ -128,7 +128,7 @@ const Dashboard = () => {
         <div className="mt-28 ms-3.5 md:ms-0 bottom-20 absolute w-full">
           <Link
             to="/profile"
-            className={`-ml-3.5 flex p-2 pl-6 cursor-pointer text-sm items-center w-full ${
+            className={`-ml-3.5 flex p-2 pl-4.5 cursor-pointer text-sm items-center w-full ${
               location.pathname === "/profile" ? "bg-white" : "hover:bg-white"
             }`}
           >
@@ -141,7 +141,7 @@ const Dashboard = () => {
           </Link>
           <button
             onClick={handleLogout}
-            className="flex text-red-400 p-2 text-sm items-center cursor-pointer w-full"
+            className="flex text-red-400 mt-5 p-1 text-sm items-center cursor-pointer w-full"
           >
             <li className="flex items-center gap-x-4 w-full">
               <RiLogoutBoxRLine className="text-xl"/>
