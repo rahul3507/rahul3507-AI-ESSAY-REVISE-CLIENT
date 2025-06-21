@@ -6,13 +6,40 @@ import useLoggedUser from "../../../components/hook/useLoggedUser";
 
 export default function ProfilePage() {
   const { user, loading } = useLoggedUser([]);
-  console.log(user);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
 
+  const [formData, setFormData] = useState({
+    first_name: user?.user?.user_profile?.first_name || "",
+    last_name: user?.user?.user_profile?.last_name || "",
+    email: user?.user?.email || "",
+    phone_number: user?.user?.user_profile?.phone_number || "",
+    address: user?.user?.user_profile?.address || "",
+    profile_picture: "",
+  });
+
+  const openEditProfileModal = () => setIsEditProfileModalOpen(true);
+  const closeEditProfileModal = () => setIsEditProfileModalOpen(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleEditProfileChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
+  };
+
+  const handleEditProfileSave = () => {
+    console.log("Updated Profile Data:", formData);
+    closeEditProfileModal();
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <div>User not found.</div>;
 
   const openPasswordModal = () => setIsModalOpen(true);
   const closePasswordModal = () => {
@@ -71,7 +98,10 @@ export default function ProfilePage() {
               className="w-full h-full rounded-full object-cover"
             />
             <button className="absolute bottom-1 right-1 p-2 cursor-pointer rounded-full bg-white/60">
-              <FaEdit className="text-gray-600" />
+              <FaEdit
+                onClick={openEditProfileModal}
+                className="text-gray-600"
+              />
             </button>
           </div>
           <div className="text-center md:text-left">
@@ -119,7 +149,10 @@ export default function ProfilePage() {
               className="w-full bg-blue-100 text-blue-500 rounded-lg py-2 px-4 pr-10 outline-none"
             />
 
-            <FiEdit2 className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400" />
+            <FiEdit2
+              onClick={openEditProfileModal}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400"
+            />
           </div>
         </div>
 
@@ -132,7 +165,10 @@ export default function ProfilePage() {
               readOnly
               className="w-full bg-blue-100 text-blue-500 rounded-lg py-2 px-4 pr-10 outline-none"
             />
-            <FiEdit2 className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400" />
+            <FiEdit2
+              onClick={openEditProfileModal}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400"
+            />
           </div>
         </div>
       </div>
@@ -180,6 +216,78 @@ export default function ProfilePage() {
           </button>
         </div>
       </div>
+
+      {isEditProfileModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 space-y-4">
+            <h2 className="text-2xl font-bold text-center mb-4">
+              Edit Profile
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleEditProfileChange}
+                placeholder="First Name"
+                className="p-2 border border-gray-300 rounded-lg"
+              />
+              <input
+                type="text"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleEditProfileChange}
+                placeholder="Last Name"
+                className="p-2 border border-gray-300 rounded-lg"
+              />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleEditProfileChange}
+                placeholder="Email"
+                className="p-2 border border-gray-300 rounded-lg"
+              />
+              <input
+                type="text"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleEditProfileChange}
+                placeholder="Phone Number"
+                className="p-2 border border-gray-300 rounded-lg"
+              />
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleEditProfileChange}
+                placeholder="Address"
+                className="p-2 border border-gray-300 rounded-lg sm:col-span-2"
+              />
+              <input
+                type="file"
+                name="profile_picture"
+                onChange={handleEditProfileChange}
+                className="p-2 border border-gray-300 rounded-lg sm:col-span-2"
+              />
+            </div>
+            <div className="flex justify-end space-x-4 pt-4">
+              <button
+                onClick={closeEditProfileModal}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEditProfileSave}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Change Password Modal */}
       {isModalOpen && (
