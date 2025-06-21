@@ -23,6 +23,7 @@ const Signup = () => {
     window.location.href = "/otp";
   };
 
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 min-h-screen bg-base-200">
       {/* Left Side - Hidden on mobile, visible on md and up */}
@@ -55,7 +56,7 @@ const Signup = () => {
                 <div className="relative">
                   <input
                     type="text"
-                    {...register("firstName", {
+                    {...register("first_name", {
                       required: "First name is required",
                     })}
                     placeholder="First name"
@@ -63,9 +64,9 @@ const Signup = () => {
                   />
                   <FaUser className="absolute inset-y-3 right-3 flex items-center text-gray-500" />
                 </div>
-                {errors.firstName && (
+                {errors.first_name && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.firstName.message}
+                    {errors.first_name.message}
                   </p>
                 )}
               </div>
@@ -76,7 +77,7 @@ const Signup = () => {
                 <div className="relative">
                   <input
                     type="text"
-                    {...register("lastName", {
+                    {...register("last_name", {
                       required: "Last name is required",
                     })}
                     placeholder="Last name"
@@ -84,9 +85,9 @@ const Signup = () => {
                   />
                   <FaUser className="absolute inset-y-3 right-3 flex items-center text-gray-500" />
                 </div>
-                {errors.lastName && (
+                {errors.last_name && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.lastName.message}
+                    {errors.last_name.message}
                   </p>
                 )}
               </div>
