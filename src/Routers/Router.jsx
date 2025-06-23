@@ -10,6 +10,7 @@ import Upgrade from "../Pages/Dashboard/Upgrade/Upgrade";
 import UploadOneFile from "../Pages/Dashboard/HomePage/UploadOneFile";
 import UploadComparison from "../Pages/Dashboard/UploadEssay/UploadComparison";
 import ComparisonResult from "../Pages/Dashboard/UploadEssay/ComparisonResult";
+import PaymentSuccess from "../Pages/Dashboard/Upgrade/PaymentSuccess";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
     ],
   },
   
+  {
+    path: "/payment/success",
+    element: <PaymentSuccess />,
+  },
   {
     path: "/signin",
     element: <SignIn />,
