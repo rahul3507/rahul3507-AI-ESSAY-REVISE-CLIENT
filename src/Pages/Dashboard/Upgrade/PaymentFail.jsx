@@ -23,7 +23,7 @@ const PaymentFail = () => {
         </svg>
 
         <Link
-          to="/pricing"
+          to="/upgrade"
           className="inline-block bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-6 py-3 rounded-md transition"
         >
           Back to Pricing

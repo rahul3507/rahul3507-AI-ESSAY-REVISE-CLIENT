@@ -11,6 +11,8 @@ import UploadOneFile from "../Pages/Dashboard/HomePage/UploadOneFile";
 import UploadComparison from "../Pages/Dashboard/UploadEssay/UploadComparison";
 import ComparisonResult from "../Pages/Dashboard/UploadEssay/ComparisonResult";
 import PaymentSuccess from "../Pages/Dashboard/Upgrade/PaymentSuccess";
+import PaymentFail from "../Pages/Dashboard/Upgrade/PaymentFail";
+import PaymentCancel from "../Pages/Dashboard/Upgrade/PaymentCancel";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -51,6 +53,14 @@ const router = createBrowserRouter([
   {
     path: "/payment/success",
     element: <PaymentSuccess />,
+  },
+  {
+    path: "/payment/cancel",
+    element: <PaymentCancel />,
+  },
+  {
+    path: "/payment/failed",
+    element: <PaymentFail />,
   },
   {
     path: "/signin",

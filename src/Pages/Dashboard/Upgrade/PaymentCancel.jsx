@@ -22,7 +22,7 @@ const PaymentCancel = () => {
         </svg>
 
         <Link
-          to="/pricing"
+          to="/upgrade"
           className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-md transition"
         >
           Back to Pricing

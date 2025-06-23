@@ -5,32 +5,28 @@ import apiClient from "../../../lib/api-client";
 const PricingCards = () => {
   const { packageData, loading } = usePackagePlan();
   const [selected, setSelected] = useState(null);
-  const [isPaying, setIsPaying] = useState(false);
+  const [payingPlanId, setPayingPlanId] = useState(null); // 👈 updated
 
   const handleBuyNow = async (plan) => {
     try {
-      setIsPaying(true);
+      setPayingPlanId(plan.id); // 👈 mark current plan as "processing"
 
-      const response = await apiClient.post(
-        "/payment/create-checkout-session/",
-        {
-          price_id: plan.price_id,
-          plan_name: plan.name,
-          duration_type: plan.duration_type,
-        }
-      );
-console.log(response);
+      const response = await apiClient.post("/payment/create-checkout-session/", {
+        price_id: plan.price_id,
+        plan_name: plan.name,
+        duration_type: plan.duration_type,
+      });
+
       if (response.data?.checkout_url) {
         window.location.href = response.data.checkout_url;
       } else {
         alert("Payment initialization failed. Try again.");
       }
     } catch (error) {
-      console.log(error);
       console.error("Payment initiation error:", error);
       alert("Something went wrong during payment.");
     } finally {
-      setIsPaying(false);
+      setPayingPlanId(null); // 👈 reset after process
     }
   };
 
@@ -41,6 +37,7 @@ console.log(response);
       {packageData?.map((plan) => {
         const isActive = selected === plan.id;
         const isHalfYearly = plan.duration_type === "half_yearly";
+        const isProcessing = payingPlanId === plan.id;
 
         return (
           <div
@@ -111,19 +108,20 @@ console.log(response);
                 ))}
               </ul>
 
+              {/* Buy Now Button */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleBuyNow(plan);
                 }}
-                disabled={isPaying}
+                disabled={isProcessing}
                 className={`w-full mt-6 rounded-md text-sm font-semibold py-2 transition ${
                   isActive
                     ? "bg-white text-[#0F172A] hover:bg-gray-200"
                     : "bg-gray-900 text-white hover:bg-gray-800"
-                } ${isPaying ? "opacity-50 cursor-not-allowed" : ""}`}
+                } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                {isPaying ? "Processing..." : "Buy Now"}
+                {isProcessing ? "Processing..." : "Buy Now"}
               </button>
             </div>
           </div>
