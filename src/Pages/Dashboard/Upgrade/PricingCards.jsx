@@ -1,72 +1,63 @@
 import { useState } from "react";
+import usePackagePlan from "../../../components/hook/usePackagePlan";
+import apiClient from "../../../lib/api-client";
 
-const pricingPlans = [
-  {
-    id: "monthly",
-    title: "Monthly",
-    price: "$55",
-    duration: "/mn",
-    oldPrice: "$95",
-    save: "$40",
-    features: [
-      "Automatic bot building",
-      "Team collaboration",
-      "Basic AI model training",
-      "Multilingual AI",
-      "Limited support access",
-    ],
-  },
-  {
-    id: "halfyear",
-    title: "Half Year",
-    price: "$255",
-    duration: "/6mo",
-    oldPrice: "$295",
-    save: "$40",
-    features: [
-      "Automatic bot building",
-      "Team collaboration",
-      "Advanced AI model training",
-      "Multilingual AI",
-      "Draft comparison tool",
-      "Inline comments & feedback",
-    ],
-  },
-  {
-    id: "yearly",
-    title: "Yearly",
-    price: "$555",
-    duration: "/yr",
-    oldPrice: "$695",
-    save: "$140",
-    features: [
-      "Automatic bot building",
-      "Full team collaboration",
-      "Premium AI model training",
-      "Multilingual AI with regional tuning",
-      "Analytics dashboard access",
-      "Admin custom guidelines",
-      "Source authenticity validation",
-    ],
-  },
-];
 const PricingCards = () => {
-  const [selected, setSelected] = useState("halfyear");
+  const { packageData, loading } = usePackagePlan();
+  const [selected, setSelected] = useState(null);
+  const [isPaying, setIsPaying] = useState(false);
+
+  const handleBuyNow = async (plan) => {
+    try {
+      setIsPaying(true);
+
+      const response = await apiClient.post(
+        "/payment/create-checkout-session/",
+        {
+          price_id: plan.price_id,
+          plan_name: plan.name,
+          duration_type: plan.duration_type,
+        }
+      );
+console.log(response);
+      if (response.data?.checkout_url) {
+        window.location.href = response.data.checkout_url;
+      } else {
+        alert("Payment initialization failed. Try again.");
+      }
+    } catch (error) {
+      console.log(error);
+      console.error("Payment initiation error:", error);
+      alert("Something went wrong during payment.");
+    } finally {
+      setIsPaying(false);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-col md:flex-row justify-center gap-6 px-4 py-10 bg-gradient-to-br from-gray-100 to-white rounded-2xl">
-      {pricingPlans.map((plan) => {
+      {packageData?.map((plan) => {
         const isActive = selected === plan.id;
+        const isHalfYearly = plan.duration_type === "half_yearly";
 
         return (
           <div
             key={plan.id}
             onClick={() => setSelected(plan.id)}
-            className={`w-full max-w-sm rounded-xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl ${
+            className={`relative w-full max-w-sm rounded-xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl ${
               isActive ? "bg-[#0F172A] text-white" : "bg-white text-black"
             }`}
           >
-            {/* Title Pill Button */}
+            {/* RECOMMENDED Badge */}
+            {isHalfYearly && (
+              <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
+                Recommended
+              </div>
+            )}
+
+            {/* Title Pill */}
             <div className="flex justify-center mt-4">
               <div
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border transition-all ${
@@ -80,7 +71,7 @@ const PricingCards = () => {
                     <span className="w-2 h-2 bg-[#0F172A] rounded-full"></span>
                   )}
                 </span>
-                {plan.title}
+                {plan.name}
               </div>
             </div>
 
@@ -89,40 +80,50 @@ const PricingCards = () => {
               {/* Price Section */}
               <div className="text-center">
                 <div className="text-3xl font-bold mb-1">
-                  {plan.price}
-                  <span className="text-base font-normal">{plan.duration}</span>
+                  ${plan.amount}
+                  <span className="text-base font-normal">
+                    {plan.duration_type === "monthly"
+                      ? "/mn"
+                      : plan.duration_type === "half_yearly"
+                      ? "/6mo"
+                      : "/yr"}
+                  </span>
                 </div>
                 <div className="text-sm line-through text-gray-400">
-                  {plan.oldPrice}
+                  ${+plan.amount + 40}
                 </div>
                 <div
                   className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                     isActive ? "bg-white text-[#0F172A]" : "bg-black text-white"
                   }`}
                 >
-                  Save: {plan.save}
+                  Save: $40
                 </div>
               </div>
 
-              {/* Features List */}
+              {/* Features */}
               <ul className="mt-6 space-y-2 text-sm">
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2">
+                {plan.descriptions?.map((desc) => (
+                  <li key={desc.id} className="flex items-center gap-2">
                     <span className="text-blue-500">●</span>
-                    {feature}
+                    {desc.text}
                   </li>
                 ))}
               </ul>
 
-              {/* Button */}
               <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleBuyNow(plan);
+                }}
+                disabled={isPaying}
                 className={`w-full mt-6 rounded-md text-sm font-semibold py-2 transition ${
                   isActive
                     ? "bg-white text-[#0F172A] hover:bg-gray-200"
                     : "bg-gray-900 text-white hover:bg-gray-800"
-                }`}
+                } ${isPaying ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                Buy Now
+                {isPaying ? "Processing..." : "Buy Now"}
               </button>
             </div>
           </div>

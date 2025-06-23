@@ -30,12 +30,12 @@ const OtpVerification = () => {
 
     try {
       // Verify OTP
-      const verifyRes = await apiClient.post("/auth/otp/verify/", {
+      await apiClient.post("/auth/otp/verify/", {
         email: signupData.email,
         otp: finalOtp,
       });
 
-      const registerRes = await apiClient.post("/auth/register/", signupData);
+      await apiClient.post("/auth/register/", signupData);
 
       localStorage.removeItem("pendingSignupData");
       navigate("/");

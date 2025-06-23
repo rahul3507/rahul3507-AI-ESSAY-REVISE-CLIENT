@@ -1,46 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaTrashCan } from "react-icons/fa6";
-import { FiEdit2, FiExternalLink, FiLock } from "react-icons/fi";
+import { FiEdit2, FiExternalLink, FiLock, FiUpload } from "react-icons/fi";
 import useLoggedUser from "../../../components/hook/useLoggedUser";
+import apiClient from "../../../lib/api-client";
 
 export default function ProfilePage() {
-  const { user, loading } = useLoggedUser([]);
+  const { user, loading, refetch } = useLoggedUser([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
-    first_name: user?.user?.user_profile?.first_name || "",
-    last_name: user?.user?.user_profile?.last_name || "",
-    email: user?.user?.email || "",
-    phone_number: user?.user?.user_profile?.phone_number || "",
-    address: user?.user?.user_profile?.address || "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    address: "",
     profile_picture: "",
+    profile_picture_preview: "",
   });
 
-  const openEditProfileModal = () => setIsEditProfileModalOpen(true);
-  const closeEditProfileModal = () => setIsEditProfileModalOpen(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleEditProfileChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: files ? files[0] : value,
-    }));
-  };
+  useEffect(() => {
+    if (user?.user) {
+      setFormData({
+        first_name: user.user.user_profile?.first_name || "",
+        last_name: user.user.user_profile?.last_name || "",
+        email: user.user.email || "",
+        phone_number: user.user.user_profile?.phone_number || "",
+        address: user.user.user_profile?.address || "",
+        profile_picture: "",
+        profile_picture_preview: user.user.user_profile?.profile_picture || "",
+      });
+    }
+  }, [user]);
 
-  const handleEditProfileSave = () => {
-    console.log("Updated Profile Data:", formData);
-    closeEditProfileModal();
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (!user) return <div>User not found.</div>;
-
+  const openEditProfileModal = () => setIsEditProfileModalOpen(true);
+  const closeEditProfileModal = () => setIsEditProfileModalOpen(false);
   const openPasswordModal = () => setIsModalOpen(true);
   const closePasswordModal = () => {
     setIsModalOpen(false);
@@ -48,43 +48,87 @@ export default function ProfilePage() {
     setNewPassword("");
     setConfirmPassword("");
   };
-
   const openDeleteModal = () => setIsDeleteModalOpen(true);
   const closeDeleteModal = () => setIsDeleteModalOpen(false);
+
+  const handleEditProfileChange = (e) => {
+    const { name, value, files } = e.target;
+
+    if (files && files.length > 0) {
+      const file = files[0];
+      const previewURL = URL.createObjectURL(file);
+      setFormData((prev) => ({
+        ...prev,
+        profile_picture: file,
+        profile_picture_preview: previewURL,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleEditProfileSave = async () => {
+    try {
+      const payload = new FormData();
+      payload.append("first_name", formData.first_name);
+      payload.append("last_name", formData.last_name);
+      payload.append("email", formData.email);
+      payload.append("phone_number", formData.phone_number);
+      payload.append("address", formData.address);
+      if (formData.profile_picture instanceof File) {
+        payload.append("profile_picture", formData.profile_picture);
+      }
+
+      const response = await apiClient.put("auth/profile/", payload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response?.data) {
+        const updated = response.data;
+        refetch();
+        setFormData((prev) => ({
+          ...prev,
+          first_name: updated.user_profile?.first_name || "",
+          last_name: updated.user_profile?.last_name || "",
+          email: updated.email || "",
+          phone_number: updated.user_profile?.phone_number || "",
+          address: updated.user_profile?.address || "",
+          profile_picture_preview: updated.user_profile?.profile_picture || "",
+        }));
+        alert("Profile updated successfully!");
+        closeEditProfileModal();
+      }
+    } catch (error) {
+      console.error("Profile update failed:", error);
+      alert("Failed to update profile.");
+    }
+  };
 
   const handleSavePassword = () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
       alert("Please fill in all fields!");
       return;
     }
-
     if (newPassword !== confirmPassword) {
       alert("New passwords do not match!");
       return;
     }
-
-    // Mock API call
     console.log("Password changed successfully!");
     alert("Password changed successfully!");
-
     closePasswordModal();
   };
 
   const handleDeleteAccount = () => {
-    // Mock delete action
     console.log("Account deleted!");
     alert("Your account has been deleted!");
-
     closeDeleteModal();
   };
 
-  if (!user) {
-    return <div>User not found.</div>;
-  }
-
-  if (loading) {
-    return <div>Loading..</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <div>User not found.</div>;
 
   return (
     <div className="p-5">
@@ -93,8 +137,13 @@ export default function ProfilePage() {
         <div className="flex flex-col md:flex-row items-center gap-5">
           <div className="relative w-24 h-24 md:w-32 md:h-32">
             <img
-              src="https://i.pravatar.cc/150?img=32"
+              src={
+                formData.profile_picture_preview
+                  ? `http://192.168.10.145:9000${formData.profile_picture_preview}`
+                  : "https://i.pravatar.cc/150?img=32"
+              }
               alt="Profile"
+              crossOrigin="anonymous"
               className="w-full h-full rounded-full object-cover"
             />
             <button className="absolute bottom-1 right-1 p-2 cursor-pointer rounded-full bg-white/60">
@@ -109,8 +158,7 @@ export default function ProfilePage() {
               {user?.user?.role}
             </span>
             <h2 className="text-lg font-semibold mt-2">
-              {user?.user?.user_profile?.first_name}{" "}
-              {user?.user?.user_profile?.last_name}
+              {formData.first_name} {formData.last_name}
             </h2>
           </div>
         </div>
@@ -118,19 +166,15 @@ export default function ProfilePage() {
         <div className="text-sm md:text-end text-center space-y-3">
           <div>
             <p className="font-medium">E-mail</p>
-            <p className="text-gray-600">{user?.user?.email ?? "N/A"}</p>
+            <p className="text-gray-600">{formData.email || "N/A"}</p>
           </div>
           <div>
             <p className="font-medium">Phone</p>
-            <p className="text-gray-600">
-              {user.user.user_profile?.phone_number ?? "N/A"}{" "}
-            </p>
+            <p className="text-gray-600">{formData.phone_number || "N/A"}</p>
           </div>
           <div>
             <p className="font-medium">Address</p>
-            <p className="text-gray-600">
-              {user.user.user_profile?.address ?? "N/A"}{" "}
-            </p>
+            <p className="text-gray-600">{formData.address || "N/A"}</p>
           </div>
         </div>
       </div>
@@ -173,29 +217,25 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Change Password */}
+      {/* Change Password Section */}
       <div className="mt-8 p-6 rounded-2xl border border-blue-200 shadow-sm gap-4">
         <button
           onClick={openPasswordModal}
           className="text-gray-500 hover:text-blue-500 transition py-3"
         >
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-full bg-gray-200">
-                <FiLock className="text-gray-500" size={20} />
-              </div>
-              <div>
-                <h4 className="font-semibold text-lg">Change Password</h4>
-              </div>
+            <div className="p-3 rounded-full bg-gray-200">
+              <FiLock className="text-gray-500" size={20} />
             </div>
             <div>
-              <FiExternalLink size={20} />
+              <h4 className="font-semibold text-lg">Change Password</h4>
             </div>
+            <FiExternalLink size={20} />
           </div>
         </button>
       </div>
 
-      {/* Delete Account */}
+      {/* Delete Account Section */}
       <div className="md:flex justify-between items-center mt-8 p-6 shadow-sm rounded-2xl border border-red-300">
         <div>
           <h4 className="text-red-500 font-bold text-lg">Delete Account</h4>
@@ -217,6 +257,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* Edit Profile Modal */}
       {isEditProfileModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 space-y-4">
@@ -224,6 +265,38 @@ export default function ProfilePage() {
               Edit Profile
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Profile Image Upload */}
+              <div className="sm:col-span-2 flex flex-col items-center space-y-2">
+                <div className="relative group w-28 h-28 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center overflow-hidden cursor-pointer hover:border-blue-500 transition">
+                  {formData.profile_picture_preview ? (
+                    <img
+                      src={
+                        formData.profile_picture_preview?.startsWith("blob:")
+                          ? formData.profile_picture_preview
+                          : `http://192.168.10.145:9000${formData.profile_picture_preview}`
+                      }
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-gray-400 text-sm">No Image</span>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                    <FiUpload className="text-white text-2xl" />
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleEditProfileChange}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Upload Profile Picture
+                </p>
+              </div>
+
+              {/* Other Fields */}
               <input
                 type="text"
                 name="first_name"
@@ -264,13 +337,8 @@ export default function ProfilePage() {
                 placeholder="Address"
                 className="p-2 border border-gray-300 rounded-lg sm:col-span-2"
               />
-              <input
-                type="file"
-                name="profile_picture"
-                onChange={handleEditProfileChange}
-                className="p-2 border border-gray-300 rounded-lg sm:col-span-2"
-              />
             </div>
+
             <div className="flex justify-end space-x-4 pt-4">
               <button
                 onClick={closeEditProfileModal}
@@ -339,16 +407,16 @@ export default function ProfilePage() {
 
       {/* Delete Account Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black/50 border border-base-300 flex items-center justify-center z-50 p-3">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
           <div className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-lg">
             <div className="w-10 h-10 bg-red-100 rounded-lg mb-4 flex items-center justify-center">
               <FaTrashCan className="text-red-500 text-xl" />
             </div>
             <h5 className="text-gray-600 font-bold">
-              Are you sure you want to Delete your account?{" "}
+              Are you sure you want to delete your account?
             </h5>
             <p className="mb-5">
-              Inter your current password you used login with
+              Enter your current password you used to login with
             </p>
             <div className="flex justify-between gap-4 w-full">
               <button
