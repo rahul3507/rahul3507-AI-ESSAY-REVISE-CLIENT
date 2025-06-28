@@ -13,43 +13,44 @@ import ComparisonResult from "../Pages/Dashboard/UploadEssay/ComparisonResult";
 import PaymentSuccess from "../Pages/Dashboard/Upgrade/PaymentSuccess";
 import PaymentFail from "../Pages/Dashboard/Upgrade/PaymentFail";
 import PaymentCancel from "../Pages/Dashboard/Upgrade/PaymentCancel";
+import ProtectedRoute from "./ProtectedRoute";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Dashboard />,
+    element: 
+        <Dashboard />,
     children: [
       {
         path: "/",
-        element: <HomePage/>
+        element: <HomePage />,
       },
       {
         path: "/upload_one",
-        element: <UploadOneFile/>
+        element: <UploadOneFile />,
       },
       {
         path: "/upload_essay",
-        element: <UploadEssay/>
+        element: <UploadEssay />,
       },
       {
         path: "/upload_comparison",
-        element: <UploadComparison/>
+        element: <UploadComparison />,
       },
       {
         path: "/result",
-        element: <ComparisonResult/>
+        element: <ComparisonResult />,
       },
       {
         path: "/upgrade",
-        element: <Upgrade/>
+        element: <Upgrade />,
       },
       {
         path: "/profile",
-        element: <ProfilePage/>
+        element: <ProfilePage />,
       },
-
     ],
   },
-  
+
   {
     path: "/payment/success",
     element: <PaymentSuccess />,
