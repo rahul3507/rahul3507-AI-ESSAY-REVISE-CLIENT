@@ -13,7 +13,7 @@ import ComparisonResult from "../Pages/Dashboard/UploadEssay/ComparisonResult";
 import PaymentSuccess from "../Pages/Dashboard/Upgrade/PaymentSuccess";
 import PaymentFail from "../Pages/Dashboard/Upgrade/PaymentFail";
 import PaymentCancel from "../Pages/Dashboard/Upgrade/PaymentCancel";
-import ProtectedRoute from "./ProtectedRoute";
+// import ProtectedRoute from "./ProtectedRoute";
 const router = createBrowserRouter([
   {
     path: "/",

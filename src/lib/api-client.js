@@ -5,9 +5,6 @@ const API_URL = import.meta.env.VITE_API_URL || "http://192.168.10.145:9000/api"
 const apiClient = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 apiClient.interceptors.request.use(

@@ -1,37 +1,34 @@
 import { useState } from "react";
 import { Upload, FileText, File } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import apiClient from "../../../lib/api-client"; // Make sure this path is correct
 
 const UploadComparison = () => {
   const [draft1Label, setDraft1Label] = useState("Draft 01");
   const [draft2Label, setDraft2Label] = useState("Draft 02");
-  const [file1, setFile1] = useState(null);
-  const [file2, setFile2] = useState(null);
+  const [essay1, setEssay1] = useState(null);
+  const [essay2, setEssay2] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleFileChange1 = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile1(e.target.files[0]);
+    if (e.target.files?.[0]) {
+      setEssay1(e.target.files[0]);
     }
   };
 
   const handleFileChange2 = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile2(e.target.files[0]);
+    if (e.target.files?.[0]) {
+      setEssay2(e.target.files[0]);
     }
   };
 
   const getFileIcon = (file) => {
-    if (!file) return null;
-
-    const extension = file.name.split(".").pop()?.toLowerCase();
-
-    if (extension === "pdf") {
-      return <File className="w-8 h-8 text-red-500" />;
-    } else if (extension === "docx" || extension === "doc") {
-      return <FileText className="w-8 h-8 text-blue-500" />;
-    } else {
-      return <FileText className="w-8 h-8 text-gray-500" />;
-    }
+    const ext = file?.name.split(".").pop()?.toLowerCase();
+    if (ext === "pdf") return <File className="w-8 h-8 text-red-500" />;
+    if (ext === "docx" || ext === "doc") return <FileText className="w-8 h-8 text-blue-500" />;
+    return <FileText className="w-8 h-8 text-gray-500" />;
   };
 
   const formatFileSize = (bytes) => {
@@ -39,11 +36,37 @@ const UploadComparison = () => {
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return (
-      Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
-    );
+    return (bytes / Math.pow(k, i)).toFixed(2) + " " + sizes[i];
   };
 
+  const handleGenerate = async () => {
+    if (!essay1 || !essay2) return;
+
+    const formData = new FormData();
+    formData.append("essay1", essay1);
+    formData.append("essay2", essay2);
+    formData.append("label1", draft1Label);
+    formData.append("label2", draft2Label);
+
+    try {
+      setLoading(true);
+      const res = await apiClient.post("/ai/compare_documents/", formData);
+      const result = res.data;
+console.log(res);
+      navigate("/result", {
+        state: {
+          result,
+          draft1: { name: essay1.name, type: essay1.type },
+          draft2: { name: essay2.name, type: essay2.type },
+        },
+      });
+    } catch (err) {
+      console.error("Comparison error:", err);
+      alert("Failed to generate comparison.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen p-5">
       <div className="">
@@ -94,21 +117,21 @@ const UploadComparison = () => {
                     flex flex-col items-center justify-center cursor-pointer 
                     border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200
                     ${
-                      file1
+                      essay1
                         ? "border-green-300 bg-green-50/50"
                         : "border-slate-300 hover:border-slate-400 hover:bg-slate-50/50"
                     }
                   `}
                 >
-                  {file1 ? (
+                  {essay1 ? (
                     <div className="flex flex-col items-center space-y-3">
-                      {getFileIcon(file1)}
+                      {getFileIcon(essay1)}
                       <div className="text-center">
                         <p className="text-sm font-medium text-slate-800 truncate max-w-48">
-                          {file1.name}
+                          {essay1.name}
                         </p>
                         <p className="text-xs text-slate-500 mt-1">
-                          {formatFileSize(file1.size)}
+                          {formatFileSize(essay1.size)}
                         </p>
                       </div>
                       <p className="text-xs text-green-600 font-medium">
@@ -179,21 +202,21 @@ const UploadComparison = () => {
                     flex flex-col items-center justify-center cursor-pointer 
                     border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200
                     ${
-                      file2
+                      essay2
                         ? "border-green-300 bg-green-50/50"
                         : "border-slate-300 hover:border-slate-400 hover:bg-slate-50/50"
                     }
                   `}
                 >
-                  {file2 ? (
+                  {essay2 ? (
                     <div className="flex flex-col items-center space-y-3">
-                      {getFileIcon(file2)}
+                      {getFileIcon(essay2)}
                       <div className="text-center">
                         <p className="text-sm font-medium text-slate-800 truncate max-w-48">
-                          {file2.name}
+                          {essay2.name}
                         </p>
                         <p className="text-xs text-slate-500 mt-1">
-                          {formatFileSize(file2.size)}
+                          {formatFileSize(essay2.size)}
                         </p>
                       </div>
                       <p className="text-xs text-green-600 font-medium">
@@ -233,41 +256,37 @@ const UploadComparison = () => {
 
         {/* Action Button */}
         <div className="flex justify-center">
-          <button
-            disabled={!file1 || !file2}
-            onClick={() => {
-              if (file1 && file2) {
-                alert(
-                  `Generating comparison between ${draft1Label} and ${draft2Label}`
-                );
-              }
-            }}
-            className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-lg rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-900"
-          >
-            <Link to="/result">Generate Comparison Analysis</Link>
-          </button>
+          <div className="flex justify-center">
+        <button
+          disabled={!essay1 || !essay2 || loading}
+          onClick={handleGenerate}
+          className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-lg rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? "Generating..." : "Generate Comparison Analysis"}
+        </button>
+      </div>
         </div>
 
         {/* Status Indicator */}
-        {(file1 || file2) && (
+        {(essay1 || essay2) && (
           <div className="mt-6 text-center">
             <div className="inline-flex items-center space-x-2 text-sm text-slate-600 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-200">
               <div className="flex space-x-1">
                 <div
                   className={`w-2 h-2 rounded-full ${
-                    file1 ? "bg-green-500" : "bg-slate-300"
+                    essay1 ? "bg-green-500" : "bg-slate-300"
                   }`}
                 ></div>
                 <div
                   className={`w-2 h-2 rounded-full ${
-                    file2 ? "bg-green-500" : "bg-slate-300"
+                    essay2 ? "bg-green-500" : "bg-slate-300"
                   }`}
                 ></div>
               </div>
               <span>
-                {file1 && file2
+                {essay1 && essay2
                   ? "Ready to generate comparison"
-                  : `${file1 || file2 ? "1" : "0"} of 2 documents uploaded`}
+                  : `${essay1 || essay2 ? "1" : "0"} of 2 documents uploaded`}
               </span>
             </div>
           </div>

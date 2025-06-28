@@ -1,21 +1,26 @@
 import { useState } from "react";
 import usePackagePlan from "../../../components/hook/usePackagePlan";
 import apiClient from "../../../lib/api-client";
+import useLoggedUser from "../../../components/hook/useLoggedUser";
 
 const PricingCards = () => {
+  const { user } = useLoggedUser();
   const { packageData, loading } = usePackagePlan();
   const [selected, setSelected] = useState(null);
-  const [payingPlanId, setPayingPlanId] = useState(null); // 👈 updated
+  const [payingPlanId, setPayingPlanId] = useState(null);
 
   const handleBuyNow = async (plan) => {
     try {
-      setPayingPlanId(plan.id); // 👈 mark current plan as "processing"
+      setPayingPlanId(plan.id);
 
-      const response = await apiClient.post("/payment/create-checkout-session/", {
-        price_id: plan.price_id,
-        plan_name: plan.name,
-        duration_type: plan.duration_type,
-      });
+      const response = await apiClient.post(
+        "/payment/create-checkout-session/",
+        {
+          price_id: plan.price_id,
+          plan_name: plan.name,
+          duration_type: plan.duration_type,
+        }
+      );
 
       if (response.data?.checkout_url) {
         window.location.href = response.data.checkout_url;
@@ -26,7 +31,7 @@ const PricingCards = () => {
       console.error("Payment initiation error:", error);
       alert("Something went wrong during payment.");
     } finally {
-      setPayingPlanId(null); // 👈 reset after process
+      setPayingPlanId(null);
     }
   };
 
@@ -35,7 +40,8 @@ const PricingCards = () => {
   return (
     <div className="flex flex-col md:flex-row justify-center gap-6 px-4 py-10 bg-gradient-to-br from-gray-100 to-white rounded-2xl">
       {packageData?.map((plan) => {
-        const isActive = selected === plan.id;
+        const isCurrentPlan = plan.id === user?.plan;
+        const isSelected = selected === plan.id || isCurrentPlan;
         const isHalfYearly = plan.duration_type === "half_yearly";
         const isProcessing = payingPlanId === plan.id;
 
@@ -44,7 +50,7 @@ const PricingCards = () => {
             key={plan.id}
             onClick={() => setSelected(plan.id)}
             className={`relative w-full max-w-sm rounded-xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl ${
-              isActive ? "bg-[#0F172A] text-white" : "bg-white text-black"
+              isSelected ? "bg-[#0F172A] text-white" : "bg-white text-black"
             }`}
           >
             {/* RECOMMENDED Badge */}
@@ -58,13 +64,13 @@ const PricingCards = () => {
             <div className="flex justify-center mt-4">
               <div
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border transition-all ${
-                  isActive
+                  isSelected
                     ? "bg-white text-[#0F172A] border-white"
                     : "bg-gray-200 text-gray-600 border-gray-300"
                 }`}
               >
                 <span className="rounded-full w-4 h-4 border-2 border-current flex items-center justify-center">
-                  {isActive && (
+                  {isSelected && (
                     <span className="w-2 h-2 bg-[#0F172A] rounded-full"></span>
                   )}
                 </span>
@@ -91,7 +97,9 @@ const PricingCards = () => {
                 </div>
                 <div
                   className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                    isActive ? "bg-white text-[#0F172A]" : "bg-black text-white"
+                    isSelected
+                      ? "bg-white text-[#0F172A]"
+                      : "bg-black text-white"
                   }`}
                 >
                   Save: $40
@@ -108,21 +116,27 @@ const PricingCards = () => {
                 ))}
               </ul>
 
-              {/* Buy Now Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleBuyNow(plan);
-                }}
-                disabled={isProcessing}
-                className={`w-full mt-6 rounded-md text-sm font-semibold py-2 transition ${
-                  isActive
-                    ? "bg-white text-[#0F172A] hover:bg-gray-200"
-                    : "bg-gray-900 text-white hover:bg-gray-800"
-                } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
-              >
-                {isProcessing ? "Processing..." : "Buy Now"}
-              </button>
+              {/* Action Button */}
+              {isCurrentPlan ? (
+                <div className="w-full mt-6 py-2 rounded-md text-center text-sm font-semibold bg-gray-300 text-gray-800 cursor-default">
+                  Your Plan
+                </div>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBuyNow(plan);
+                  }}
+                  disabled={isProcessing}
+                  className={`w-full mt-6 rounded-md text-sm font-semibold py-2 transition ${
+                    isSelected
+                      ? "bg-white text-[#0F172A] hover:bg-gray-200"
+                      : "bg-gray-900 text-white hover:bg-gray-800 cursor-pointer"
+                  } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  {isProcessing ? "Processing..." : "Subscribe Now"}
+                </button>
+              )}
             </div>
           </div>
         );
