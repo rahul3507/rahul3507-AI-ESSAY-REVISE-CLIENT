@@ -27,7 +27,8 @@ const UploadComparison = () => {
   const getFileIcon = (file) => {
     const ext = file?.name.split(".").pop()?.toLowerCase();
     if (ext === "pdf") return <File className="w-8 h-8 text-red-500" />;
-    if (ext === "docx" || ext === "doc") return <FileText className="w-8 h-8 text-blue-500" />;
+    if (ext === "docx" || ext === "doc")
+      return <FileText className="w-8 h-8 text-blue-500" />;
     return <FileText className="w-8 h-8 text-gray-500" />;
   };
 
@@ -52,12 +53,20 @@ const UploadComparison = () => {
       setLoading(true);
       const res = await apiClient.post("/ai/compare_documents/", formData);
       const result = res.data;
-console.log(res);
+      // console.log(res);
       navigate("/result", {
         state: {
           result,
-          draft1: { name: essay1.name, type: essay1.type },
-          draft2: { name: essay2.name, type: essay2.type },
+          draft1: {
+            name: essay1.name,
+            type: essay1.type,
+            text: result?.draft1_text, 
+          },
+          draft2: {
+            name: essay2.name,
+            type: essay2.type,
+            text: result?.draft2_text,
+          },
         },
       });
     } catch (err) {
@@ -257,14 +266,14 @@ console.log(res);
         {/* Action Button */}
         <div className="flex justify-center">
           <div className="flex justify-center">
-        <button
-          disabled={!essay1 || !essay2 || loading}
-          onClick={handleGenerate}
-          className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-lg rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? "Generating..." : "Generate Comparison Analysis"}
-        </button>
-      </div>
+            <button
+              disabled={!essay1 || !essay2 || loading}
+              onClick={handleGenerate}
+              className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-lg rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Generating..." : "Generate Comparison Analysis"}
+            </button>
+          </div>
         </div>
 
         {/* Status Indicator */}

@@ -10,7 +10,7 @@ const usePackagePlan = () => {
     setLoading(true);
     try {
       const response = await apiClient.get("/payment/get/all-plan/");
-      console.log(response);
+      // console.log(response);
       setPackageData(response.data);
       setError(null);
     } catch (err) {

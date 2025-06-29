@@ -1,5 +1,6 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import useLoggedUser from "../components/hook/useLoggedUser";
+import Dashboard from "../Layouts/Dashboard";
 
 const ProtectedRoute = () => {
   const { user, loading } = useLoggedUser();
@@ -12,11 +13,12 @@ const ProtectedRoute = () => {
     );
   }
 
-  if (!user) {
+  // Ensure not just falsy, but also not an empty object
+  if (!user || Object.keys(user).length === 0) {
     return <Navigate to="/signin" replace />;
   }
 
-  return <Outlet />;
+  return <Dashboard />;
 };
 
 export default ProtectedRoute;

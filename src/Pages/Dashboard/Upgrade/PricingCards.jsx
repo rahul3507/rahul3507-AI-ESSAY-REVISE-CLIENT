@@ -92,7 +92,7 @@ const PricingCards = () => {
                       : "/yr"}
                   </span>
                 </div>
-                <div className="text-sm line-through text-gray-400">
+                {/* <div className="text-sm line-through text-gray-400">
                   ${+plan.amount + 40}
                 </div>
                 <div
@@ -103,7 +103,7 @@ const PricingCards = () => {
                   }`}
                 >
                   Save: $40
-                </div>
+                </div> */}
               </div>
 
               {/* Features */}

@@ -82,7 +82,7 @@ const Dashboard = () => {
     },
   ];
 
-  const studentMenus = Menus.filter((menu) => menu.role === "user");
+  const userMenus = Menus.filter((menu) => menu.role === "user");
   return (
     <div className="flex">
       {/* Sidebar */}
@@ -110,7 +110,7 @@ const Dashboard = () => {
             open ? "" : "flex flex-col items-center justify-center"
           }`}
         >
-          {studentMenus.map((Menu, index) => (
+          {userMenus.map((Menu, index) => (
             <Link
               to={Menu.path}
               key={index}
