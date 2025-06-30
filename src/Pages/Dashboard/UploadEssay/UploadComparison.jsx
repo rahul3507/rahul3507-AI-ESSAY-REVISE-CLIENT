@@ -81,7 +81,7 @@ const UploadComparison = () => {
       <div className="">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-slate-900 mb-2">
+          <h1 className="text-2xl font-semibold text-slate-900 mb-2">
             Document Comparison
           </h1>
           <p className="text-slate-600">

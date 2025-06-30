@@ -318,7 +318,7 @@ const UploadOneFile = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
+    <div className="p-4 md:p-8">
       <ToastContainer position="top-right" autoClose={2000} />
       <h1 className="text-2xl font-semibold mb-6 text-gray-800">
         Quick Actions
@@ -390,9 +390,7 @@ const UploadOneFile = () => {
               value={essayType}
               onChange={(e) => setEssayType(e.target.value)}
             >
-              <option value="" disabled>
-                Select type
-              </option>
+              <option disabled>Select type</option>
               <option value="Narrative Essay">Narrative Essay</option>
               <option value="Descriptive Essay">Descriptive Essay</option>
               <option value="Expository Essay">Expository Essay</option>
@@ -420,7 +418,9 @@ const UploadOneFile = () => {
 
             {overallScore !== null && (
               <p className="text-sm text-gray-700 mb-2">
-                <span className="font-semibold text-gray-900">Overall Score:</span>{" "}
+                <span className="font-semibold text-gray-900">
+                  Overall Score:
+                </span>{" "}
                 {overallScore} / 100
               </p>
             )}
