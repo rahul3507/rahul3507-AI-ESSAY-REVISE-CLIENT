@@ -208,6 +208,20 @@ const UploadOneFile = () => {
     toast.success("Change accepted");
   };
 
+  const handleRejectChange = (index) => {
+    const rejectedChange = changes[index];
+    const regex = new RegExp(
+      `<del>${rejectedChange.del}</del>\\s*<ins>${rejectedChange.ins}</ins>`
+    );
+    const updatedEssayText = essayText.replace(regex, rejectedChange.del);
+    setEssayText(updatedEssayText);
+
+    const updatedChanges = changes.filter((_, i) => i !== index);
+    setChanges(updatedChanges);
+
+    toast.info("Change rejected");
+  };
+
   const handleAcceptAllChanges = () => {
     let updatedText = essayText;
     changes.forEach((change) => {
@@ -445,12 +459,20 @@ const UploadOneFile = () => {
                     &quot;{item.del}&quot; ➝ &quot;{item.ins}&quot;
                   </p>
                   <div className="flex items-center justify-between mt-2">
-                    <button
-                      className="text-xs text-green-600 hover:underline"
-                      onClick={() => handleAcceptChange(index)}
-                    >
-                      ✓ Accept
-                    </button>
+                    <div className="flex gap-3">
+                      <button
+                        className="text-xs text-green-600 hover:underline"
+                        onClick={() => handleAcceptChange(index)}
+                      >
+                        ✓ Accept
+                      </button>
+                      <button
+                        className="text-xs text-red-600 hover:underline"
+                        onClick={() => handleRejectChange(index)}
+                      >
+                        ✕ Reject
+                      </button>
+                    </div>
                     <span className="text-xs text-gray-400">{item.time}</span>
                   </div>
                 </div>

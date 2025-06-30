@@ -135,27 +135,6 @@ const SignIn = () => {
             </button>
           </form>
 
-          <div className="divider">Or Login with</div>
-
-          <div className="flex space-x-4">
-            <button className="flex-1 flex items-center justify-center border border-base-300 rounded-md py-2 hover:bg-gray-100">
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                alt="Google"
-                className="w-5 h-5 mr-2"
-              />
-              Google
-            </button>
-            <button className="flex-1 flex items-center justify-center border border-base-300 rounded-md py-2 hover:bg-gray-100">
-              <img
-                src="https://www.svgrepo.com/show/452196/facebook-1.svg"
-                alt="Facebook"
-                className="w-5 h-5 mr-2"
-              />
-              Facebook
-            </button>
-          </div>
-
           <p className="text-center text-sm mt-6">
             Don’t have an account?{" "}
             <Link to="/signup" className="text-blue-600 hover:underline">

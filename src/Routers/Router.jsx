@@ -14,6 +14,7 @@ import PaymentSuccess from "../Pages/Dashboard/Upgrade/PaymentSuccess";
 import PaymentFail from "../Pages/Dashboard/Upgrade/PaymentFail";
 import PaymentCancel from "../Pages/Dashboard/Upgrade/PaymentCancel";
 import ProtectedRoute from "./ProtectedRoute";
+import TermsAndConditions from "../Pages/Authentication/TermsAndConditions";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
   {
     path: "/otp",
     element: <OtpVerification />,
+  },
+  {
+    path: "/terms",
+    element: <TermsAndConditions />,
   },
 ]);
 
