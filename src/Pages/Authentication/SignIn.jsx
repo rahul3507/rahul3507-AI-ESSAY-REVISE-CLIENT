@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
-import apiClient from "../../lib/api-client"; // update path as per your structure
+import apiClient from "../../lib/api-client";
 import toast from "react-hot-toast";
 
 const SignIn = () => {
@@ -11,9 +11,12 @@ const SignIn = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
@@ -23,6 +26,9 @@ const SignIn = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
+      setServerError(""); // Clear any previous server errors
+      clearErrors(); // Clear form errors
+      
       const response = await apiClient.post("/auth/login/", data);
       console.log(response);
 
@@ -34,9 +40,29 @@ const SignIn = () => {
 
       toast.success("Login successful!");
       navigate("/");
+
     } catch (error) {
       console.error("Login failed:", error);
-      toast.error(error?.response?.data?.message || "Login failed");
+      
+      const errorMessage = error?.response?.data?.message || "Login failed: Email or password is incorrect";
+      
+      // Check if it's a specific field error (like wrong password)
+      if (error?.response?.status === 401 || errorMessage.toLowerCase().includes('password')) {
+        setError("password", {
+          type: "server",
+          message: "Invalid email or password"
+        });
+      } else if (errorMessage.toLowerCase().includes('email')) {
+        setError("email", {
+          type: "server", 
+          message: "Invalid email address"
+        });
+      } else {
+        // General server error
+        setServerError(errorMessage);
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -50,20 +76,15 @@ const SignIn = () => {
           Portal!
         </h2>
       </div>
-
+      
       <div className="col-span-4 md:col-span-4 flex items-center justify-center p-4">
         <div className="max-w-lg w-full bg-white rounded-3xl border border-gray-200 shadow-md p-6 md:p-16">
-          <h2 className="text-2xl font-bold text-center mb-2">
+          <h2 className="text-2xl font-bold text-center mb-4">
             Sign in Account
           </h2>
-          <p className="text-center text-sm mb-6">
-            Don’t have an Account?{" "}
-            <Link to="/signup" className="text-blue-600 hover:underline">
-              Sign Up Free
-            </Link>
-          </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Email Field */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 Email
@@ -72,20 +93,27 @@ const SignIn = () => {
                 <input
                   type="email"
                   {...register("email", {
-                    required: "email is required",
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address"
+                    }
                   })}
                   placeholder="Enter your email"
-                  className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring focus:ring-slate-700"
+                  className={`w-full border rounded-md p-2 focus:outline-none focus:ring focus:ring-slate-700 ${
+                    errors.email ? 'border-red-500 bg-red-50' : 'border-base-300 bg-base-200'
+                  }`}
                 />
                 <FaUser className="absolute inset-y-3 right-3 text-gray-500" />
               </div>
-              {errors.username && (
+              {errors.email && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.username.message}
+                  {errors.email.message}
                 </p>
               )}
             </div>
 
+            {/* Password Field */}
             <div>
               <label className="block text-sm font-medium mb-1">Password</label>
               <div className="relative">
@@ -93,9 +121,15 @@ const SignIn = () => {
                   type={showPassword ? "text" : "password"}
                   {...register("password", {
                     required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters"
+                    }
                   })}
                   placeholder="Enter your Password"
-                  className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring focus:ring-slate-700"
+                  className={`w-full border rounded-md p-2 focus:outline-none focus:ring focus:ring-slate-700 ${
+                    errors.password ? 'border-red-500 bg-red-50' : 'border-base-300 bg-base-200'
+                  }`}
                 />
                 <button
                   type="button"
@@ -110,7 +144,8 @@ const SignIn = () => {
                   {errors.password.message}
                 </p>
               )}
-
+              
+              {/* Remember me and Forgot password */}
               <div className="flex justify-between items-center mt-2 text-sm">
                 <div className="flex items-center opacity-75">
                   <input
@@ -120,23 +155,31 @@ const SignIn = () => {
                   />
                   Remember for 30 Days
                 </div>
-                <a href="#" className="text-blue-600 hover:underline">
+                <Link to="/forgot-password" className="text-blue-600 hover:underline">
                   Forgot Password?
-                </a>
+                </Link>
               </div>
             </div>
 
+            {/* General Server Error Display */}
+            {serverError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+                {serverError}
+              </div>
+            )}
+
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#1E2839] hover:bg-slate-700 text-white font-semibold py-2 rounded-md"
+              className="w-full bg-[#1E2839] hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 rounded-md transition-colors"
             >
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
           <p className="text-center text-sm mt-6">
-            Don’t have an account?{" "}
+            Do not have an account?{" "}
             <Link to="/signup" className="text-blue-600 hover:underline">
               Sign Up Free
             </Link>

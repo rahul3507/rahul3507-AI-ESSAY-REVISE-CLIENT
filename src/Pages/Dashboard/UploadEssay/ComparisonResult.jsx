@@ -61,7 +61,7 @@ export default function ComparisonResult() {
           </div>
         </div>
         <Link
-          to="/"
+          to="/upload_comparison"
           className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-50 transition"
         >
           <Plus size={16} />

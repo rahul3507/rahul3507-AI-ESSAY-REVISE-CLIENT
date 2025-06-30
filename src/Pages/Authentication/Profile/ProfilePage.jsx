@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
-import { FaTrashCan } from "react-icons/fa6";
+// import { FaTrashCan } from "react-icons/fa6";
 import { FiEdit2, FiExternalLink, FiLock, FiUpload } from "react-icons/fi";
 import useLoggedUser from "../../../components/hook/useLoggedUser";
 import apiClient from "../../../lib/api-client";
@@ -8,7 +8,7 @@ import apiClient from "../../../lib/api-client";
 export default function ProfilePage() {
   const { user, loading, refetch } = useLoggedUser([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -48,8 +48,8 @@ export default function ProfilePage() {
     setNewPassword("");
     setConfirmPassword("");
   };
-  const openDeleteModal = () => setIsDeleteModalOpen(true);
-  const closeDeleteModal = () => setIsDeleteModalOpen(false);
+  // const openDeleteModal = () => setIsDeleteModalOpen(true);
+  // const closeDeleteModal = () => setIsDeleteModalOpen(false);
 
   const handleEditProfileChange = (e) => {
     const { name, value, files } = e.target;
@@ -121,11 +121,11 @@ export default function ProfilePage() {
     closePasswordModal();
   };
 
-  const handleDeleteAccount = () => {
-    console.log("Account deleted!");
-    alert("Your account has been deleted!");
-    closeDeleteModal();
-  };
+  // const handleDeleteAccount = () => {
+  //   console.log("Account deleted!");
+  //   alert("Your account has been deleted!");
+  //   closeDeleteModal();
+  // };
 
   if (loading) return <div>Loading...</div>;
   if (!user) return <div>User not found.</div>;
@@ -236,7 +236,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Delete Account Section */}
-      <div className="md:flex justify-between items-center mt-8 p-6 shadow-sm rounded-2xl border border-red-300">
+      {/* <div className="md:flex justify-between items-center mt-8 p-6 shadow-sm rounded-2xl border border-red-300">
         <div>
           <h4 className="text-red-500 font-bold text-lg">Delete Account</h4>
           <p className="text-gray-500 text-sm mt-2">
@@ -255,7 +255,7 @@ export default function ProfilePage() {
             Apply Delete
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Edit Profile Modal */}
       {isEditProfileModalOpen && (
@@ -406,7 +406,7 @@ export default function ProfilePage() {
       )}
 
       {/* Delete Account Modal */}
-      {isDeleteModalOpen && (
+      {/* {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
           <div className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-lg">
             <div className="w-10 h-10 bg-red-100 rounded-lg mb-4 flex items-center justify-center">
@@ -434,7 +434,7 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

@@ -5,8 +5,10 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import apiClient from "../../../lib/api-client";
 import { FileText } from "lucide-react";
+import useLoggedUser from "../../../components/hook/useLoggedUser";
 
 const UploadOneFile = () => {
+  const { user } = useLoggedUser([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [essayText, setEssayText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,14 @@ const UploadOneFile = () => {
   const [changes, setChanges] = useState([]);
   const [overallScore, setOverallScore] = useState(null);
 
+  console.log(user?.is_active);
+
   const handleFileChange = async (e) => {
+    if (!user?.is_active) {
+      toast.error("You currently do not have an active subscription plan.");
+      return;
+    }
+
     const file = e.target.files[0];
     if (!file) return;
 
@@ -325,7 +334,13 @@ const UploadOneFile = () => {
           </p>
 
           {!selectedFile ? (
-            <label className="flex items-center gap-3 border border-gray-300 bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition">
+            <label
+              className={`flex items-center gap-3 border ${
+                user?.is_active
+                  ? "cursor-pointer hover:bg-gray-100"
+                  : " bg-gray-100 opacity-60"
+              } p-4 rounded-xl transition`}
+            >
               <FiUploadCloud className="text-2xl text-gray-500" />
               <span className="text-sm text-gray-600">
                 Click to upload file
@@ -334,7 +349,8 @@ const UploadOneFile = () => {
                 type="file"
                 accept=".pdf,.doc,.docx"
                 onChange={handleFileChange}
-                className="hidden outline-none"
+                className="hidden"
+                // disabled={!user?.is_active}
               />
             </label>
           ) : (

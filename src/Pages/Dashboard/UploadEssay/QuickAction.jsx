@@ -1,80 +1,117 @@
+
+import { useNavigate } from "react-router-dom"
+import toast, { Toaster } from "react-hot-toast"
 import {
-  RiShare2Line,
-  RiSettings5Line,
-  RiFolder6Line,
-  RiMessage2Line,
-  RiPieChart2Line,
-  RiLinksLine,
-  RiBarChart2Line,
-  RiZoomInLine,
-  RiSearchLine,
-  RiSendPlaneFill,
-  RiFileList2Line,
-} from "react-icons/ri";
-import { Link } from "react-router-dom";
+  Share2,
+  Settings,
+  Folder,
+  MessageSquare,
+  PieChart,
+  Link,
+  BarChart2,
+  ZoomIn,
+  Search,
+  Send,
+  FileText,
+} from "lucide-react"
+import useLoggedUser from "../../../components/hook/useLoggedUser"
+
+
 
 const QuickAction = () => {
+  const { user } = useLoggedUser([])
+  const navigate = useNavigate()
+
+  const handleUploadClick = () => {
+    console.log("User:", user)
+    console.log("User is_active:", user?.is_active)
+
+    if (!user?.is_active) {
+      console.log("Firing toast...")
+      toast.error("You currently do not have an active subscription plan.")
+      return
+    }
+
+    navigate("/upload_one")
+  }
+
   return (
-    <div className="bg-white rounded-xl shadow-md p-5 border border-base-300">
-      <div className="border-b border-gray-300 mb-4">
-        <h2 className="text-xl font-semibold">Quick Actions</h2>
-        <p className="text-sm text-gray-500 pb-3">
-          Common tasks and actions to get started
-        </p>
+    <>
+      <div className="bg-white rounded-xl shadow-md p-5 border border-gray-300">
+        <div className="border-b border-gray-300 mb-4">
+          <h2 className="text-xl font-semibold">Quick Actions</h2>
+          <p className="text-sm text-gray-500 pb-3">Common tasks and actions to get started</p>
+        </div>
+
+        <button
+          onClick={handleUploadClick}
+          className="w-full flex items-center justify-center gap-2 bg-[#1E2839] cursor-pointer text-white font-medium py-2.5 rounded-md mb-6 transition hover:bg-[#2a3441]"
+        >
+          <Share2 className="text-white w-4 h-4" />
+          Upload New Essay
+        </button>
+
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Features We Provide</h3>
+
+        <div className="space-y-5 text-sm text-gray-700">
+          <div className="flex items-center gap-2">
+            <FileText className="text-gray-500 w-5 h-5" />
+            Document Upload (.docx)
+          </div>
+          <div className="flex items-center gap-2">
+            <Link className="text-gray-500 w-5 h-5" />
+            Source Authenticity Validation
+          </div>
+          <div className="flex items-center gap-2">
+            <Send className="text-gray-500 w-5 h-5" />
+            Essay Type Classification
+          </div>
+          <div className="flex items-center gap-2">
+            <Folder className="text-gray-500 w-5 h-5" />
+            Draft Comparison (Optional)
+          </div>
+          <div className="flex items-center gap-2">
+            <Search className="text-gray-500 w-5 h-5" />
+            Tracked Revisions with Metadata
+          </div>
+          <div className="flex items-center gap-2">
+            <Settings className="text-gray-500 w-5 h-5" />
+            Admin Custom Guidelines
+          </div>
+          <div className="flex items-center gap-2">
+            <ZoomIn className="text-gray-500 w-5 h-5" />
+            Multi-Pass Grammar & Style Checks
+          </div>
+          <div className="flex items-center gap-2">
+            <MessageSquare className="text-gray-500 w-5 h-5" />
+            Inline Comments & Feedback
+          </div>
+          <div className="flex items-center gap-2">
+            <BarChart2 className="text-gray-500 w-5 h-5" />
+            Essay-Specific Criteria
+          </div>
+          <div className="flex items-center gap-2">
+            <PieChart className="text-gray-500 w-5 h-5" />
+            Analytics Dashboard (Upcoming)
+          </div>
+        </div>
       </div>
 
-      <Link to="/upload_one" className="w-full flex items-center justify-center gap-2 bg-[#1E2839] cursor-pointer text-white font-medium py-2.5 rounded-md mb-6 transition">
-        <RiShare2Line className="text-white" />
-        Upload New Essay
-      </Link>
+      {/* This is crucial - the Toaster component must be included */}
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        gutter={8}
+        toastOptions={{
+          duration: 2000,
+          style: {
+            background: "#363636",
+            color: "#fff",
+          },
+        }}
+      />
+    </>
+  )
+}
 
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">
-        Features We Provide
-      </h3>
-      <div className="space-y-5 text-sm text-gray-700">
-        <div className="flex items-center gap-2">
-          <RiFileList2Line className="text-gray-500 text-xl" />
-          Document Upload (.docx)
-        </div>
-        <div className="flex items-center gap-2">
-          <RiLinksLine className="text-gray-500 text-xl" />
-          Source Authenticity Validation
-        </div>
-        <div className="flex items-center gap-2">
-          <RiSendPlaneFill className="text-gray-500 text-xl" />
-          Essay Type Classification
-        </div>
-        <div className="flex items-center gap-2">
-          <RiFolder6Line className="text-gray-500 text-xl" />
-          Draft Comparison (Optional)
-        </div>
-        <div className="flex items-center gap-2">
-          <RiSearchLine className="text-gray-500 text-xl" />
-          Tracked Revisions with Metadata
-        </div>
-        <div className="flex items-center gap-2">
-          <RiSettings5Line className="text-gray-500 text-xl" />
-          Admin Custom Guidelines
-        </div>
-        <div className="flex items-center gap-2">
-          <RiZoomInLine className="text-gray-500 text-xl" />
-          Multi-Pass Grammar & Style Checks
-        </div>
-        <div className="flex items-center gap-2">
-          <RiMessage2Line className="text-gray-500 text-xl" />
-          Inline Comments & Feedback
-        </div>
-        <div className="flex items-center gap-2">
-          <RiBarChart2Line className="text-gray-500 text-xl" />
-          Essay-Specific Criteria
-        </div>
-        <div className="flex items-center gap-2">
-          <RiPieChart2Line className="text-gray-500 text-xl" />
-          Analytics Dashboard (Upcoming)
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default QuickAction;
+export default QuickAction

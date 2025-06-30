@@ -44,16 +44,10 @@ const Signup = () => {
 
       <div className="col-span-4 md:col-span-4 flex items-center justify-center">
         <div className="max-w-lg w-full bg-white rounded-3xl border border-gray-200 shadow-md p-6 md:p-16">
-          <h2 className="text-2xl font-bold text-center mb-2">
+          <h2 className="text-2xl font-bold text-center mb-4">
             Sign Up Account
           </h2>
-          <p className="text-center text-sm mb-6">
-            Already have an Account?{" "}
-            <Link to="/signin" className="text-blue-500 hover:underline">
-              Sign In
-            </Link>
-          </p>
-
+          
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
