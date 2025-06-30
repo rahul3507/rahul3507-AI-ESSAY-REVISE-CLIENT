@@ -71,7 +71,7 @@ const SignIn = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 min-h-screen bg-base-200">
       <div className="hidden md:col-span-3 md:flex items-center justify-center bg-[#1E2839] p-8">
-        <h2 className="text-white text-4xl font-bold leading-relaxed">
+        <h2 className="text-white text-4xl font-semibold leading-relaxed">
           Welcome Back! Verify Your <br /> Email to Access Your <br /> Learning
           Portal!
         </h2>
@@ -79,7 +79,7 @@ const SignIn = () => {
       
       <div className="col-span-4 md:col-span-4 flex items-center justify-center p-4">
         <div className="max-w-lg w-full bg-white rounded-3xl border border-gray-200 shadow-md p-6 md:p-16">
-          <h2 className="text-2xl font-bold text-center mb-4">
+          <h2 className="text-2xl font-semibold text-center mb-4">
             Sign in Account
           </h2>
 

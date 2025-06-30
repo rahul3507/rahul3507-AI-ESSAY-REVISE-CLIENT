@@ -10,7 +10,7 @@ const useLoggedUser = () => {
     setLoading(true);
     try {
       const response = await apiClient.get("/auth/profile/");
-      // console.log(response);
+      console.log(response);
       setUser(response.data);
       setError(null);
     } catch (err) {

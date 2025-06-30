@@ -325,7 +325,7 @@ const UploadOneFile = () => {
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-md">
           <h2 className="text-lg font-semibold text-gray-800 mb-1">
             Uploaded File
           </h2>
@@ -335,9 +335,9 @@ const UploadOneFile = () => {
 
           {!selectedFile ? (
             <label
-              className={`flex items-center gap-3 border ${
+              className={`flex items-center gap-3${
                 user?.is_active
-                  ? "cursor-pointer hover:bg-gray-100"
+                  ? "cursor-pointer border border-gray-200 hover:bg-gray-100 "
                   : " bg-gray-100 opacity-60"
               } p-4 rounded-xl transition`}
             >
@@ -349,7 +349,7 @@ const UploadOneFile = () => {
                 type="file"
                 accept=".pdf,.doc,.docx"
                 onChange={handleFileChange}
-                className="hidden"
+                className="hidden border border-gray-200"
                 // disabled={!user?.is_active}
               />
             </label>
@@ -377,8 +377,8 @@ const UploadOneFile = () => {
           )}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg mb-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-md">
+          <div className="flex items-center gap-3 border border-gray-200 p-3 rounded-lg mb-4">
             <div className="bg-black text-white p-3 rounded-lg text-xl">
               <RiVoiceAiLine />
             </div>
@@ -386,7 +386,7 @@ const UploadOneFile = () => {
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <select
-              className="flex-grow border border-gray-300 rounded-md p-2 text-sm outline-none"
+              className="flex-grow border border-gray-200 rounded-md p-2 text-sm outline-none"
               value={essayType}
               onChange={(e) => setEssayType(e.target.value)}
             >
@@ -412,7 +412,7 @@ const UploadOneFile = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <div className="md:col-span-3 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+        <div className="md:col-span-3 bg-white p-6 rounded-2xl border border-gray-200 shadow-md">
           <div className="border-b border-gray-200 mb-4 pb-1">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
               Essay Preview
@@ -420,7 +420,7 @@ const UploadOneFile = () => {
 
             {overallScore !== null && (
               <p className="text-sm text-gray-700 mb-2">
-                <span className="font-bold text-gray-900">Overall Score:</span>{" "}
+                <span className="font-semibold text-gray-900">Overall Score:</span>{" "}
                 {overallScore} / 100
               </p>
             )}
@@ -434,7 +434,7 @@ const UploadOneFile = () => {
           )}
         </div>
 
-        <div className="md:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+        <div className="md:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-md">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-xl font-semibold text-gray-800">
               Track Changes

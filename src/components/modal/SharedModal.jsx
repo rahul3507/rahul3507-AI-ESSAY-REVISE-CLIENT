@@ -10,21 +10,21 @@ const SharedModal = ({ isOpen, onClose }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-500 mb-6">
           <div>
             <label className="block text-sm font-medium mb-1">Test Name</label>
-            <select className="w-full border border-gray-300 rounded-md p-2">
+            <select className="w-full border border-gray-200 rounded-md p-2">
               <option value="">Math test</option>
               <option value="1">Option 1</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Select Question</label>
-            <select className="w-full border border-gray-300 rounded-md p-2">
+            <select className="w-full border border-gray-200 rounded-md p-2">
               <option value="">40 Marks</option>
               <option value="1">Option 1</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Duration</label>
-            <select className="w-full border border-gray-300 rounded-md p-2">
+            <select className="w-full border border-gray-200 rounded-md p-2">
               <option value="">60 min</option>
               <option value="1">Option 1</option>
             </select>

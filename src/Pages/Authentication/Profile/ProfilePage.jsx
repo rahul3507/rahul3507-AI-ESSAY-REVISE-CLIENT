@@ -133,7 +133,7 @@ export default function ProfilePage() {
   return (
     <div className="p-5">
       {/* Profile Header */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-2xl shadow-sm border border-base-300">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-2xl shadow-md border border-base-300">
         <div className="flex flex-col md:flex-row items-center gap-5">
           <div className="relative w-24 h-24 md:w-32 md:h-32">
             <img
@@ -154,7 +154,7 @@ export default function ProfilePage() {
             </button>
           </div>
           <div className="text-center md:text-left">
-            <span className="mt-2 text-sm font-bold bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+            <span className="mt-2 text-sm font-semibold bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
               {user?.user?.role}
             </span>
             <h2 className="text-lg font-semibold mt-2">
@@ -218,7 +218,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Change Password Section */}
-      <div className="mt-8 p-6 rounded-2xl border border-blue-200 shadow-sm gap-4">
+      <div className="mt-8 p-6 rounded-2xl border border-blue-200 shadow-md gap-4">
         <button
           onClick={openPasswordModal}
           className="text-gray-500 hover:text-blue-500 transition py-3"
@@ -236,9 +236,9 @@ export default function ProfilePage() {
       </div>
 
       {/* Delete Account Section */}
-      {/* <div className="md:flex justify-between items-center mt-8 p-6 shadow-sm rounded-2xl border border-red-300">
+      {/* <div className="md:flex justify-between items-center mt-8 p-6 shadow-md rounded-2xl border border-red-300">
         <div>
-          <h4 className="text-red-500 font-bold text-lg">Delete Account</h4>
+          <h4 className="text-red-500 font-semibold text-lg">Delete Account</h4>
           <p className="text-gray-500 text-sm mt-2">
             Contact our{" "}
             <a href="#" className="text-blue-500 hover:underline">
@@ -250,7 +250,7 @@ export default function ProfilePage() {
         <div className="py-3">
           <button
             onClick={openDeleteModal}
-            className="bg-red-500 hover:bg-red-600 shadow-lg text-white font-semibold py-2 px-6 rounded-lg transition"
+            className="bg-red-500 hover:bg-red-600 shadow-md text-white font-semibold py-2 px-6 rounded-lg transition"
           >
             Apply Delete
           </button>
@@ -260,14 +260,14 @@ export default function ProfilePage() {
       {/* Edit Profile Modal */}
       {isEditProfileModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 space-y-4">
-            <h2 className="text-2xl font-bold text-center mb-4">
+          <div className="bg-white rounded-2xl shadow-md w-full max-w-xl p-6 space-y-4">
+            <h2 className="text-2xl font-semibold text-center mb-4">
               Edit Profile
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Profile Image Upload */}
               <div className="sm:col-span-2 flex flex-col items-center space-y-2">
-                <div className="relative group w-28 h-28 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center overflow-hidden cursor-pointer hover:border-blue-500 transition">
+                <div className="relative group w-28 h-28 rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden cursor-pointer hover:border-blue-500 transition">
                   {formData.profile_picture_preview ? (
                     <img
                       src={
@@ -303,7 +303,7 @@ export default function ProfilePage() {
                 value={formData.first_name}
                 onChange={handleEditProfileChange}
                 placeholder="First Name"
-                className="p-2 border border-gray-300 rounded-lg"
+                className="p-2 border border-gray-200 rounded-lg"
               />
               <input
                 type="text"
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                 value={formData.last_name}
                 onChange={handleEditProfileChange}
                 placeholder="Last Name"
-                className="p-2 border border-gray-300 rounded-lg"
+                className="p-2 border border-gray-200 rounded-lg"
               />
               <input
                 type="email"
@@ -319,7 +319,7 @@ export default function ProfilePage() {
                 value={formData.email}
                 onChange={handleEditProfileChange}
                 placeholder="Email"
-                className="p-2 border border-gray-300 rounded-lg"
+                className="p-2 border border-gray-200 rounded-lg"
               />
               <input
                 type="text"
@@ -327,7 +327,7 @@ export default function ProfilePage() {
                 value={formData.phone_number}
                 onChange={handleEditProfileChange}
                 placeholder="Phone Number"
-                className="p-2 border border-gray-300 rounded-lg"
+                className="p-2 border border-gray-200 rounded-lg"
               />
               <input
                 type="text"
@@ -335,14 +335,14 @@ export default function ProfilePage() {
                 value={formData.address}
                 onChange={handleEditProfileChange}
                 placeholder="Address"
-                className="p-2 border border-gray-300 rounded-lg sm:col-span-2"
+                className="p-2 border border-gray-200 rounded-lg sm:col-span-2"
               />
             </div>
 
             <div className="flex justify-end space-x-4 pt-4">
               <button
                 onClick={closeEditProfileModal}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+                className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-100"
               >
                 Cancel
               </button>
@@ -360,8 +360,8 @@ export default function ProfilePage() {
       {/* Change Password Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-lg">
-            <h2 className="text-2xl font-bold mb-6 text-center">
+          <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-md">
+            <h2 className="text-2xl font-semibold mb-6 text-center">
               Change Password
             </h2>
             <div className="flex flex-col gap-4">
@@ -408,11 +408,11 @@ export default function ProfilePage() {
       {/* Delete Account Modal */}
       {/* {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-lg">
+          <div className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-md">
             <div className="w-10 h-10 bg-red-100 rounded-lg mb-4 flex items-center justify-center">
               <FaTrashCan className="text-red-500 text-xl" />
             </div>
-            <h5 className="text-gray-600 font-bold">
+            <h5 className="text-gray-600 font-semibold">
               Are you sure you want to delete your account?
             </h5>
             <p className="mb-5">

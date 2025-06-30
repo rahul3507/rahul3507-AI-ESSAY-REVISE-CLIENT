@@ -81,7 +81,7 @@ const UploadComparison = () => {
       <div className="">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+          <h1 className="text-3xl font-semibold text-slate-900 mb-2">
             Document Comparison
           </h1>
           <p className="text-slate-600">
@@ -93,7 +93,7 @@ const UploadComparison = () => {
         {/* Upload Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Draft 1 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0 overflow-hidden">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border-0 overflow-hidden">
             <div className="p-5 pb-4 border-b border-slate-100">
               <h3 className="text-lg font-semibold text-slate-800 mb-1">
                 First Document
@@ -115,7 +115,7 @@ const UploadComparison = () => {
                   type="text"
                   value={draft1Label}
                   onChange={(e) => setDraft1Label(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-colors"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-colors"
                 />
               </div>
 
@@ -178,7 +178,7 @@ const UploadComparison = () => {
           </div>
 
           {/* Draft 2 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0 overflow-hidden">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border-0 overflow-hidden">
             <div className="p-6 pb-4 border-b border-slate-100">
               <h3 className="text-lg font-semibold text-slate-800 mb-1">
                 Second Document
@@ -200,7 +200,7 @@ const UploadComparison = () => {
                   type="text"
                   value={draft2Label}
                   onChange={(e) => setDraft2Label(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-colors"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-colors"
                 />
               </div>
 
@@ -269,7 +269,7 @@ const UploadComparison = () => {
             <button
               disabled={!essay1 || !essay2 || loading}
               onClick={handleGenerate}
-              className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-lg rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-md rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Generating..." : "Generate Comparison Analysis"}
             </button>

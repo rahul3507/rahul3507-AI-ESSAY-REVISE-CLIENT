@@ -1,7 +1,7 @@
 import { useState } from "react";
 import usePackagePlan from "../../../components/hook/usePackagePlan";
-import apiClient from "../../../lib/api-client";
 import useLoggedUser from "../../../components/hook/useLoggedUser";
+import apiClient from "../../../lib/api-client";
 
 const PricingCards = () => {
   const { user } = useLoggedUser();
@@ -13,17 +13,16 @@ const PricingCards = () => {
     try {
       setPayingPlanId(plan.id);
 
-      const response = await apiClient.post(
-        "/payment/create-checkout-session/",
-        {
-          price_id: plan.price_id,
-          plan_name: plan.name,
-          duration_type: plan.duration_type,
-        }
-      );
+      const response = await apiClient.post("/payment/create-checkout-session/", {
+        price_id: plan.price_id,
+        plan_name: plan.name,
+        duration_type: plan.duration_type,
+      });
 
-      if (response.data?.checkout_url) {
-        window.location.href = response.data.checkout_url;
+      const checkoutUrl = response.data?.checkout_url;
+
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
       } else {
         alert("Payment initialization failed. Try again.");
       }
@@ -38,7 +37,7 @@ const PricingCards = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="flex flex-col md:flex-row justify-center gap-6 px-4 py-10 bg-gradient-to-br from-gray-100 to-white rounded-2xl">
+    <div className="flex flex-col md:flex-row justify-center gap-6 p-14 bg-gradient-to-br from-gray-200 to-gray-50 rounded-2xl">
       {packageData?.map((plan) => {
         const isCurrentPlan = plan.id === user?.plan;
         const isSelected = selected === plan.id || isCurrentPlan;
@@ -49,24 +48,22 @@ const PricingCards = () => {
           <div
             key={plan.id}
             onClick={() => setSelected(plan.id)}
-            className={`relative w-full max-w-sm rounded-xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl ${
+            className={`relative w-full max-w-sm rounded-xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-md ${
               isSelected ? "bg-[#0F172A] text-white" : "bg-white text-black"
             }`}
           >
-            {/* RECOMMENDED Badge */}
             {isHalfYearly && (
-              <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
+              <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-semibold px-3 py-1 rounded-full shadow-md z-10">
                 Recommended
               </div>
             )}
 
-            {/* Title Pill */}
             <div className="flex justify-center mt-4">
               <div
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border transition-all ${
                   isSelected
                     ? "bg-white text-[#0F172A] border-white"
-                    : "bg-gray-200 text-gray-600 border-gray-300"
+                    : "bg-gray-200 text-gray-600 border-gray-200"
                 }`}
               >
                 <span className="rounded-full w-4 h-4 border-2 border-current flex items-center justify-center">
@@ -78,11 +75,9 @@ const PricingCards = () => {
               </div>
             </div>
 
-            {/* Card Body */}
             <div className="p-6 flex flex-col justify-between min-h-[460px]">
-              {/* Price Section */}
               <div className="text-center">
-                <div className="text-3xl font-bold mb-1">
+                <div className="text-3xl font-semibold mb-1">
                   ${plan.amount}
                   <span className="text-base font-normal">
                     {plan.duration_type === "monthly"
@@ -92,21 +87,8 @@ const PricingCards = () => {
                       : "/yr"}
                   </span>
                 </div>
-                {/* <div className="text-sm line-through text-gray-400">
-                  ${+plan.amount + 40}
-                </div>
-                <div
-                  className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                    isSelected
-                      ? "bg-white text-[#0F172A]"
-                      : "bg-black text-white"
-                  }`}
-                >
-                  Save: $40
-                </div> */}
               </div>
 
-              {/* Features */}
               <ul className="mt-6 space-y-2 text-sm">
                 {plan.descriptions?.map((desc) => (
                   <li key={desc.id} className="flex items-center gap-2">
@@ -116,7 +98,6 @@ const PricingCards = () => {
                 ))}
               </ul>
 
-              {/* Action Button */}
               {isCurrentPlan ? (
                 <div className="w-full mt-6 py-2 rounded-md text-center text-sm font-semibold bg-gray-300 text-gray-800 cursor-default">
                   Your Plan
@@ -130,7 +111,7 @@ const PricingCards = () => {
                   disabled={isProcessing}
                   className={`w-full mt-6 rounded-md text-sm font-semibold py-2 transition ${
                     isSelected
-                      ? "bg-white text-[#0F172A] hover:bg-gray-200"
+                      ? "bg-white text-[#0F172A] hover:bg-gray-200 cursor-pointer"
                       : "bg-gray-900 text-white hover:bg-gray-800 cursor-pointer"
                   } ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
                 >

@@ -24,9 +24,9 @@ const QuickActionsCard = () => {
 
   return (
     <>
-      <div className="max-w-4xl w-full mx-auto bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8 border border-gray-300">
+      <div className="max-w-4xl w-full mx-auto bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8 border border-gray-200">
         {/* Header */}
-        <div className="border-b border-gray-300 mb-4">
+        <div className="border-b border-gray-200 mb-4">
           <h2 className="text-lg sm:text-xl font-semibold">Quick Actions</h2>
           <p className="text-sm text-gray-500 pb-3">Common tasks and actions to get started</p>
         </div>

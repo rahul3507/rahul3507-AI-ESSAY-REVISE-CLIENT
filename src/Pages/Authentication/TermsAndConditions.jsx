@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function TermsAndConditions() {
   return (
     <div className="max-w-3xl mx-auto p-6 text-gray-800">
-      <h1 className="text-3xl font-bold mb-6 text-center">Terms & Conditions</h1>
+      <h1 className="text-3xl font-semibold mb-6 text-center">Terms & Conditions</h1>
 
       <p className="mb-4 text-sm text-gray-600">
         Last Updated: June 28, 2025

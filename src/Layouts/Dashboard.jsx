@@ -92,7 +92,7 @@ const Dashboard = () => {
         } h-screen bg-base-300 fixed left-0 top-0 bottom-0 z-50 pt-8 transition-all duration-500`}
       >
         <RiArrowRightSLine
-          className={`absolute cursor-pointer -right-3 text-gray-400 bg-base-300 shadow-2xl top-9 w-7 h-7 rounded-full ${
+          className={`absolute cursor-pointer -right-3 text-gray-400 bg-base-300 shadow-md top-9 w-7 h-7 rounded-full ${
             !open && "rotate-180"
           }`}
           onClick={() => setOpen(!open)}

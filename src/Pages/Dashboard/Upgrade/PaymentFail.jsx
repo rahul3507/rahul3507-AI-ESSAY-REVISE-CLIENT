@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 const PaymentFail = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-yellow-50 px-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
-        <h1 className="text-4xl font-bold text-yellow-600 mb-4">Payment Failed</h1>
+      <div className="bg-white rounded-lg shadow-md p-8 max-w-md text-center">
+        <h1 className="text-4xl font-semibold text-yellow-600 mb-4">Payment Failed</h1>
         <p className="text-gray-700 mb-6">
           Unfortunately, your payment could not be processed at this time. Please try again or contact support if the problem persists.
         </p>

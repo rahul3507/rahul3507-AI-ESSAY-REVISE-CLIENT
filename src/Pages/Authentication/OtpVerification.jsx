@@ -96,14 +96,14 @@ const OtpVerification = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 min-h-screen bg-base-200">
       <div className="hidden md:col-span-3 md:flex items-center justify-center bg-[#1E2839] p-8">
-        <h2 className="text-white text-4xl font-bold leading-relaxed">
+        <h2 className="text-white text-4xl font-semibold leading-relaxed">
           Confirm Your Email to <br /> Access Educational <br /> Resources!
         </h2>
       </div>
 
       <div className="col-span-4 md:col-span-4 flex items-center justify-center p-8">
         <div className="max-w-xl w-full bg-white border border-gray-200 rounded-3xl shadow-md p-6 md:p-20 relative">
-          <h2 className="text-2xl font-bold text-center mb-2">
+          <h2 className="text-2xl font-semibold text-center mb-2">
             Verify Your E-mail
           </h2>
           <p className="text-center text-sm mb-6">

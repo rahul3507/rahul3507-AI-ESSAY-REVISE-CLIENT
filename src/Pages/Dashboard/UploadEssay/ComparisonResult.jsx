@@ -62,7 +62,7 @@ export default function ComparisonResult() {
         </div>
         <Link
           to="/upload_comparison"
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-50 transition"
+          className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-700 text-sm rounded hover:bg-gray-50 transition"
         >
           <Plus size={16} />
           <span>New Comparison</span>
@@ -74,7 +74,7 @@ export default function ComparisonResult() {
         {[draft1, draft2].map((doc, idx) => (
           <div
             key={idx}
-            className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden"
+            className="bg-white rounded-xl border border-gray-200 shadow-md overflow-hidden"
           >
             <div className="p-6 border-b border-gray-200">
               <h2 className="text-sm font-medium text-gray-900 mb-1">
@@ -114,7 +114,7 @@ export default function ComparisonResult() {
             onClick={() => setActiveTab(tab.value)}
             className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
               activeTab === tab.value
-                ? "bg-[#1E2839] shadow-sm"
+                ? "bg-[#1E2839] shadow-md"
                 : "hover:bg-[#1E2839]/30"
             }`}
           >
@@ -124,7 +124,7 @@ export default function ComparisonResult() {
       </div>
 
       {/* Tab Content */}
-      <div className="mt-6 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+      <div className="mt-6 bg-white border border-gray-200 rounded-xl p-5 shadow-md">
         {tabs.find((tab) => tab.value === activeTab)?.content}
       </div>
     </div>
