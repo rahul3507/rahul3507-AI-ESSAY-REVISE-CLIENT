@@ -155,18 +155,57 @@ const UploadOneFile = () => {
     }
   };
 
+  // const extractChanges = (text) => {
+  //   const regex = /<del>(.*?)<\/del>\s*<ins>(.*?)<\/ins>/g;
+  //   let match;
+  //   const found = [];
+  //   while ((match = regex.exec(text))) {
+  //     found.push({
+  //       del: match[1],
+  //       ins: match[2],
+  //       time: new Date().toLocaleTimeString(),
+  //     });
+  //   }
+  //   setChanges(found);
+  // };
+
   const extractChanges = (text) => {
-    const regex = /<del>(.*?)<\/del>\s*<ins>(.*?)<\/ins>/g;
+    const changesList = [];
+
+    const replaceRegex = /<del>(.*?)<\/del>\s*<ins>(.*?)<\/ins>/g;
+    const deleteRegex = /<del>(.*?)<\/del>(?!\s*<ins>)/g;
+    const insertRegex = /(?<!<del>)<ins>(.*?)<\/ins>/g;
+
     let match;
-    const found = [];
-    while ((match = regex.exec(text))) {
-      found.push({
+
+    while ((match = replaceRegex.exec(text))) {
+      changesList.push({
         del: match[1],
         ins: match[2],
+        type: "replace",
         time: new Date().toLocaleTimeString(),
       });
     }
-    setChanges(found);
+
+    while ((match = deleteRegex.exec(text))) {
+      changesList.push({
+        del: match[1],
+        ins: null,
+        type: "delete",
+        time: new Date().toLocaleTimeString(),
+      });
+    }
+
+    while ((match = insertRegex.exec(text))) {
+      changesList.push({
+        del: null,
+        ins: match[1],
+        type: "insert",
+        time: new Date().toLocaleTimeString(),
+      });
+    }
+
+    setChanges(changesList);
   };
 
   const stripHtmlTags = (html) => {
@@ -203,31 +242,72 @@ const UploadOneFile = () => {
     }
   };
 
+  // const handleAcceptChange = (index) => {
+  //   const acceptedChange = changes[index];
+  //   const regex = new RegExp(
+  //     `<del>${acceptedChange.del}</del>\\s*<ins>${acceptedChange.ins}</ins>`
+  //   );
+  //   const updatedEssayText = essayText.replace(regex, acceptedChange.ins);
+  //   setEssayText(updatedEssayText);
+
+  //   const updatedChanges = changes.filter((_, i) => i !== index);
+  //   setChanges(updatedChanges);
+
+  //   toast.success("Change accepted");
+  // };
+
+  // const handleRejectChange = (index) => {
+  //   const rejectedChange = changes[index];
+  //   const regex = new RegExp(
+  //     `<del>${rejectedChange.del}</del>\\s*<ins>${rejectedChange.ins}</ins>`
+  //   );
+  //   const updatedEssayText = essayText.replace(regex, rejectedChange.del);
+  //   setEssayText(updatedEssayText);
+
+  //   const updatedChanges = changes.filter((_, i) => i !== index);
+  //   setChanges(updatedChanges);
+
+  //   toast.info("Change rejected");
+  // };
+
   const handleAcceptChange = (index) => {
-    const acceptedChange = changes[index];
-    const regex = new RegExp(
-      `<del>${acceptedChange.del}</del>\\s*<ins>${acceptedChange.ins}</ins>`
-    );
-    const updatedEssayText = essayText.replace(regex, acceptedChange.ins);
-    setEssayText(updatedEssayText);
+    const change = changes[index];
+    let updatedText = essayText;
 
-    const updatedChanges = changes.filter((_, i) => i !== index);
-    setChanges(updatedChanges);
+    if (change.type === "replace") {
+      const regex = new RegExp(
+        `<del>${change.del}</del>\\s*<ins>${change.ins}</ins>`
+      );
+      updatedText = updatedText.replace(regex, change.ins);
+    } else if (change.type === "insert") {
+      const regex = new RegExp(`<ins>${change.ins}</ins>`);
+      updatedText = updatedText.replace(regex, change.ins);
+    }
 
+    setEssayText(updatedText);
+    setChanges(changes.filter((_, i) => i !== index));
     toast.success("Change accepted");
   };
 
   const handleRejectChange = (index) => {
-    const rejectedChange = changes[index];
-    const regex = new RegExp(
-      `<del>${rejectedChange.del}</del>\\s*<ins>${rejectedChange.ins}</ins>`
-    );
-    const updatedEssayText = essayText.replace(regex, rejectedChange.del);
-    setEssayText(updatedEssayText);
+    const change = changes[index];
+    let updatedText = essayText;
 
-    const updatedChanges = changes.filter((_, i) => i !== index);
-    setChanges(updatedChanges);
+    if (change.type === "replace") {
+      const regex = new RegExp(
+        `<del>${change.del}</del>\\s*<ins>${change.ins}</ins>`
+      );
+      updatedText = updatedText.replace(regex, change.del);
+    } else if (change.type === "delete") {
+      const regex = new RegExp(`<del>${change.del}</del>`);
+      updatedText = updatedText.replace(regex, change.del);
+    } else if (change.type === "insert") {
+      const regex = new RegExp(`<ins>${change.ins}</ins>`);
+      updatedText = updatedText.replace(regex, "");
+    }
 
+    setEssayText(updatedText);
+    setChanges(changes.filter((_, i) => i !== index));
     toast.info("Change rejected");
   };
 
@@ -471,11 +551,18 @@ const UploadOneFile = () => {
                   <span className="absolute top-2 left-2 text-xs font-semibold px-2 py-1 rounded-full text-white bg-blue-500">
                     CHANGE
                   </span>
-                  <p className="text-sm italic mt-6 text-gray-800">
+                  {/* <p className="text-sm italic mt-6 text-gray-800">
                     &quot;{item.del}&quot; ➝ &quot;{item.ins}&quot;
+                  </p> */}
+
+                  <p className="text-sm italic mt-6 text-gray-800">
+                    {item.type === "replace" && `"${item.del}" ➝ "${item.ins}"`}
+                    {item.type === "delete" && `Delete "${item.del}"`}
+                    {item.type === "insert" && `Insert "${item.ins}"`}
                   </p>
+
                   <div className="flex items-center justify-between mt-2">
-                    <div className="flex gap-3">
+                    {/* <div className="flex gap-3">
                       <button
                         className="text-xs text-green-600 hover:underline"
                         onClick={() => handleAcceptChange(index)}
@@ -488,7 +575,29 @@ const UploadOneFile = () => {
                       >
                         ✕ Reject
                       </button>
+                    </div> */}
+
+                    <div className="flex gap-3">
+                      {(item.type === "replace" || item.type === "insert") && (
+                        <button
+                          className="text-xs text-green-600 hover:underline"
+                          onClick={() => handleAcceptChange(index)}
+                        >
+                          ✓ Accept
+                        </button>
+                      )}
+                      {(item.type === "replace" ||
+                        item.type === "delete" ||
+                        item.type === "insert") && (
+                        <button
+                          className="text-xs text-red-600 hover:underline"
+                          onClick={() => handleRejectChange(index)}
+                        >
+                          ✕ Reject
+                        </button>
+                      )}
                     </div>
+
                     <span className="text-xs text-gray-400">{item.time}</span>
                   </div>
                 </div>

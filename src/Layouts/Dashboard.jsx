@@ -98,11 +98,12 @@ const Dashboard = () => {
           onClick={() => setOpen(!open)}
         />
         <div className="flex items-center gap-x-4 p-2">
-          <img
+          {/* <img
             src="/your-logo.png"
             alt="logo"
             className={`cursor-pointer w-full md:w-9/12 p-1 duration-500`}
-          />
+          /> */}
+          <h1 className="text-2xl ps-3 font-bold">Logo</h1>
         </div>
 
         <ul

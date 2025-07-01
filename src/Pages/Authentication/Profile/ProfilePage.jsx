@@ -140,7 +140,7 @@ export default function ProfilePage() {
             <img
               src={
                 formData.profile_picture_preview
-                  ? `https://lamprey-included-lion.ngrok-free.app${formData.profile_picture_preview}`
+                  ? `https://aissayrevise.pythonanywhere.com${formData.profile_picture_preview}`
                   : "https://i.pravatar.cc/150?img=32"
               }
               alt="Profile"
@@ -274,7 +274,7 @@ export default function ProfilePage() {
                       src={
                         formData.profile_picture_preview?.startsWith("blob:")
                           ? formData.profile_picture_preview
-                          : `https://lamprey-included-lion.ngrok-free.app${formData.profile_picture_preview}`
+                          : `https://aissayrevise.pythonanywhere.com${formData.profile_picture_preview}`
                       }
                       alt="Profile"
                       className="w-full h-full object-cover"

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getCookie, setCookie, removeAuthTokens } from "./cookie-utils";
-const fallbackURL = "https://lamprey-included-lion.ngrok-free.app/api";
+const fallbackURL = "https://aissayrevise.pythonanywhere.com/api";
 const envUrl = import.meta.env.VITE_API_URL;
 const API_URL = envUrl && envUrl.startsWith("http") ? envUrl : fallbackURL;
 ;
