@@ -4,6 +4,7 @@ import { FaEdit } from "react-icons/fa";
 import { FiEdit2, FiExternalLink, FiLock, FiUpload } from "react-icons/fi";
 import useLoggedUser from "../../../components/hook/useLoggedUser";
 import apiClient from "../../../lib/api-client";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 export default function ProfilePage() {
   const { user, loading, refetch } = useLoggedUser([]);
@@ -127,7 +128,7 @@ export default function ProfilePage() {
   //   closeDeleteModal();
   // };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner/>;
   if (!user) return <div>User not found.</div>;
 
   return (
@@ -139,7 +140,7 @@ export default function ProfilePage() {
             <img
               src={
                 formData.profile_picture_preview
-                  ? `http://192.168.10.145:9000${formData.profile_picture_preview}`
+                  ? `https://lamprey-included-lion.ngrok-free.app${formData.profile_picture_preview}`
                   : "https://i.pravatar.cc/150?img=32"
               }
               alt="Profile"
@@ -273,7 +274,7 @@ export default function ProfilePage() {
                       src={
                         formData.profile_picture_preview?.startsWith("blob:")
                           ? formData.profile_picture_preview
-                          : `http://192.168.10.145:9000${formData.profile_picture_preview}`
+                          : `https://lamprey-included-lion.ngrok-free.app${formData.profile_picture_preview}`
                       }
                       alt="Profile"
                       className="w-full h-full object-cover"

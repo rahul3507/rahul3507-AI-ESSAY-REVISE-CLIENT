@@ -2,6 +2,7 @@ import { useState } from "react";
 import usePackagePlan from "../../../components/hook/usePackagePlan";
 import useLoggedUser from "../../../components/hook/useLoggedUser";
 import apiClient from "../../../lib/api-client";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const PricingCards = () => {
   const { user } = useLoggedUser();
@@ -34,7 +35,7 @@ const PricingCards = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner/>;
 
   return (
     <div className="flex flex-col md:flex-row justify-center gap-6 p-14 bg-gradient-to-br from-gray-200 to-gray-50 rounded-2xl">

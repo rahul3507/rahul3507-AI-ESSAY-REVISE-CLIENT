@@ -1,10 +1,9 @@
 import axios from "axios";
 import { getCookie, setCookie, removeAuthTokens } from "./cookie-utils";
-const fallbackURL = "http://192.168.10.145:9000/api";
+const fallbackURL = "https://lamprey-included-lion.ngrok-free.app/api";
 const envUrl = import.meta.env.VITE_API_URL;
 const API_URL = envUrl && envUrl.startsWith("http") ? envUrl : fallbackURL;
-
-// console.log("🔧 Final API_URL:", API_URL);
+;
 
 const apiClient = axios.create({
   baseURL: API_URL,

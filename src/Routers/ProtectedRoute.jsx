@@ -1,16 +1,13 @@
 import { Navigate } from "react-router-dom";
 import useLoggedUser from "../components/hook/useLoggedUser";
 import Dashboard from "../Layouts/Dashboard";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const ProtectedRoute = () => {
   const { user, loading } = useLoggedUser();
 
   if (loading) {
-    return (
-      <div className="h-screen flex justify-center items-center text-gray-500">
-        Loading...
-      </div>
-    );
+    return <LoadingSpinner/>;
   }
 
   // Ensure not just falsy, but also not an empty object
