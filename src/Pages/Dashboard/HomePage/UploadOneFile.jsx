@@ -7,6 +7,9 @@ import apiClient from "../../../lib/api-client";
 import { FileText } from "lucide-react";
 import useLoggedUser from "../../../components/hook/useLoggedUser";
 
+import { Document, Packer, Paragraph, TextRun } from "docx";
+import { saveAs } from "file-saver";
+
 const UploadOneFile = () => {
   const { user } = useLoggedUser([]);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -397,6 +400,31 @@ const UploadOneFile = () => {
     );
   };
 
+  const downloadEssayAsDocx = () => {
+    const plainText = stripHtmlTags(essayText);
+
+    const lines = plainText.split("\n").filter((line) => line.trim() !== "");
+
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: lines.map(
+            (line) =>
+              new Paragraph({
+                children: [new TextRun(line)],
+              })
+          ),
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then((blob) => {
+      saveAs(blob, "revised_essay.docx");
+      toast.success("Essay downloaded as DOCX!");
+    });
+  };
+
   return (
     <div className="p-4 md:p-8">
       <ToastContainer position="top-right" autoClose={2000} />
@@ -491,19 +519,28 @@ const UploadOneFile = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
         <div className="md:col-span-3 bg-white p-6 rounded-2xl border border-gray-200 shadow-md">
-          <div className="border-b border-gray-200 mb-4 pb-1">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Essay Preview
-            </h2>
+          <div className="flex items-center justify-between border-b border-gray-200 mb-4 pb-4">
+            <div className="pb-1">
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                Essay Preview
+              </h2>
 
-            {overallScore !== null && (
-              <p className="text-sm text-gray-700 mb-2">
-                <span className="font-semibold text-gray-900">
-                  Overall Score:
-                </span>{" "}
-                {overallScore} / 100
-              </p>
-            )}
+              {overallScore !== null && (
+                <p className="text-sm text-gray-700 mb-2">
+                  <span className="font-semibold text-gray-900">
+                    Overall Score:
+                  </span>{" "}
+                  {overallScore} / 100
+                </p>
+              )}
+            </div>
+            <button
+              onClick={downloadEssayAsDocx}
+              className="mt-2 text-sm px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              disabled={!essayText}
+            >
+              Download as DOCX
+            </button>
           </div>
           {loading ? (
             <p className="text-sm text-gray-500">Processing...</p>
