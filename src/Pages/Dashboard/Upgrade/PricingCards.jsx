@@ -38,7 +38,7 @@ const PricingCards = () => {
   if (loading) return <LoadingSpinner/>;
 
   return (
-    <div className="flex flex-col md:flex-row justify-center gap-6 p-14 bg-gradient-to-br from-gray-200 to-gray-50 rounded-2xl">
+    <div className="flex flex-col md:flex-row justify-center gap-6 md:p-14 md:bg-gradient-to-br from-gray-200 to-gray-50 rounded-2xl">
       {packageData?.map((plan) => {
         const isCurrentPlan = plan.id === user?.plan;
         const isSelected = selected === plan.id || isCurrentPlan;
@@ -49,7 +49,7 @@ const PricingCards = () => {
           <div
             key={plan.id}
             onClick={() => setSelected(plan.id)}
-            className={`relative w-full max-w-sm rounded-xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-md ${
+            className={`relative w-full max-w-sm rounded-xl shadow-md cursor-pointer transition-all border border-gray-200 duration-300 hover:shadow-md ${
               isSelected ? "bg-[#0F172A] text-white" : "bg-white text-black"
             }`}
           >
@@ -76,7 +76,7 @@ const PricingCards = () => {
               </div>
             </div>
 
-            <div className="p-6 flex flex-col justify-between min-h-[460px]">
+            <div className="p-6 flex flex-col justify-between md:min-h-[460px]">
               <div className="text-center">
                 <div className="text-3xl font-semibold mb-1">
                   ${plan.amount}

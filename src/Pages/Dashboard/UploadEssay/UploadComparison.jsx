@@ -77,7 +77,7 @@ const UploadComparison = () => {
     }
   };
   return (
-    <div className="min-h-screen p-5">
+    <div className="min-h-screen md:p-5">
       <div className="">
         {/* Header */}
         <div className="mb-8">

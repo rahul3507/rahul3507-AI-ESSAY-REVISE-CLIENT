@@ -3,12 +3,12 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { IconContext } from "react-icons";
 import Swal from "sweetalert2";
 import {
-  RiArrowRightSLine,
   RiLogoutBoxRLine,
   RiVipCrownLine,
   RiMapPinUserLine,
   RiHome9Line,
   RiFolderUploadLine,
+  RiArrowLeftSLine,
 } from "react-icons/ri";
 import { removeAuthTokens } from "../lib/cookie-utils";
 import useLoggedUser from "../components/hook/useLoggedUser";
@@ -91,7 +91,7 @@ const Dashboard = () => {
           open ? "w-52 p-4" : "w-14 text-center"
         } h-screen bg-base-300 fixed left-0 top-0 bottom-0 z-50 pt-8 transition-all duration-500`}
       >
-        <RiArrowRightSLine
+        <RiArrowLeftSLine
           className={`absolute cursor-pointer -right-3 text-gray-400 bg-base-300 shadow-md top-9 w-7 h-7 rounded-full ${
             !open && "rotate-180"
           }`}
@@ -103,7 +103,7 @@ const Dashboard = () => {
             alt="logo"
             className={`cursor-pointer w-full md:w-9/12 p-1 duration-500`}
           /> */}
-          <h1 className="text-2xl ps-3 font-bold">Logo</h1>
+          <h1 className="md:text-2xl ps-3 font-bold">Logo</h1>
         </div>
 
         <ul
