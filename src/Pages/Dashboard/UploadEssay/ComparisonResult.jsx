@@ -7,6 +7,7 @@ export default function ComparisonResult() {
   const { result, draft1, draft2 } = location.state || {};
 
   const [activeTab, setActiveTab] = useState("summary");
+  console.log(draft1);
 
   const tabs = [
     {
@@ -16,11 +17,15 @@ export default function ComparisonResult() {
         <div className="text-sm text-gray-700 space-y-4">
           <div>
             <h3 className="font-semibold mb-2">Draft 01 Summary:</h3>
-            <p className="bg-gray-50 p-3 rounded-md border border-gray-200">{result?.draft1_analysis}</p>
+            <p className="bg-gray-50 p-3 rounded-md border border-gray-200">
+              {result?.draft1_analysis}
+            </p>
           </div>
           <div>
             <h3 className="font-semibold mb-2">Draft 02 Summary:</h3>
-            <p className="bg-gray-50 p-3 rounded-md border border-gray-200">{result?.draft2_analysis}</p>
+            <p className="bg-gray-50 p-3 rounded-md border border-gray-200">
+              {result?.draft2_analysis}
+            </p>
           </div>
         </div>
       ),
@@ -76,7 +81,7 @@ export default function ComparisonResult() {
             key={idx}
             className="bg-white rounded-xl border border-gray-200 shadow-md overflow-hidden"
           >
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-3 border-b border-gray-200">
               <h2 className="text-sm font-medium text-gray-900 mb-1">
                 Uploaded file
               </h2>
@@ -88,13 +93,17 @@ export default function ComparisonResult() {
                   <FileText size={16} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">{doc?.name}</p>
-                  <p className="text-xs text-gray-500">{doc?.type}</p>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {doc?.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {doc?.type?.split(".")[3] || "Unknown"}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-4">
               <h3 className="text-base font-medium text-gray-900 mb-3">
                 Draft {idx + 1} Analysis
               </h3>

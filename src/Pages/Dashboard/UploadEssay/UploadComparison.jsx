@@ -77,7 +77,7 @@ const UploadComparison = () => {
     }
   };
   return (
-    <div className="min-h-screen md:p-5">
+    <div className="min-h-screen p-5">
       <div className="">
         {/* Header */}
         <div className="mb-8">
@@ -93,7 +93,7 @@ const UploadComparison = () => {
         {/* Upload Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Draft 1 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border-0 overflow-hidden">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-gray-200 overflow-hidden">
             <div className="p-5 pb-4 border-b border-slate-100">
               <h3 className="text-lg font-semibold text-slate-800 mb-1">
                 First Document
@@ -115,7 +115,7 @@ const UploadComparison = () => {
                   type="text"
                   value={draft1Label}
                   onChange={(e) => setDraft1Label(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-colors"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-colors"
                 />
               </div>
 
@@ -178,7 +178,7 @@ const UploadComparison = () => {
           </div>
 
           {/* Draft 2 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border-0 overflow-hidden">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-gray-200 overflow-hidden">
             <div className="p-6 pb-4 border-b border-slate-100">
               <h3 className="text-lg font-semibold text-slate-800 mb-1">
                 Second Document
@@ -200,7 +200,7 @@ const UploadComparison = () => {
                   type="text"
                   value={draft2Label}
                   onChange={(e) => setDraft2Label(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-colors"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-md  focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 transition-colors"
                 />
               </div>
 
