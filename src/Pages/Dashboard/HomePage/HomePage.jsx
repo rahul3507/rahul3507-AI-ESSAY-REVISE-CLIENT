@@ -2,7 +2,12 @@
 
 import { Bell, Upload } from "lucide-react";
 import { Button } from "./../../../components/ui/button";
-import { Card, CardContent } from "./../../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./../../../components/ui/card";
 
 const HomePage = () => {
   const data = [
@@ -83,6 +88,50 @@ const HomePage = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2 rounded-2xl bg-gray-100 p-4">
+          <h2 className="text-black font-bold text-2xl pb-4">
+            Essay Activates
+          </h2>
+          <Card className="col-span-2 bg-white border-white">
+            <CardHeader>
+              <div className="grid grid-cols-5 w-full ">
+                <div className=" col-span-3 w-full ">
+                  <div className="text-4xl font-bold text-black pb-2">
+                    1,665
+                    <span className="text-sm text-[#a1a1a1] font-normal">
+                      /Essay
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-400">
+                    You&apos;ve achieved a remarkable 79% increase compared to
+                    last year!
+                  </p>
+                </div>
+                <div className="col-span-2 grid grid-cols-2 items-center gap-6 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#647187]">Grammar</span>
+                    <div className="w-8 h-4 rounded-xl bg-[#3096f5]"></div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#647187]">Argument Strength</span>
+                    <div className="w-8 h-4 rounded-xl bg-[#29bc99]"></div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#647187]">Clarity</span>
+                    <div className="w-8 h-4 rounded-xl bg-[#e2e58a]"></div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#647187]">Vocabulary</span>
+                    <div className="w-8 h-4 rounded-xl bg-[#f428e0]"></div>
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+        </div>
       </div>
     </div>
   );
