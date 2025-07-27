@@ -419,11 +419,11 @@ const HomePage = () => {
                   <Button
                     className={
                       data.progress === "Complete"
-                        ? "bg-[#34C724] text-white"
-                        : "bg-gray-400 text-white"
+                        ? "bg-[#34C724] text-white cursor-pointer "
+                        : "bg-gray-400 text-white cursor-pointer "
                     }
                   >
-                    {data.progress === "Complete" ? "View" : "Submitted"}
+                    {data.progress === "Complete" ? " View " : "Submit"}
                   </Button>
                 </TableCell>
               </TableRow>
