@@ -1,6 +1,13 @@
 /** @format */
 
-import { Bell, Upload } from "lucide-react";
+import {
+  Bell,
+  BookOpenText,
+  FileText,
+  MessageSquareCode,
+  PenTool,
+  Upload,
+} from "lucide-react";
 import { Button } from "./../../../components/ui/button";
 import {
   Card,
@@ -8,9 +15,76 @@ import {
   CardHeader,
   CardTitle,
 } from "./../../../components/ui/card";
+import {
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 const HomePage = () => {
   const data = [
+    {
+      name: "Jan",
+      grammar: 70,
+      argument: 125,
+      clarity: 55,
+      vocabulary: 150,
+      amt: 2400,
+    },
+    {
+      name: "Feb",
+      grammar: 100,
+      argument: 30,
+      clarity: 100,
+      vocabulary: 130,
+      amt: 2210,
+    },
+    {
+      name: "Mar",
+      grammar: 120,
+      argument: 170,
+      clarity: 30,
+      vocabulary: 140,
+      amt: 2290,
+    },
+    {
+      name: "Apr",
+      grammar: 155,
+      argument: 140,
+      clarity: 130,
+      vocabulary: 123,
+      amt: 2000,
+    },
+    {
+      name: "May",
+      grammar: 144,
+      argument: 166,
+      clarity: 111,
+      vocabulary: 155,
+      amt: 2181,
+    },
+    {
+      name: "Jun",
+      grammar: 177,
+      argument: 144,
+      clarity: 133,
+      vocabulary: 133,
+      amt: 2500,
+    },
+    {
+      name: "Jul",
+      grammar: 122,
+      argument: 133,
+      clarity: 155,
+      vocabulary: 145,
+      amt: 2100,
+    },
+  ];
+
+  const data2 = [
     {
       title: "Total Essays",
       value: 12,
@@ -34,6 +108,41 @@ const HomePage = () => {
       value: 5,
       totalAdded: "+1",
       totalMark: 12,
+    },
+  ];
+
+  const progressData = [
+    {
+      title: "Grammar",
+      icon: BookOpenText,
+      time: "45 minutes",
+      priority: "High priority",
+      percentage: "25",
+      bgColor: "#D1E9FF",
+    },
+    {
+      title: "Clarity",
+      icon: PenTool,
+      time: "30 minutes",
+      priority: "Medium priority",
+      percentage: "82",
+      bgColor: "#FDFFC2",
+    },
+    {
+      title: "Argument Strength",
+      icon: MessageSquareCode,
+      time: "20 minutes",
+      priority: "Medium priority",
+      percentage: "25",
+      bgColor: "#CBFEE2",
+    },
+    {
+      title: "Vocabulary",
+      icon: MessageSquareCode,
+      time: "20 minutes",
+      priority: "Medium priority",
+      percentage: "43",
+      bgColor: "#FFF4FE",
     },
   ];
 
@@ -61,7 +170,7 @@ const HomePage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        {data.map((item, index) => (
+        {data2.map((item, index) => (
           <Card key={index} className="border-[#e3e4e6]">
             <CardContent className="px-6">
               <div className="text-lg text-black mb-1">{item.title}</div>
@@ -90,18 +199,18 @@ const HomePage = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2 rounded-2xl bg-gray-100 p-4">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div className="col-span-1 xl:col-span-2 rounded-2xl bg-gray-100 p-4">
           <h2 className="text-black font-bold text-2xl pb-4">
             Essay Activates
           </h2>
-          <Card className="col-span-2 bg-white border-white">
+          <Card className=" bg-white border-white">
             <CardHeader>
-              <div className="grid grid-cols-5 w-full ">
-                <div className=" col-span-3 w-full ">
+              <div className="grid grid-cols-1 md:grid-cols-5 w-full  mb-6">
+                <div className=" col-span-1 md:col-span-3 w-full ">
                   <div className="text-4xl font-bold text-black pb-2">
                     1,665
-                    <span className="text-sm text-[#a1a1a1] font-normal">
+                    <span className="text-sm text-gray-400 font-normal">
                       /Essay
                     </span>
                   </div>
@@ -110,7 +219,7 @@ const HomePage = () => {
                     last year!
                   </p>
                 </div>
-                <div className="col-span-2 grid grid-cols-2 items-center gap-6 text-sm">
+                <div className="col-span-1 md:col-span-2 grid grid-cols-2 items-center gap-6 text-sm">
                   <div className="flex items-center justify-between">
                     <span className="text-[#647187]">Grammar</span>
                     <div className="w-8 h-4 rounded-xl bg-[#3096f5]"></div>
@@ -129,7 +238,110 @@ const HomePage = () => {
                   </div>
                 </div>
               </div>
+
+              <div className="overflow-x-auto">
+                <div className="min-w-96">
+                  <ResponsiveContainer width="100%" height={300} className="">
+                    <LineChart
+                      data={data}
+                      margin={{
+                        top: 5,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
+                      }}
+                    >
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+
+                      <Line
+                        type="monotone"
+                        dataKey="grammar"
+                        stroke="#3096f5"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="argument"
+                        stroke="#29bc99"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="clarity"
+                        stroke="#e2e58a"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="vocabulary"
+                        stroke="#f428e0"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </CardHeader>
+          </Card>
+        </div>
+
+        <div className="col-span-1 ">
+          {/* Essay Progress */}
+          <Card className="border-[#e3e4e6] h-[545px] overflow-auto">
+            <CardHeader className="w-full flex justify-between">
+              <div>
+                <CardTitle className="text-black font-bold text-2xl pb-2">
+                  Essay Progress
+                </CardTitle>
+                <div className="text-sm text-gray-400">
+                  AI-generated based on your performance
+                </div>
+              </div>
+              <div className="">
+                <div className="text-4xl font-bold text-black pb-2">
+                  120
+                  <span className="text-sm text-gray-400 font-normal">
+                    /Essay
+                  </span>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4 ">
+              {progressData.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between border border-gray-300 rounded-2xl p-4 "
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center`}
+                      style={{ backgroundColor: item.bgColor }}
+                    >
+                      <item.icon className={`w-6 h-6`} />
+                    </div>
+                    <div>
+                      <div className="text-xl font-medium text-[#1e2839]">
+                        {item.title}
+                      </div>
+                      <div className="text-base text-[#a1a1a1]">
+                        {item.time} • {item.priority}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="text-3xl font-bold"
+                    style={{
+                      color:
+                        item?.percentage < 40
+                          ? "#F54A45" // red
+                          : item?.percentage >= 4 && item?.percentage < 70
+                          ? "#FF8800" // orange
+                          : "#34C724", // green
+                    }}
+                  >
+                    {item?.percentage}%
+                  </div>
+                </div>
+              ))}
+            </CardContent>
           </Card>
         </div>
       </div>
