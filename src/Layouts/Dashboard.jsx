@@ -1,3 +1,5 @@
+/** @format */
+
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { IconContext } from "react-icons";
@@ -70,6 +72,12 @@ const Dashboard = () => {
     },
     {
       title: "Upload Essay",
+      path: "/upload_essay",
+      icon: iconMappings.Book,
+      role: "user",
+    },
+    {
+      title: "Compare Essay",
       path: "/upload_essay",
       icon: iconMappings.Book,
       role: "user",
