@@ -318,7 +318,7 @@ const HomePage = () => {
                       <item.icon className={`w-6 h-6`} />
                     </div>
                     <div>
-                      <div className="text-xl font-medium text-[#1e2839]">
+                      <div className="text-xl font-medium text-black">
                         {item.title}
                       </div>
                       <div className="text-base text-[#a1a1a1]">
