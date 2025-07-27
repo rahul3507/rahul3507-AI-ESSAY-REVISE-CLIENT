@@ -2,9 +2,7 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -12,7 +10,6 @@ import {
 import {
   Bell,
   BookOpenText,
-  BookText,
   FileText,
   MessageSquareCode,
   PenTool,
