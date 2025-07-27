@@ -4,11 +4,9 @@ import ComparisonFile from "./ComparisonFile";
 
 const CompareEssay = () => {
   return (
-    <section className="md:p-10 p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 place-items-center max-w-6xl mx-auto">
-        <div className="w-full max-w-md shadow-md rounded-lg overflow-hidden">
-          <ComparisonFile />
-        </div>
+    <section className="md:p-10 p-4 w-full  ">
+      <div className="w-full  shadow-md rounded-lg overflow-hidden ">
+        <ComparisonFile />
       </div>
     </section>
   );
