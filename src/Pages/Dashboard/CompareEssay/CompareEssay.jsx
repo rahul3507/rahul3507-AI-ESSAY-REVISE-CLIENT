@@ -1,6 +1,6 @@
 /** @format */
 
-import React from "react";
+import ComparisonFile from "./ComparisonFile";
 
 const CompareEssay = () => {
   return (

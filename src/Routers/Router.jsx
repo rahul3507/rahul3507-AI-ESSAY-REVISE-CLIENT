@@ -1,3 +1,5 @@
+/** @format */
+
 import { createBrowserRouter } from "react-router";
 import Dashboard from "../Layouts/Dashboard";
 import Signup from "../Pages/Authentication/Signup";
@@ -6,10 +8,11 @@ import OtpVerification from "../Pages/Authentication/OtpVerification";
 import ProfilePage from "../Pages/Authentication/Profile/ProfilePage";
 import HomePage from "../Pages/Dashboard/HomePage/HomePage";
 import UploadEssay from "../Pages/Dashboard/UploadEssay/UploadEssay";
+import CompareEssay from "../Pages/Dashboard/CompareEssay/CompareEssay";
 import Upgrade from "../Pages/Dashboard/Upgrade/Upgrade";
 import UploadOneFile from "../Pages/Dashboard/HomePage/UploadOneFile";
-import UploadComparison from "../Pages/Dashboard/UploadEssay/UploadComparison";
-import ComparisonResult from "../Pages/Dashboard/UploadEssay/ComparisonResult";
+import UploadComparison from "../Pages/Dashboard/CompareEssay/UploadComparison";
+import ComparisonResult from "../Pages/Dashboard/CompareEssay/ComparisonResult";
 import PaymentSuccess from "../Pages/Dashboard/Upgrade/PaymentSuccess";
 import PaymentFail from "../Pages/Dashboard/Upgrade/PaymentFail";
 import PaymentCancel from "../Pages/Dashboard/Upgrade/PaymentCancel";
@@ -35,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "/upload_essay",
         element: <UploadEssay />,
+      },
+      {
+        path: "/compare_essay",
+        element: <CompareEssay />,
       },
       {
         path: "/upload_comparison",

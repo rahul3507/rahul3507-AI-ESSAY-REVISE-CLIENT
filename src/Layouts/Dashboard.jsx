@@ -78,7 +78,7 @@ const Dashboard = () => {
     },
     {
       title: "Compare Essay",
-      path: "/upload_essay",
+      path: "/compare_essay",
       icon: iconMappings.Book,
       role: "user",
     },
