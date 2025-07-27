@@ -18,6 +18,7 @@ import PaymentFail from "../Pages/Dashboard/Upgrade/PaymentFail";
 import PaymentCancel from "../Pages/Dashboard/Upgrade/PaymentCancel";
 import ProtectedRoute from "./ProtectedRoute";
 import TermsAndConditions from "../Pages/Authentication/TermsAndConditions";
+import Assignment from "../Pages/Dashboard/Assignment/Assignment";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: "/result",
         element: <ComparisonResult />,
+      },
+      {
+        path: "/assignment",
+        element: <Assignment />,
       },
       {
         path: "/upgrade",

@@ -11,6 +11,7 @@ import {
   RiHome9Line,
   RiFolderUploadLine,
   RiArrowLeftSLine,
+  RiBookletLine,
 } from "react-icons/ri";
 import { removeAuthTokens } from "../lib/cookie-utils";
 import useLoggedUser from "../components/hook/useLoggedUser";
@@ -60,6 +61,7 @@ const Dashboard = () => {
     Upgrade: RiVipCrownLine,
     Book: RiFolderUploadLine,
     Home: RiHome9Line,
+    Assignment: RiBookletLine,
   };
 
   const Menus = [
@@ -80,6 +82,12 @@ const Dashboard = () => {
       title: "Compare Essay",
       path: "/compare_essay",
       icon: iconMappings.Book,
+      role: "user",
+    },
+    {
+      title: "Assignment",
+      path: "/assignment",
+      icon: iconMappings.Assignment,
       role: "user",
     },
     {
