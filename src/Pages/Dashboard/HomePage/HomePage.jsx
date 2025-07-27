@@ -221,19 +221,19 @@ const HomePage = () => {
                 </div>
                 <div className="col-span-1 md:col-span-2 grid grid-cols-2 items-center gap-6 text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-[#647187]">Grammar</span>
+                    <span className="text-gray-400">Grammar</span>
                     <div className="w-8 h-4 rounded-xl bg-[#3096f5]"></div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[#647187]">Argument Strength</span>
+                    <span className="text-gray-400">Argument Strength</span>
                     <div className="w-8 h-4 rounded-xl bg-[#29bc99]"></div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[#647187]">Clarity</span>
+                    <span className="text-gray-400">Clarity</span>
                     <div className="w-8 h-4 rounded-xl bg-[#e2e58a]"></div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[#647187]">Vocabulary</span>
+                    <span className="text-gray-400">Vocabulary</span>
                     <div className="w-8 h-4 rounded-xl bg-[#f428e0]"></div>
                   </div>
                 </div>
@@ -321,7 +321,7 @@ const HomePage = () => {
                       <div className="text-xl font-medium text-black">
                         {item.title}
                       </div>
-                      <div className="text-base text-[#a1a1a1]">
+                      <div className="text-base text-gray-400">
                         {item.time} • {item.priority}
                       </div>
                     </div>
