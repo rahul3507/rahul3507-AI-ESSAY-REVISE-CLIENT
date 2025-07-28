@@ -15,6 +15,8 @@ import {
   DialogTrigger,
 } from "../../../components/ui/dialog";
 
+import AssignmentForm from "./AssignmentForm";
+
 const Assignment = () => {
   // Sample data array with 20 assignments
   const assignmentsData = [
@@ -296,7 +298,9 @@ const Assignment = () => {
                         Submit Essay
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]"></DialogContent>
+                    <DialogContent className="sm:max-w-[425px] bg-white">
+                      <AssignmentForm />
+                    </DialogContent>
                   </Dialog>
                 ) : (
                   <Button className="cursor-pointer rounded-lg bg-transparent hover:bg-gray-100 text-gray-700 border border-gray-300 font-medium py-4">
