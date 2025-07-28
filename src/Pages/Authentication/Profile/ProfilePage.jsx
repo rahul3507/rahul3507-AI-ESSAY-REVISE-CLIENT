@@ -7,6 +7,7 @@ import { FiEdit2, FiExternalLink, FiLock, FiUpload } from "react-icons/fi";
 import useLoggedUser from "../../../components/hook/useLoggedUser";
 import apiClient from "../../../lib/api-client";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { Mail, Phone } from "lucide-react";
 
 export default function ProfilePage() {
   const { user, loading, refetch } = useLoggedUser([]);
@@ -171,11 +172,48 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="text-sm md:text-end text-center space-y-3">
-          <div>
-            <p className="font-medium">E-mail</p>
-            <p className="text-gray-600">{formData.email || "N/A"}</p>
+        <div className="text-sm md:text-end text-center space-y-3 mt-4">
+          <div className="flex justify-between">
+            <h1 className="text-2xl font-medium">Personal Information</h1>
+            <button
+              className="text-blue-500 flex gap-1 justify-center items-center"
+              onClick={openEditProfileModal}
+            >
+              <FiEdit2 className="text-black w-3 h-3" />
+              <p className="text-sm text-black">Edit</p>
+            </button>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 space-y-6">
+            <div className="flex  items-center gap-2">
+              <Mail className="text-gray-400" />
+              <div className="text-start">
+                <p className="text-black">{formData.email || "N/A"}</p>
+                <p className="text-gray-400">E-mail</p>
+              </div>
+            </div>
+            <div className="flex  items-center gap-2">
+              <Phone className="text-gray-400" />
+              <div className="text-start">
+                <p className="text-black">{formData.phone_number || "N/A"}</p>
+                <p className="text-gray-400">Phone</p>
+              </div>
+            </div>
+            <div className="flex  items-center gap-2">
+              <Mail className="text-gray-400" />
+              <div className="text-start">
+                <p className="text-black">{formData.email || "N/A"}</p>
+                <p className="text-gray-400">E-mail</p>
+              </div>
+            </div>
+            <div className="flex  items-center gap-2">
+              <Mail className="text-gray-400" />
+              <div className="text-start">
+                <p className="text-black">{formData.email || "N/A"}</p>
+                <p className="text-gray-400">E-mail</p>
+              </div>
+            </div>
+          </div>
+
           <div>
             <p className="font-medium">Phone</p>
             <p className="text-gray-600">{formData.phone_number || "N/A"}</p>
