@@ -1,3 +1,5 @@
+/** @format */
+
 import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
 // import { FaTrashCan } from "react-icons/fa6";
@@ -128,39 +130,44 @@ export default function ProfilePage() {
   //   closeDeleteModal();
   // };
 
-  if (loading) return <LoadingSpinner/>;
+  if (loading) return <LoadingSpinner />;
   if (!user) return <div>User not found.</div>;
 
   return (
     <div className="p-5">
       {/* Profile Header */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-2xl shadow-md border border-base-300">
-        <div className="flex flex-col md:flex-row items-center gap-5">
-          <div className="relative w-24 h-24 md:w-32 md:h-32">
-            <img
-              src={
-                formData.profile_picture_preview
-                  ? `https://aissayrevise.pythonanywhere.com${formData.profile_picture_preview}`
-                  : "https://i.pravatar.cc/150?img=32"
-              }
-              alt="Profile"
-              crossOrigin="anonymous"
-              className="w-full h-full rounded-full object-cover"
-            />
-            <button className="absolute bottom-1 right-1 p-2 cursor-pointer rounded-full bg-white/60">
-              <FaEdit
-                onClick={openEditProfileModal}
-                className="text-gray-600"
+      <div className="gap-6 p-6 rounded-2xl shadow-md border border-base-300">
+        <div className="flex justify-between border-b border-gray-200 pb-4">
+          <div className="flex flex-col md:flex-row text-left items-start gap-0 md:gap-5">
+            <div className="relative w-14 h-14 md:w-18 md:h-18">
+              <img
+                src={
+                  formData.profile_picture_preview
+                    ? `https://aissayrevise.pythonanywhere.com${formData.profile_picture_preview}`
+                    : "https://i.pravatar.cc/150?img=32"
+                }
+                alt="Profile"
+                crossOrigin="anonymous"
+                className="w-full h-full rounded-full object-cover"
               />
-            </button>
+              <button className="absolute bottom-1 right-1 p-2 cursor-pointer rounded-full bg-white/60">
+                <FaEdit
+                  onClick={openEditProfileModal}
+                  className="text-gray-600"
+                />
+              </button>
+            </div>
+            <div className="text-left">
+              <h2 className="text-lg font-semibold mt-2">
+                {formData.first_name} {formData.last_name}
+              </h2>
+              <p className="text-gray-400">{formData.email || "N/A"}</p>
+            </div>
           </div>
-          <div className="text-center md:text-left">
-            <span className="mt-2 text-sm font-semibold bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+          <div className="flex items-center">
+            <span className="mt-2 text-sm font-semibold bg-gray-100 text-black px-2 py-1 rounded-lg">
               {user?.user?.role}
             </span>
-            <h2 className="text-lg font-semibold mt-2">
-              {formData.first_name} {formData.last_name}
-            </h2>
           </div>
         </div>
 
