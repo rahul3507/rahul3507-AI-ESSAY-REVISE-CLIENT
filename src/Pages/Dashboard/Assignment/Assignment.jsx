@@ -9,6 +9,11 @@ import {
 } from "../../../components/ui/card";
 import { Calendar, FileText } from "lucide-react";
 import { Button } from "../../../components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "../../../components/ui/dialog";
 
 const Assignment = () => {
   // Sample data array with 20 assignments
@@ -285,9 +290,14 @@ const Assignment = () => {
 
               <div className="mb-4 mt-auto h-full ">
                 {assignment.status === "submit" ? (
-                  <Button className="cursor-pointer rounded-lg bg-black hover:bg-gray-800 text-white font-medium py-4">
-                    Submit Essay
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="cursor-pointer rounded-lg bg-black hover:bg-gray-800 text-white font-medium py-4">
+                        Submit Essay
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]"></DialogContent>
+                  </Dialog>
                 ) : (
                   <Button className="cursor-pointer rounded-lg bg-transparent hover:bg-gray-100 text-gray-700 border border-gray-300 font-medium py-4">
                     View Submission
