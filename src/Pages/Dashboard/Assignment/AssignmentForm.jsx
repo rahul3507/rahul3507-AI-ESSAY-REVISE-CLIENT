@@ -20,6 +20,7 @@ import {
   TabsTrigger,
 } from "../../../components/ui/tabs";
 import { Input } from "../../../components/ui/input";
+import { Upload } from "lucide-react";
 
 export default function EssayForm() {
   const [assignmentTitle, setAssignmentTitle] = useState(
@@ -33,6 +34,7 @@ export default function EssayForm() {
   const [suggestionLevel, setSuggestionLevel] = useState(
     "Medium - Moderate suggestions"
   );
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleSubmit = () => {
     console.log("Submitting assignment:", {
@@ -41,15 +43,30 @@ export default function EssayForm() {
       essayText,
       coachingLevel,
       suggestionLevel,
+      selectedFile,
     });
   };
 
   const handleCancel = () => {
     console.log("Cancelled");
+    setSelectedFile(null); // Reset file on cancel
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (
+      file &&
+      ["docx", "pdf", "txt"].includes(file.name.split(".").pop().toLowerCase())
+    ) {
+      setSelectedFile(file);
+    } else {
+      alert("Please upload a file in .docx, .pdf, or .txt format.");
+      event.target.value = null;
+    }
   };
 
   return (
-    <div className=" w-full overflow-hidden p-2">
+    <div className="w-full overflow-hidden p-2">
       <div className="space-y-2">
         <Label
           htmlFor="assignment-title"
@@ -62,7 +79,7 @@ export default function EssayForm() {
           placeholder="Enter assignment title"
           value={assignmentTitle}
           onChange={(e) => setAssignmentTitle(e.target.value)}
-          className="border-1 focus-visible:ring-[1px] "
+          className="border-1 focus-visible:ring-[1px]"
         />
       </div>
 
@@ -78,7 +95,7 @@ export default function EssayForm() {
           placeholder="Enter essay type"
           value={essayType}
           onChange={(e) => setEssayType(e.target.value)}
-          className="border-1 focus-visible:ring-[1px] "
+          className="border-1 focus-visible:ring-[1px]"
         />
       </div>
 
@@ -90,7 +107,7 @@ export default function EssayForm() {
               File upload
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="text-input" className="mt-4">
+          <TabsContent value="text-input" className="">
             <div className="space-y-2 p-2">
               <Label
                 htmlFor="essay-text"
@@ -103,15 +120,46 @@ export default function EssayForm() {
                 placeholder="Write your essay here..."
                 value={essayText}
                 onChange={(e) => setEssayText(e.target.value)}
-                className="min-h-[130px]  max-w-full resize-none border-1 focus-visible:ring-[1px] "
+                className="min-h-[130px] max-w-full resize-none border-1 focus-visible:ring-[1px]"
               />
             </div>
           </TabsContent>
-          <TabsContent value="file-upload" className="mt-4">
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-              <p className="text-gray-500">
-                File upload functionality would go here
-              </p>
+          <TabsContent value="file-upload" className="">
+            <div className="space-y-2 p-2">
+              <Label
+                htmlFor="file-upload"
+                className="text-base font-medium text-gray-700"
+              >
+                File Upload
+              </Label>
+              <div className="border border-dashed border-blue-300 rounded-lg p-4 py-10  text-center">
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept=".docx,.pdf,.txt"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="cursor-pointer flex flex-col items-center"
+                >
+                  <div className="flex  items-center gap-2">
+                    <Upload />
+                    <div className="flex flex-col text-left">
+                      <span className="text-black">Upload first draft</span>
+                      <span className="text-gray-500 text-sm">
+                        Supported formats: .docx, .pdf, .txt
+                      </span>
+                      {selectedFile && (
+                        <span className="text-green-600 mt-2">
+                          Selected: {selectedFile.name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </label>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
@@ -177,7 +225,7 @@ export default function EssayForm() {
         </Button>
         <Button
           onClick={handleSubmit}
-          className="px-8 bg-slate-800 hover:bg-slate-700"
+          className="px-8 text-white bg-slate-800 hover:bg-slate-700"
         >
           Submit Assignment
         </Button>
