@@ -1,3 +1,5 @@
+/** @format */
+
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -12,7 +14,7 @@ const SignIn = () => {
     handleSubmit,
     formState: { errors },
     setError,
-    clearErrors
+    clearErrors,
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ const SignIn = () => {
       setLoading(true);
       setServerError(""); // Clear any previous server errors
       clearErrors(); // Clear form errors
-      
+
       const response = await apiClient.post("/auth/login/", data);
       console.log(response);
 
@@ -40,28 +42,32 @@ const SignIn = () => {
 
       toast.success("Login successful!");
       navigate("/");
-
     } catch (error) {
       console.error("Login failed:", error);
-      
-      const errorMessage = error?.response?.data?.message || "Login failed: Email or password is incorrect";
-      
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        "Login failed: Email or password is incorrect";
+
       // Check if it's a specific field error (like wrong password)
-      if (error?.response?.status === 401 || errorMessage.toLowerCase().includes('password')) {
+      if (
+        error?.response?.status === 401 ||
+        errorMessage.toLowerCase().includes("password")
+      ) {
         setError("password", {
           type: "server",
-          message: "Invalid email or password"
+          message: "Invalid email or password",
         });
-      } else if (errorMessage.toLowerCase().includes('email')) {
+      } else if (errorMessage.toLowerCase().includes("email")) {
         setError("email", {
-          type: "server", 
-          message: "Invalid email address"
+          type: "server",
+          message: "Invalid email address",
         });
       } else {
         // General server error
         setServerError(errorMessage);
       }
-      
+
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -76,7 +82,7 @@ const SignIn = () => {
           Portal!
         </h2>
       </div>
-      
+
       <div className="col-span-4 md:col-span-4 flex items-center justify-center p-4">
         <div className="max-w-lg w-full bg-white rounded-3xl border border-gray-200 shadow-md p-6 md:p-16">
           <h2 className="text-2xl font-semibold text-center mb-4">
@@ -86,9 +92,7 @@ const SignIn = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Email Field */}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Email
-              </label>
+              <label className="block text-sm font-medium mb-1">Email</label>
               <div className="relative">
                 <input
                   type="email"
@@ -96,12 +100,14 @@ const SignIn = () => {
                     required: "Email is required",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address"
-                    }
+                      message: "Invalid email address",
+                    },
                   })}
                   placeholder="Enter your email"
                   className={`w-full border rounded-md p-2 focus:outline-none focus:ring focus:ring-slate-700 ${
-                    errors.email ? 'border-red-500 bg-red-50' : 'border-base-300 bg-base-200'
+                    errors.email
+                      ? "border-red-500 bg-red-50"
+                      : "border-base-300 bg-base-200"
                   }`}
                 />
                 <FaUser className="absolute inset-y-3 right-3 text-gray-500" />
@@ -123,12 +129,14 @@ const SignIn = () => {
                     required: "Password is required",
                     minLength: {
                       value: 6,
-                      message: "Password must be at least 6 characters"
-                    }
+                      message: "Password must be at least 6 characters",
+                    },
                   })}
                   placeholder="Enter your Password"
                   className={`w-full border rounded-md p-2 focus:outline-none focus:ring focus:ring-slate-700 ${
-                    errors.password ? 'border-red-500 bg-red-50' : 'border-base-300 bg-base-200'
+                    errors.password
+                      ? "border-red-500 bg-red-50"
+                      : "border-base-300 bg-base-200"
                   }`}
                 />
                 <button
@@ -144,7 +152,7 @@ const SignIn = () => {
                   {errors.password.message}
                 </p>
               )}
-              
+
               {/* Remember me and Forgot password */}
               <div className="flex justify-between items-center mt-2 text-sm">
                 <div className="flex items-center opacity-75">
@@ -155,7 +163,10 @@ const SignIn = () => {
                   />
                   Remember for 30 Days
                 </div>
-                <Link to="/forgot-password" className="text-blue-600 hover:underline">
+                <Link
+                  to="/forgot-password"
+                  className="text-blue-600 hover:underline"
+                >
                   Forgot Password?
                 </Link>
               </div>
