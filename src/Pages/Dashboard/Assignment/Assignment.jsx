@@ -299,7 +299,10 @@ const Assignment = () => {
                       </Button>
                     </DialogTrigger>
                     <DialogContent className=" bg-white rounded-lg">
-                      <AssignmentForm />
+                      <AssignmentForm
+                        initialTitle={assignment.title}
+                        initialType={assignment.type}
+                      />
                     </DialogContent>
                   </Dialog>
                 ) : (

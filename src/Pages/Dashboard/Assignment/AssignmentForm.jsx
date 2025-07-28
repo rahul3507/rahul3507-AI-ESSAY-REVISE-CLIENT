@@ -1,7 +1,5 @@
 /** @format */
 
-"use client";
-
 import { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Label } from "../../../components/ui/label";
@@ -21,12 +19,11 @@ import {
 } from "../../../components/ui/tabs";
 import { Input } from "../../../components/ui/input";
 import { Upload } from "lucide-react";
+import { DialogClose } from "../../../components/ui/dialog";
 
-export default function EssayForm() {
-  const [assignmentTitle, setAssignmentTitle] = useState(
-    "write an essay about pollution"
-  );
-  const [essayType, setEssayType] = useState("Argumentative");
+export default function AssignmentForm({ initialTitle, initialType }) {
+  const [assignmentTitle, setAssignmentTitle] = useState(initialTitle || "");
+  const [essayType, setEssayType] = useState(initialType || "");
   const [essayText, setEssayText] = useState("");
   const [coachingLevel, setCoachingLevel] = useState(
     "Medium - Balanced feedback"
@@ -45,11 +42,6 @@ export default function EssayForm() {
       suggestionLevel,
       selectedFile,
     });
-  };
-
-  const handleCancel = () => {
-    console.log("Cancelled");
-    setSelectedFile(null); // Reset file on cancel
   };
 
   const handleFileChange = (event) => {
@@ -216,16 +208,17 @@ export default function EssayForm() {
       </div>
 
       <div className="flex justify-end gap-3 pt-6">
-        <Button
-          variant="outline"
-          onClick={handleCancel}
-          className="px-8 bg-transparent"
-        >
-          Cancel
-        </Button>
+        <DialogClose asChild>
+          <Button
+            variant="outline"
+            className="px-8 bg-transparent hover:bg-gray-100 cursor-pointer"
+          >
+            Cancel
+          </Button>
+        </DialogClose>
         <Button
           onClick={handleSubmit}
-          className="px-8 text-white bg-slate-800 hover:bg-slate-700"
+          className="px-4 text-white bg-slate-800 hover:bg-slate-700 cursor-pointer"
         >
           Submit Assignment
         </Button>
