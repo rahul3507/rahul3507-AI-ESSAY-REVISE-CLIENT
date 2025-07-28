@@ -19,6 +19,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../../components/ui/tabs";
+import { Input } from "../../../components/ui/input";
 
 export default function EssayForm() {
   const [assignmentTitle, setAssignmentTitle] = useState(
@@ -48,7 +49,7 @@ export default function EssayForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className=" w-full overflow-hidden p-2">
       <div className="space-y-2">
         <Label
           htmlFor="assignment-title"
@@ -56,22 +57,13 @@ export default function EssayForm() {
         >
           Assignment Title
         </Label>
-        <Select value={assignmentTitle} onValueChange={setAssignmentTitle}>
-          <SelectTrigger className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="write an essay about pollution">
-              write an essay about pollution
-            </SelectItem>
-            <SelectItem value="analyze climate change impacts">
-              analyze climate change impacts
-            </SelectItem>
-            <SelectItem value="discuss renewable energy solutions">
-              discuss renewable energy solutions
-            </SelectItem>
-          </SelectContent>
-        </Select>
+        <Input
+          id="assignment-title"
+          placeholder="Enter assignment title"
+          value={assignmentTitle}
+          onChange={(e) => setAssignmentTitle(e.target.value)}
+          className="border-1 focus-visible:ring-[1px] "
+        />
       </div>
 
       <div className="space-y-2">
@@ -81,18 +73,13 @@ export default function EssayForm() {
         >
           Essay Type
         </Label>
-        <Select value={essayType} onValueChange={setEssayType}>
-          <SelectTrigger className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Argumentative">Argumentative</SelectItem>
-            <SelectItem value="Persuasive">Persuasive</SelectItem>
-            <SelectItem value="Expository">Expository</SelectItem>
-            <SelectItem value="Descriptive">Descriptive</SelectItem>
-            <SelectItem value="Narrative">Narrative</SelectItem>
-          </SelectContent>
-        </Select>
+        <Input
+          id="essay-type"
+          placeholder="Enter essay type"
+          value={essayType}
+          onChange={(e) => setEssayType(e.target.value)}
+          className="border-1 focus-visible:ring-[1px] "
+        />
       </div>
 
       <div className="space-y-4">
@@ -104,7 +91,7 @@ export default function EssayForm() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="text-input" className="mt-4">
-            <div className="space-y-2">
+            <div className="space-y-2 p-2">
               <Label
                 htmlFor="essay-text"
                 className="text-base font-medium text-gray-700"
@@ -116,7 +103,7 @@ export default function EssayForm() {
                 placeholder="Write your essay here..."
                 value={essayText}
                 onChange={(e) => setEssayText(e.target.value)}
-                className="min-h-[300px] resize-none"
+                className="min-h-[130px]  max-w-full resize-none border-1 focus-visible:ring-[1px] "
               />
             </div>
           </TabsContent>
@@ -141,7 +128,7 @@ export default function EssayForm() {
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white">
             <SelectItem value="Low - Minimal feedback">
               Low - Minimal feedback
             </SelectItem>
@@ -166,7 +153,7 @@ export default function EssayForm() {
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white">
             <SelectItem value="Low - Few suggestions">
               Low - Few suggestions
             </SelectItem>

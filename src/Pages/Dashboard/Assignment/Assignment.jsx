@@ -298,7 +298,7 @@ const Assignment = () => {
                         Submit Essay
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px] bg-white">
+                    <DialogContent className=" bg-white rounded-lg">
                       <AssignmentForm />
                     </DialogContent>
                   </Dialog>
