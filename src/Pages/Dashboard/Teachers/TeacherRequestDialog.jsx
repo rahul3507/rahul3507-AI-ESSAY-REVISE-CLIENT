@@ -37,7 +37,7 @@ const TeacherRequestDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose} className="bg-white">
-      <DialogContent className="bg-white">
+      <DialogContent className="bg-white max-w-[90vw] sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Teacher Requests</DialogTitle>
           <Input
@@ -48,7 +48,7 @@ const TeacherRequestDialog = ({
             className="w-1/2 mt-3"
           />
         </DialogHeader>
-        <div className="">
+        <div className="overflow-x-auto">
           {filteredTeachers.length === 0 ? (
             <p className="text-gray-500">
               {searchTerm
@@ -83,7 +83,7 @@ const TeacherRequestDialog = ({
                       </TableCell>
                       <TableCell className="text-center">
                         <Button
-                          className="bg-blue-500 text-white hover:bg-blue-600"
+                          className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
                           onClick={() => onAccept(item.email)}
                         >
                           Accept
@@ -99,14 +99,14 @@ const TeacherRequestDialog = ({
         <div className="mt-6 flex justify-between">
           <Button
             variant="outline"
-            className="border-gray-300"
+            className="border-gray-300 cursor-pointer"
             onClick={onClose}
           >
             Cancel
           </Button>
           {filteredTeachers.length > 0 && (
             <Button
-              className="bg-blue-500 text-white hover:bg-blue-600"
+              className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
               onClick={onAcceptAll}
             >
               Accept All
