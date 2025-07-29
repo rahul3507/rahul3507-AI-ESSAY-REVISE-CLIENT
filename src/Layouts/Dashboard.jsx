@@ -16,6 +16,7 @@ import {
 import { removeAuthTokens } from "../lib/cookie-utils";
 import useLoggedUser from "../components/hook/useLoggedUser";
 import { FaSignInAlt, FaUsers } from "react-icons/fa";
+import { User } from "lucide-react";
 
 const Dashboard = () => {
   const { user } = useLoggedUser([]);
@@ -173,7 +174,7 @@ const Dashboard = () => {
                 }`}
               >
                 <li className="flex items-center gap-x-4 w-full">
-                  <RiMapPinUserLine className="text-xl" />
+                  <User className="text-xl" />
                   <span
                     className={`${!open && "hidden"} origin-left duration-200`}
                   >

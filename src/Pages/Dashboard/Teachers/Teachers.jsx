@@ -175,10 +175,10 @@ const Teachers = () => {
           Assignments
         </h1>
         <Button
-          className="bg-gray-200 text-black px-2 py-1 rounded-md gap-1 cursor-pointer"
+          className="bg-gray-200 text-black px-2 py-1 rounded-md gap-1 cursor-pointer hover:bg-gray-100"
           onClick={() => setIsDialogOpen(true)}
         >
-          <span className="p-1 px-2 text-xs rounded-full bg-blue-500 text-white">
+          <span className="p-1 px-2 text-xs rounded-full bg-blue-500 text-white items-center m-auto justify-center">
             {acceptedCount}
           </span>
           Teachers Request
