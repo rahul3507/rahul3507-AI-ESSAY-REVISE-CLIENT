@@ -19,6 +19,7 @@ import PaymentCancel from "../Pages/Dashboard/Upgrade/PaymentCancel";
 import ProtectedRoute from "./ProtectedRoute";
 import TermsAndConditions from "../Pages/Authentication/TermsAndConditions";
 import Assignment from "../Pages/Dashboard/Assignment/Assignment";
+import Teachers from "../Pages/Dashboard/Teachers/Teachers";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: "/assignment",
         element: <Assignment />,
+      },
+      {
+        path: "/teachers",
+        element: <Teachers />,
       },
       {
         path: "/upgrade",
