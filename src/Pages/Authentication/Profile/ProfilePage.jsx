@@ -7,7 +7,7 @@ import { FiEdit2, FiExternalLink, FiLock, FiUpload } from "react-icons/fi";
 import useLoggedUser from "../../../components/hook/useLoggedUser";
 import apiClient from "../../../lib/api-client";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { Mail, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 export default function ProfilePage() {
   const { user, loading, refetch } = useLoggedUser([]);
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                 crossOrigin="anonymous"
                 className="w-full h-full rounded-full object-cover"
               />
-              <button className="absolute bottom-1 right-1 p-2 cursor-pointer rounded-full bg-white/60">
+              <button className="absolute bottom-0.5 right-0 p-1 cursor-pointer rounded-full bg-white/60 m-auto">
                 <FaEdit
                   onClick={openEditProfileModal}
                   className="text-gray-600"
@@ -176,7 +176,7 @@ export default function ProfilePage() {
           <div className="flex justify-between">
             <h1 className="text-2xl font-medium">Personal Information</h1>
             <button
-              className="text-blue-500 flex gap-1 justify-center items-center"
+              className="text-blue-500 flex gap-1 justify-center items-center cursor-pointer"
               onClick={openEditProfileModal}
             >
               <FiEdit2 className="text-black w-3 h-3" />
@@ -199,34 +199,34 @@ export default function ProfilePage() {
               </div>
             </div>
             <div className="flex  items-center gap-2">
-              <Mail className="text-gray-400" />
+              <MapPin className="text-gray-400" />
               <div className="text-start">
-                <p className="text-black">{formData.email || "N/A"}</p>
-                <p className="text-gray-400">E-mail</p>
+                <p className="text-black">{formData.address || "N/A"}</p>
+                <p className="text-gray-400">Location</p>
               </div>
             </div>
             <div className="flex  items-center gap-2">
-              <Mail className="text-gray-400" />
-              <div className="text-start">
-                <p className="text-black">{formData.email || "N/A"}</p>
-                <p className="text-gray-400">E-mail</p>
-              </div>
+              <button
+                onClick={openPasswordModal}
+                className="text-gray-500 hover:text-blue-500 transition py-3 cursor-pointer"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-full bg-gray-200">
+                    <FiLock className="text-gray-500" size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">Change Password</h4>
+                  </div>
+                  <FiExternalLink size={20} />
+                </div>
+              </button>
             </div>
-          </div>
-
-          <div>
-            <p className="font-medium">Phone</p>
-            <p className="text-gray-600">{formData.phone_number || "N/A"}</p>
-          </div>
-          <div>
-            <p className="font-medium">Address</p>
-            <p className="text-gray-600">{formData.address || "N/A"}</p>
           </div>
         </div>
       </div>
 
       {/* Update Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         <div className="flex flex-col gap-2">
           <label className="font-semibold">Name</label>
           <div className="relative">
@@ -261,10 +261,10 @@ export default function ProfilePage() {
             />
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Change Password Section */}
-      <div className="mt-8 p-6 rounded-2xl border border-blue-200 shadow-md gap-4">
+      {/* <div className="mt-8 p-6 rounded-2xl border border-blue-200 shadow-md gap-4">
         <button
           onClick={openPasswordModal}
           className="text-gray-500 hover:text-blue-500 transition py-3"
@@ -279,7 +279,7 @@ export default function ProfilePage() {
             <FiExternalLink size={20} />
           </div>
         </button>
-      </div>
+      </div> */}
 
       {/* Delete Account Section */}
       {/* <div className="md:flex justify-between items-center mt-8 p-6 shadow-md rounded-2xl border border-red-300">
