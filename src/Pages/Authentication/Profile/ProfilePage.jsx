@@ -8,6 +8,7 @@ import useLoggedUser from "../../../components/hook/useLoggedUser";
 import apiClient from "../../../lib/api-client";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Mail, MapPin, Phone } from "lucide-react";
+import BillingHistoryTable from "./BillingHistoryTable";
 
 export default function ProfilePage() {
   const { user, loading, refetch } = useLoggedUser([]);
@@ -223,6 +224,14 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* billing history */}
+      <div className="gap-6 p-6 rounded-2xl shadow-md border border-base-300 mt-8">
+        <h1 className="text-xl text-black font-semibold mb-6">
+          Billing History
+        </h1>
+        <BillingHistoryTable />
       </div>
 
       {/* Update Fields */}
