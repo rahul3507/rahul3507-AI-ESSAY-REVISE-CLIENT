@@ -7,7 +7,6 @@ import Swal from "sweetalert2";
 import {
   RiLogoutBoxRLine,
   RiVipCrownLine,
-  RiMapPinUserLine,
   RiHome9Line,
   RiFolderUploadLine,
   RiArrowLeftSLine,

@@ -9,19 +9,32 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "../../../components/ui/dialog";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import { VscSettings } from "react-icons/vsc";
 import TeacherRequestDialog from "./TeacherRequestDialog";
+import { Eye } from "lucide-react";
+
+import ProfileDialog from "./ProfileDialog";
 
 const Teachers = () => {
-  const [billingData, setBillingData] = useState([
+  const [teachersData, setBillingData] = useState([
     {
       teacherName: "John Smith",
       email: "john.smith@student.edu",
       assignments: 12,
       reviewed: 124,
       action: "accepted",
+      phoneNumber: "555-0101-1234",
+      role: "teacher",
+      address: "123 Maple St, Springfield, IL 62701",
+      profileImg: "https://example.com/profiles/john_smith.jpg",
     },
     {
       teacherName: "Jane Doe",
@@ -29,6 +42,10 @@ const Teachers = () => {
       assignments: 230,
       reviewed: 124,
       action: "accept",
+      phoneNumber: "555-0102-5678",
+      role: "teacher",
+      address: "456 Oak Ave, Chicago, IL 60601",
+      profileImg: "https://example.com/profiles/jane_doe.jpg",
     },
     {
       teacherName: "Alice Johnson",
@@ -36,6 +53,10 @@ const Teachers = () => {
       assignments: 20,
       reviewed: 124,
       action: "accepted",
+      phoneNumber: "555-0103-9012",
+      role: "teacher",
+      address: "789 Pine Rd, Aurora, IL 60504",
+      profileImg: "https://example.com/profiles/alice_johnson.jpg",
     },
     {
       teacherName: "Bob Wilson",
@@ -43,6 +64,10 @@ const Teachers = () => {
       assignments: 45,
       reviewed: 134,
       action: "accept",
+      phoneNumber: "555-0104-3456",
+      role: "teacher",
+      address: "321 Elm St, Naperville, IL 60540",
+      profileImg: "https://example.com/profiles/bob_wilson.jpg",
     },
     {
       teacherName: "Emma Brown",
@@ -50,6 +75,10 @@ const Teachers = () => {
       assignments: 12,
       reviewed: 164,
       action: "accepted",
+      phoneNumber: "555-0105-7890",
+      role: "teacher",
+      address: "654 Cedar Ln, Evanston, IL 60201",
+      profileImg: "https://example.com/profiles/emma_brown.jpg",
     },
     {
       teacherName: "Michael Lee",
@@ -57,6 +86,10 @@ const Teachers = () => {
       assignments: 56,
       reviewed: 184,
       action: "accept",
+      phoneNumber: "555-0106-2345",
+      role: "teacher",
+      address: "987 Birch Dr, Peoria, IL 61604",
+      profileImg: "https://example.com/profiles/michael_lee.jpg",
     },
     {
       teacherName: "Sarah Davis",
@@ -64,6 +97,10 @@ const Teachers = () => {
       assignments: 80,
       reviewed: 1254,
       action: "accepted",
+      phoneNumber: "555-0107-6789",
+      role: "teacher",
+      address: "147 Spruce Ct, Rockford, IL 61101",
+      profileImg: "https://example.com/profiles/sarah_davis.jpg",
     },
     {
       teacherName: "David Clark",
@@ -71,6 +108,10 @@ const Teachers = () => {
       assignments: 15,
       reviewed: 1243,
       action: "accept",
+      phoneNumber: "555-0108-1234",
+      role: "teacher",
+      address: "258 Willow Way, Joliet, IL 60435",
+      profileImg: "https://example.com/profiles/david_clark.jpg",
     },
     {
       teacherName: "Laura Adams",
@@ -78,6 +119,10 @@ const Teachers = () => {
       assignments: 30,
       reviewed: 124,
       action: "accepted",
+      phoneNumber: "555-0109-5678",
+      role: "teacher",
+      address: "369 Sycamore St, Champaign, IL 61820",
+      profileImg: "https://example.com/profiles/laura_adams.jpg",
     },
     {
       teacherName: "James Taylor",
@@ -85,6 +130,10 @@ const Teachers = () => {
       assignments: 25,
       reviewed: 124,
       action: "accept",
+      phoneNumber: "555-0110-9012",
+      role: "teacher",
+      address: "741 Chestnut Blvd, Bloomington, IL 61701",
+      profileImg: "https://example.com/profiles/james_taylor.jpg",
     },
     {
       teacherName: "Emily White",
@@ -92,6 +141,10 @@ const Teachers = () => {
       assignments: 40,
       reviewed: 1424,
       action: "accepted",
+      phoneNumber: "555-0111-3456",
+      role: "teacher",
+      address: "852 Magnolia Ave, Decatur, IL 62526",
+      profileImg: "https://example.com/profiles/emily_white.jpg",
     },
     {
       teacherName: "Thomas Green",
@@ -99,6 +152,10 @@ const Teachers = () => {
       assignments: 60,
       reviewed: 1224,
       action: "accept",
+      phoneNumber: "555-0112-7890",
+      role: "teacher",
+      address: "963 Laurel Dr, Elgin, IL 60120",
+      profileImg: "https://example.com/profiles/thomas_green.jpg",
     },
     {
       teacherName: "Olivia Harris",
@@ -106,6 +163,10 @@ const Teachers = () => {
       assignments: 70,
       reviewed: 424,
       action: "accepted",
+      phoneNumber: "555-0113-2345",
+      role: "teacher",
+      address: "159 Poplar St, Waukegan, IL 60085",
+      profileImg: "https://example.com/profiles/olivia_harris.jpg",
     },
     {
       teacherName: "William Lewis",
@@ -113,6 +174,10 @@ const Teachers = () => {
       assignments: 35,
       reviewed: 1324,
       action: "accept",
+      phoneNumber: "555-0114-6789",
+      role: "teacher",
+      address: "357 Aspen Ct, Cicero, IL 60804",
+      profileImg: "https://example.com/profiles/william_lewis.jpg",
     },
     {
       teacherName: "Sophia Walker",
@@ -120,6 +185,10 @@ const Teachers = () => {
       assignments: 90,
       reviewed: 1124,
       action: "accepted",
+      phoneNumber: "555-0115-1234",
+      role: "teacher",
+      address: "468 Hazel Rd, Berwyn, IL 60402",
+      profileImg: "https://example.com/profiles/sophia_walker.jpg",
     },
   ]);
 
@@ -129,12 +198,12 @@ const Teachers = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Calculate the number of accepted teachers
-  const acceptedCount = billingData.filter(
+  const acceptedCount = teachersData.filter(
     (item) => item.action === "accept"
   ).length;
 
   // Filter and sort data based on search term and filter option
-  const filteredData = billingData
+  const filteredData = teachersData
     .filter(
       (item) =>
         item.action === "accepted" &&
@@ -186,7 +255,7 @@ const Teachers = () => {
       </div>
 
       <div className="bg-transparent mt-4 border border-gray-200 rounded-xl p-6">
-        <h1 className="text-black  text-lg md:text-xl font-medium mb-4">
+        <h1 className="text-black text-lg md:text-xl font-medium mb-4">
           Assigned Teachers List
         </h1>
 
@@ -227,7 +296,7 @@ const Teachers = () => {
                   More assignments
                 </button>
                 <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm cursor-pointer "
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm cursor-pointer"
                   onClick={() => {
                     setFilterOption("low");
                     setShowFilterDropdown(false);
@@ -247,6 +316,7 @@ const Teachers = () => {
                 <TableHead className="p-2">Teacher Name</TableHead>
                 <TableHead className="text-center">Assignments</TableHead>
                 <TableHead className="text-center">Reviewed</TableHead>
+                <TableHead className="text-center">Profile</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -260,6 +330,19 @@ const Teachers = () => {
                     {item.assignments}
                   </TableCell>
                   <TableCell className="text-center">{item.reviewed}</TableCell>
+                  <TableCell className="text-center">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="bg-gray-200 text-black hover:bg-gray-200 cursor-pointer">
+                          <Eye />
+                          View
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-white rounded-lg">
+                        <ProfileDialog teacher={item} />
+                      </DialogContent>
+                    </Dialog>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -270,7 +353,7 @@ const Teachers = () => {
       <TeacherRequestDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        teachers={billingData.filter((item) => item.action === "accept")}
+        teachers={teachersData.filter((item) => item.action === "accept")}
         onAccept={handleAccept}
         onAcceptAll={handleAcceptAll}
       />

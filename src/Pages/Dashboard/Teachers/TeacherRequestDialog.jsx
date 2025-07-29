@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "../../../components/ui/dialog";
 import { Button } from "../../../components/ui/button";
 import PropTypes from "prop-types";
@@ -18,6 +19,8 @@ import {
 } from "../../../components/ui/table";
 import { Input } from "../../../components/ui/input";
 import { useState } from "react";
+import { Eye } from "lucide-react";
+import ProfileDialog from "./ProfileDialog";
 
 const TeacherRequestDialog = ({
   isOpen,
@@ -63,6 +66,7 @@ const TeacherRequestDialog = ({
                     <TableHead className="p-2">Teacher Name</TableHead>
                     <TableHead className="text-center">Assignments</TableHead>
                     <TableHead className="text-center">Reviewed</TableHead>
+                    <TableHead className="text-center">Profile</TableHead>
                     <TableHead className="text-center">Action</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -80,6 +84,19 @@ const TeacherRequestDialog = ({
                       </TableCell>
                       <TableCell className="text-center">
                         {item.reviewed}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button className="bg-gray-200 text-black hover:bg-gray-200 cursor-pointer">
+                              <Eye />
+                              View
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="bg-white rounded-lg">
+                            <ProfileDialog teacher={item} />
+                          </DialogContent>
+                        </Dialog>
                       </TableCell>
                       <TableCell className="text-center">
                         <Button
