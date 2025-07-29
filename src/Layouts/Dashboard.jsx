@@ -15,7 +15,7 @@ import {
 } from "react-icons/ri";
 import { removeAuthTokens } from "../lib/cookie-utils";
 import useLoggedUser from "../components/hook/useLoggedUser";
-import { FaSignInAlt } from "react-icons/fa";
+import { FaSignInAlt, FaUsers } from "react-icons/fa";
 
 const Dashboard = () => {
   const { user } = useLoggedUser([]);
@@ -62,6 +62,7 @@ const Dashboard = () => {
     Book: RiFolderUploadLine,
     Home: RiHome9Line,
     Assignment: RiBookletLine,
+    Teachers: FaUsers, // Assuming Teachers is a component that renders the Teachers page
   };
 
   const Menus = [
@@ -88,6 +89,12 @@ const Dashboard = () => {
       title: "Assignment",
       path: "/assignment",
       icon: iconMappings.Assignment,
+      role: "user",
+    },
+    {
+      title: "Teachers",
+      path: "/teachers",
+      icon: iconMappings.Teachers,
       role: "user",
     },
     {
