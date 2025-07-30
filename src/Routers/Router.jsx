@@ -10,7 +10,7 @@ import HomePage from "../Pages/Dashboard/HomePage/HomePage";
 import UploadEssay from "../Pages/Dashboard/UploadEssay/UploadEssay";
 import CompareEssay from "../Pages/Dashboard/CompareEssay/CompareEssay";
 import Upgrade from "../Pages/Dashboard/Upgrade/Upgrade";
-import UploadOneFile from "../Pages/Dashboard/HomePage/UploadOneFile";
+import UploadOneFile from "../Pages/Dashboard/UploadEssay/UploadOneFile";
 import UploadComparison from "../Pages/Dashboard/CompareEssay/UploadComparison";
 import ComparisonResult from "../Pages/Dashboard/CompareEssay/ComparisonResult";
 import PaymentSuccess from "../Pages/Dashboard/Upgrade/PaymentSuccess";
