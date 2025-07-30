@@ -30,6 +30,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useNavigate } from "react-router-dom";
 
 // Sample assignmentsData array with 20 datasets
 const assignmentsData = [
@@ -176,7 +177,7 @@ const HomePage = () => {
       bgColor: "#FFF4FE",
     },
   ];
-
+  const navigate = useNavigate();
   return (
     <div className="px-4">
       {/* Header */}
@@ -190,7 +191,10 @@ const HomePage = () => {
           </p>
         </div>
         <div className="flex gap-5">
-          <Button className="flex gap-2 bg-black rounded-lg p-2 px-4 text-white cursor-pointer">
+          <Button
+            onClick={() => navigate("/upload_essay")}
+            className="flex gap-2 bg-black rounded-lg p-2 px-4 text-white cursor-pointer"
+          >
             <Upload />
             Upload Essay
           </Button>
