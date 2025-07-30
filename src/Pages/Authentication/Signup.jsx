@@ -1,3 +1,5 @@
+/** @format */
+
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaMailBulk } from "react-icons/fa";
@@ -23,7 +25,9 @@ const Signup = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await apiClient.post("/auth/otp/create/", { email: data.email });
+      await apiClient.post("/auth/otp/create/", {
+        email: data.email,
+      });
       localStorage.setItem("pendingSignupData", JSON.stringify(data));
       navigate("/otp");
     } catch (error) {
@@ -47,7 +51,7 @@ const Signup = () => {
           <h2 className="text-2xl font-semibold text-center mb-4">
             Sign Up Account
           </h2>
-          
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -111,6 +115,29 @@ const Signup = () => {
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Role</label>
+              <div className="relative">
+                <select
+                  {...register("role", {
+                    required: "Please select a role",
+                  })}
+                  className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-slate-700"
+                >
+                  <option value="" disabled selected>
+                    Select your role
+                  </option>
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher</option>
+                </select>
+              </div>
+              {errors.role && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.role.message}
                 </p>
               )}
             </div>

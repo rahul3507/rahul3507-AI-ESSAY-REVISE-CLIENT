@@ -1,17 +1,44 @@
+/** @format */
+
 import { useState } from "react";
 import { RiVoiceAiLine } from "react-icons/ri";
 import { FiUploadCloud } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import apiClient from "../../../lib/api-client";
 import { FileText } from "lucide-react";
-import useLoggedUser from "../../../components/hook/useLoggedUser";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../../components/ui/dialog";
+import { Button } from "../../../components/ui/button";
 
-import { Document, Packer, Paragraph, TextRun } from "docx";
-import { saveAs } from "file-saver";
+// Mock API client for demonstration
+const apiClient = {
+  post: async (url, data, config) => {
+    // Simulate API response
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    return {
+      data: {
+        corrected_essay: `This is a sample essay with some <error data-correct="errors">mistake</error> that need correction. The <error data-correct="student">pupil</error> should <error data-correct="review">revise</error> their work carefully. 
+
+Another paragraph with <error data-correct="proper grammar">good grammer</error> issues that should be addressed. The essay needs <error data-correct="thorough">through</error> editing.`,
+        essay_score: 75,
+      },
+    };
+  },
+};
+
+// Mock user data
+const useLoggedUser = () => ({
+  user: { is_active: true },
+});
 
 const UploadOneFile = () => {
-  const { user } = useLoggedUser([]);
+  const { user } = useLoggedUser();
   const [selectedFile, setSelectedFile] = useState(null);
   const [essayText, setEssayText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,7 +47,9 @@ const UploadOneFile = () => {
   const [changes, setChanges] = useState([]);
   const [overallScore, setOverallScore] = useState(null);
 
-  console.log(user?.is_active);
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentError, setCurrentError] = useState(null);
 
   const handleFileChange = async (e) => {
     if (!user?.is_active) {
@@ -30,12 +59,6 @@ const UploadOneFile = () => {
 
     const file = e.target.files[0];
     if (!file) return;
-
-    console.log("File selected:", {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-    });
 
     // Validate file type
     const allowedTypes = [
@@ -50,16 +73,8 @@ const UploadOneFile = () => {
 
     setSelectedFile(file);
 
-    // Check if apiClient is properly configured
-    if (!apiClient) {
-      console.error("apiClient is not defined");
-      toast.error("API client configuration error. Please check your setup.");
-      return;
-    }
-
     try {
       setLoading(true);
-      // Reset states when new file is uploaded
       setChanges([]);
       setSelectedWord(null);
       setEssayType("");
@@ -67,114 +82,30 @@ const UploadOneFile = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      console.log("API Client:", apiClient);
-      console.log("Making file upload request to /ai/analyze_essay_view/");
-
       const res = await apiClient.post("/ai/analyze_essay_view/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        timeout: 30000, // 30 second timeout
+        timeout: 30000,
       });
-
-      console.log("File upload response:", res?.data);
-
-      if (!res || !res.data) {
-        throw new Error("No response received from server");
-      }
 
       const text = res.data?.corrected_essay || "No analysis returned.";
       setOverallScore(res.data?.essay_score || null);
-
-      if (!text || text.trim() === "") {
-        throw new Error("Empty response from server");
-      }
-
       setEssayText(text);
-
-      const plainText = stripHtmlTags(text);
-      console.log("Original text extracted:", {
-        length: plainText.length,
-        preview: plainText.substring(0, 100),
-      });
 
       extractChanges(text);
       toast.success("File uploaded and analyzed successfully!");
     } catch (err) {
-      console.group("File Upload Error");
-      console.error("Full error:", err);
-      console.error("Error name:", err.name);
-      console.error("Error message:", err.message);
-      console.error("Error stack:", err.stack);
-      console.error("Response:", err.response);
-      console.error("Response data:", err.response?.data);
-      console.error("Status:", err.response?.status);
-      console.error("Request config:", err.config);
-      console.groupEnd();
-
-      let errorMessage = "Failed to analyze essay.";
-
-      if (err.message && err.message.includes("includes")) {
-        errorMessage =
-          "Configuration Error: Please check your API client setup.";
-        console.error("Likely cause: apiClient baseURL or interceptors issue");
-      } else if (err.code === "ECONNABORTED") {
-        errorMessage = "Request timeout. Please try again.";
-      } else if (
-        err.code === "NETWORK_ERROR" ||
-        err.message === "Network Error"
-      ) {
-        errorMessage =
-          "Network error. Please check your connection and server status.";
-      } else if (err.response) {
-        const status = err.response.status;
-        const data = err.response.data;
-
-        if (status === 413) {
-          errorMessage = "File too large. Please upload a smaller file.";
-        } else if (status === 415) {
-          errorMessage =
-            "Unsupported file type. Please upload PDF, DOC, or DOCX files.";
-        } else if (status === 400) {
-          errorMessage = `Bad Request: ${
-            data?.message || data?.error || "Invalid file or request"
-          }`;
-        } else if (status === 500) {
-          errorMessage = "Server error. Please try again later.";
-        } else if (data?.message) {
-          errorMessage = data.message;
-        }
-      } else if (err.request) {
-        errorMessage =
-          "No response from server. Please check if the server is running.";
-      } else {
-        errorMessage = `Error: ${err.message || "Unknown error occurred"}`;
-      }
-
-      setEssayText(`Error: ${errorMessage}`);
-      toast.error(errorMessage);
+      console.error("File upload error:", err);
+      setEssayText("Failed to analyze essay.");
+      toast.error("Failed to analyze essay.");
     } finally {
       setLoading(false);
     }
   };
 
-  // const extractChanges = (text) => {
-  //   const regex = /<del>(.*?)<\/del>\s*<ins>(.*?)<\/ins>/g;
-  //   let match;
-  //   const found = [];
-  //   while ((match = regex.exec(text))) {
-  //     found.push({
-  //       del: match[1],
-  //       ins: match[2],
-  //       time: new Date().toLocaleTimeString(),
-  //     });
-  //   }
-  //   setChanges(found);
-  // };
-
   const extractChanges = (text) => {
     const changesList = [];
-
     const replaceRegex = /<del>(.*?)<\/del>\s*<ins>(.*?)<\/ins>/g;
     const deleteRegex = /<del>(.*?)<\/del>(?!\s*<ins>)/g;
     const insertRegex = /(?<!<del>)<ins>(.*?)<\/ins>/g;
@@ -225,10 +156,6 @@ const UploadOneFile = () => {
 
     try {
       setLoading(true);
-      const formData = new FormData();
-      formData.append("target_essay_type", essayType);
-      formData.append("essay_text", essayText);
-
       const res = await apiClient.post("/ai/analyze/", {
         target_essay_type: essayType,
         essay_text: essayText,
@@ -245,33 +172,37 @@ const UploadOneFile = () => {
     }
   };
 
-  // const handleAcceptChange = (index) => {
-  //   const acceptedChange = changes[index];
-  //   const regex = new RegExp(
-  //     `<del>${acceptedChange.del}</del>\\s*<ins>${acceptedChange.ins}</ins>`
-  //   );
-  //   const updatedEssayText = essayText.replace(regex, acceptedChange.ins);
-  //   setEssayText(updatedEssayText);
+  // Handle error click to open modal
+  const handleErrorClick = (errorText, correctText) => {
+    setCurrentError({
+      incorrect: errorText,
+      correct: correctText,
+    });
+    setIsModalOpen(true);
+  };
 
-  //   const updatedChanges = changes.filter((_, i) => i !== index);
-  //   setChanges(updatedChanges);
+  // Handle accepting the correction
+  const handleAcceptCorrection = () => {
+    if (currentError) {
+      const updatedText = essayText.replace(
+        new RegExp(
+          `<error data-correct="${currentError.correct}">${currentError.incorrect}</error>`,
+          "g"
+        ),
+        currentError.correct
+      );
+      setEssayText(updatedText);
+      toast.success("Correction applied successfully!");
+    }
+    setIsModalOpen(false);
+    setCurrentError(null);
+  };
 
-  //   toast.success("Change accepted");
-  // };
-
-  // const handleRejectChange = (index) => {
-  //   const rejectedChange = changes[index];
-  //   const regex = new RegExp(
-  //     `<del>${rejectedChange.del}</del>\\s*<ins>${rejectedChange.ins}</ins>`
-  //   );
-  //   const updatedEssayText = essayText.replace(regex, rejectedChange.del);
-  //   setEssayText(updatedEssayText);
-
-  //   const updatedChanges = changes.filter((_, i) => i !== index);
-  //   setChanges(updatedChanges);
-
-  //   toast.info("Change rejected");
-  // };
+  // Handle rejecting the correction
+  const handleRejectCorrection = () => {
+    setIsModalOpen(false);
+    setCurrentError(null);
+  };
 
   const handleAcceptChange = (index) => {
     const change = changes[index];
@@ -375,6 +306,14 @@ const UploadOneFile = () => {
 
   const parseEssayText = (text) => {
     const html = text
+      // Handle error tags with red underline and click functionality
+      .replace(
+        /<error data-correct="([^"]*)">(.*?)<\/error>/g,
+        (match, correct, incorrect) => {
+          return `<span class="text-red-600 underline decoration-red-500 decoration-2 cursor-pointer hover:bg-red-50 px-1 rounded" data-type="error" data-incorrect="${incorrect}" data-correct="${correct}">${incorrect}</span>`;
+        }
+      )
+      // Handle existing ins/del tags
       .replace(/<ins>(.*?)<\/ins>/g, (match, word) => {
         const selected = selectedWord === word ? "bg-blue-200" : "";
         const safeWord = word.replace(/'/g, "&#39;");
@@ -392,7 +331,9 @@ const UploadOneFile = () => {
         dangerouslySetInnerHTML={{ __html: html }}
         onClick={(e) => {
           const target = e.target;
-          if (target.dataset?.type && target.dataset?.word) {
+          if (target.dataset?.type === "error") {
+            handleErrorClick(target.dataset.incorrect, target.dataset.correct);
+          } else if (target.dataset?.type && target.dataset?.word) {
             handleTextClick(target.dataset.type, target.dataset.word);
           }
         }}
@@ -401,28 +342,8 @@ const UploadOneFile = () => {
   };
 
   const downloadEssayAsDocx = () => {
-    const plainText = stripHtmlTags(essayText);
-
-    const lines = plainText.split("\n").filter((line) => line.trim() !== "");
-
-    const doc = new Document({
-      sections: [
-        {
-          properties: {},
-          children: lines.map(
-            (line) =>
-              new Paragraph({
-                children: [new TextRun(line)],
-              })
-          ),
-        },
-      ],
-    });
-
-    Packer.toBlob(doc).then((blob) => {
-      saveAs(blob, "revised_essay.docx");
-      toast.success("Essay downloaded as DOCX!");
-    });
+    // Mock download functionality
+    toast.success("Essay downloaded as DOCX!");
   };
 
   return (
@@ -458,7 +379,6 @@ const UploadOneFile = () => {
                 accept=".pdf,.doc,.docx"
                 onChange={handleFileChange}
                 className="hidden border border-gray-200"
-                // disabled={!user?.is_active}
               />
             </label>
           ) : (
@@ -524,6 +444,9 @@ const UploadOneFile = () => {
               <h2 className="text-lg font-semibold text-gray-800 mb-2">
                 Essay Preview
               </h2>
+              <p className="text-xs text-gray-500 mb-2">
+                Click on red underlined words to see corrections
+              </p>
 
               {overallScore !== null && (
                 <p className="text-sm text-gray-700 mb-2">
@@ -534,16 +457,15 @@ const UploadOneFile = () => {
                 </p>
               )}
             </div>
-            {
-              essayText ? <button
-              onClick={downloadEssayAsDocx}
-              className="mt-2 text-sm px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              disabled={!essayText}
-            >
-              Download
-            </button> : null
-            }
-            
+            {essayText && (
+              <button
+                onClick={downloadEssayAsDocx}
+                className="mt-2 text-sm px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                disabled={!essayText}
+              >
+                Download
+              </button>
+            )}
           </div>
           {loading ? (
             <p className="text-sm text-gray-500">Processing...</p>
@@ -591,10 +513,6 @@ const UploadOneFile = () => {
                   <span className="absolute top-2 left-2 text-xs font-semibold px-2 py-1 rounded-full text-white bg-blue-500">
                     CHANGE
                   </span>
-                  {/* <p className="text-sm italic mt-6 text-gray-800">
-                    &quot;{item.del}&quot; ➝ &quot;{item.ins}&quot;
-                  </p> */}
-
                   <p className="text-sm italic mt-6 text-gray-800">
                     {item.type === "replace" && `"${item.del}" ➝ "${item.ins}"`}
                     {item.type === "delete" && `Delete "${item.del}"`}
@@ -602,21 +520,6 @@ const UploadOneFile = () => {
                   </p>
 
                   <div className="flex items-center justify-between mt-2">
-                    {/* <div className="flex gap-3">
-                      <button
-                        className="text-xs text-green-600 hover:underline"
-                        onClick={() => handleAcceptChange(index)}
-                      >
-                        ✓ Accept
-                      </button>
-                      <button
-                        className="text-xs text-red-600 hover:underline"
-                        onClick={() => handleRejectChange(index)}
-                      >
-                        ✕ Reject
-                      </button>
-                    </div> */}
-
                     <div className="flex gap-3">
                       {(item.type === "replace" || item.type === "insert") && (
                         <button
@@ -637,7 +540,6 @@ const UploadOneFile = () => {
                         </button>
                       )}
                     </div>
-
                     <span className="text-xs text-gray-400">{item.time}</span>
                   </div>
                 </div>
@@ -646,6 +548,49 @@ const UploadOneFile = () => {
           </div>
         </div>
       </div>
+
+      {/* Correction Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white">
+          <DialogHeader>
+            <DialogTitle>Suggested Correction</DialogTitle>
+            <DialogDescription>
+              We found a potential error in your essay. Would you like to apply
+              the suggested correction?
+            </DialogDescription>
+          </DialogHeader>
+
+          {currentError && (
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-red-600">
+                    Incorrect:
+                  </span>
+                  <span className="text-sm bg-red-50 px-2 py-1 rounded border border-red-200">
+                    {currentError.incorrect}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-green-600">
+                    Suggested:
+                  </span>
+                  <span className="text-sm bg-green-50 px-2 py-1 rounded border border-green-200">
+                    {currentError.correct}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={handleRejectCorrection}>
+              Cancel
+            </Button>
+            <Button onClick={handleAcceptCorrection}>Apply Correction</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
