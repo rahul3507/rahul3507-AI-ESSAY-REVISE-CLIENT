@@ -23,10 +23,10 @@ const QuickAction = () => {
   const navigate = useNavigate();
 
   const handleUploadClick = () => {
-    if (!user?.is_active) {
-      toast.error("You currently do not have an active subscription plan.");
-      return;
-    }
+    // if (!user?.is_active) {
+    //   toast.error("You currently do not have an active subscription plan.");
+    //   return;
+    // }
     navigate("/upload_one");
   };
 

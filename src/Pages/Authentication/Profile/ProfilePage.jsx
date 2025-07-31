@@ -30,19 +30,25 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Fixed: Updated to match the actual API response structure
   useEffect(() => {
-    if (user?.user) {
+    if (user) {
+      console.log("User data received:", user); // Debug log
       setFormData({
-        first_name: user.user.user_profile?.first_name || "",
-        last_name: user.user.user_profile?.last_name || "",
-        email: user.user.email || "",
-        phone_number: user.user.user_profile?.phone_number || "",
-        address: user.user.user_profile?.address || "",
+        first_name: user.user_profile?.first_name || "",
+        last_name: user.user_profile?.last_name || "",
+        email: user.email || "",
+        phone_number: user.user_profile?.phone_number || "",
+        address: user.user_profile?.address || "",
         profile_picture: "",
-        profile_picture_preview: user.user.user_profile?.profile_picture || "",
+        profile_picture_preview: user.user_profile?.profile_picture
+          ? `http://10.10.12.15:8000${user.user_profile.profile_picture}`
+          : "/default-avatar.png", // Provide a default avatar
       });
     }
   }, [user]);
+
+  console.log("form Data:", formData);
 
   const openEditProfileModal = () => setIsEditProfileModalOpen(true);
   const closeEditProfileModal = () => setIsEditProfileModalOpen(false);
@@ -87,13 +93,14 @@ export default function ProfilePage() {
         payload.append("profile_picture", formData.profile_picture);
       }
 
-      const response = await apiClient.put("auth/profile/", payload, {
+      const response = await apiClient.put("/auth/profile/", payload, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (response?.data) {
         const updated = response.data;
         refetch();
+        // Fixed: Update form data to match API response structure
         setFormData((prev) => ({
           ...prev,
           first_name: updated.user_profile?.first_name || "",
@@ -101,7 +108,9 @@ export default function ProfilePage() {
           email: updated.email || "",
           phone_number: updated.user_profile?.phone_number || "",
           address: updated.user_profile?.address || "",
-          profile_picture_preview: updated.user_profile?.profile_picture || "",
+          profile_picture_preview: updated.user_profile?.profile_picture
+            ? `http://10.10.12.15:8000${updated.user_profile.profile_picture}`
+            : "/default-avatar.png",
         }));
         alert("Profile updated successfully!");
         closeEditProfileModal();
@@ -112,7 +121,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSavePassword = () => {
+  const handleSavePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
       alert("Please fill in all fields!");
       return;
@@ -121,9 +130,21 @@ export default function ProfilePage() {
       alert("New passwords do not match!");
       return;
     }
-    console.log("Password changed successfully!");
-    alert("Password changed successfully!");
-    closePasswordModal();
+
+    try {
+      const response = await apiClient.put("/auth/password-change/", {
+        current_password: currentPassword,
+        new_password: newPassword,
+      });
+
+      if (response?.data) {
+        alert("Password changed successfully!");
+        closePasswordModal();
+      }
+    } catch (error) {
+      console.error("Password change failed:", error);
+      alert("Failed to change password. Please check your current password.");
+    }
   };
 
   // const handleDeleteAccount = () => {
@@ -143,14 +164,13 @@ export default function ProfilePage() {
           <div className="flex flex-col md:flex-row text-left items-start gap-0 md:gap-5">
             <div className="relative w-14 h-14 md:w-18 md:h-18">
               <img
-                src={
-                  formData.profile_picture_preview
-                    ? `https://aissayrevise.pythonanywhere.com${formData.profile_picture_preview}`
-                    : "https://i.pravatar.cc/150?img=32"
-                }
+                src={formData.profile_picture_preview}
                 alt="Profile"
                 crossOrigin="anonymous"
                 className="w-full h-full rounded-full object-cover"
+                onError={(e) => {
+                  e.target.src = "/default-avatar.png"; // Fallback image
+                }}
               />
               <button className="absolute bottom-0.5 right-0 p-1 cursor-pointer rounded-full bg-white/60 m-auto">
                 <FaEdit
@@ -168,7 +188,7 @@ export default function ProfilePage() {
           </div>
           <div className="flex items-center">
             <span className="mt-2 text-sm font-semibold bg-gray-100 text-black px-2 py-1 rounded-lg">
-              {user?.user?.role}
+              {user?.role}
             </span>
           </div>
         </div>
@@ -185,28 +205,28 @@ export default function ProfilePage() {
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 space-y-6">
-            <div className="flex  items-center gap-2">
+            <div className="flex items-center gap-2">
               <Mail className="text-gray-400" />
               <div className="text-start">
                 <p className="text-black">{formData.email || "N/A"}</p>
                 <p className="text-gray-400">E-mail</p>
               </div>
             </div>
-            <div className="flex  items-center gap-2">
+            <div className="flex items-center gap-2">
               <Phone className="text-gray-400" />
               <div className="text-start">
                 <p className="text-black">{formData.phone_number || "N/A"}</p>
                 <p className="text-gray-400">Phone</p>
               </div>
             </div>
-            <div className="flex  items-center gap-2">
+            <div className="flex items-center gap-2">
               <MapPin className="text-gray-400" />
               <div className="text-start">
                 <p className="text-black">{formData.address || "N/A"}</p>
                 <p className="text-gray-400">Location</p>
               </div>
             </div>
-            <div className="flex  items-center gap-2">
+            <div className="flex items-center gap-2">
               <button
                 onClick={openPasswordModal}
                 className="text-gray-500 hover:text-blue-500 transition py-3 cursor-pointer"
@@ -234,84 +254,6 @@ export default function ProfilePage() {
         <BillingHistoryTable />
       </div>
 
-      {/* Update Fields */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold">Name</label>
-          <div className="relative">
-            <input
-              type="text"
-              value={`${user?.user?.user_profile?.first_name || ""} ${
-                user?.user?.user_profile?.last_name || ""
-              }`.trim()}
-              readOnly
-              className="w-full bg-blue-100 text-blue-500 rounded-lg py-2 px-4 pr-10 outline-none"
-            />
-
-            <FiEdit2
-              onClick={openEditProfileModal}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold">E-mail</label>
-          <div className="relative">
-            <input
-              type="email"
-              value={user?.user?.email}
-              readOnly
-              className="w-full bg-blue-100 text-blue-500 rounded-lg py-2 px-4 pr-10 outline-none"
-            />
-            <FiEdit2
-              onClick={openEditProfileModal}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400"
-            />
-          </div>
-        </div>
-      </div> */}
-
-      {/* Change Password Section */}
-      {/* <div className="mt-8 p-6 rounded-2xl border border-blue-200 shadow-md gap-4">
-        <button
-          onClick={openPasswordModal}
-          className="text-gray-500 hover:text-blue-500 transition py-3"
-        >
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-full bg-gray-200">
-              <FiLock className="text-gray-500" size={20} />
-            </div>
-            <div>
-              <h4 className="font-semibold text-lg">Change Password</h4>
-            </div>
-            <FiExternalLink size={20} />
-          </div>
-        </button>
-      </div> */}
-
-      {/* Delete Account Section */}
-      {/* <div className="md:flex justify-between items-center mt-8 p-6 shadow-md rounded-2xl border border-red-300">
-        <div>
-          <h4 className="text-red-500 font-semibold text-lg">Delete Account</h4>
-          <p className="text-gray-500 text-sm mt-2">
-            Contact our{" "}
-            <a href="#" className="text-blue-500 hover:underline">
-              support team
-            </a>{" "}
-            to process the deletion of your account.
-          </p>
-        </div>
-        <div className="py-3">
-          <button
-            onClick={openDeleteModal}
-            className="bg-red-500 hover:bg-red-600 shadow-md text-white font-semibold py-2 px-6 rounded-lg transition"
-          >
-            Apply Delete
-          </button>
-        </div>
-      </div> */}
-
       {/* Edit Profile Modal */}
       {isEditProfileModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
@@ -328,10 +270,13 @@ export default function ProfilePage() {
                       src={
                         formData.profile_picture_preview?.startsWith("blob:")
                           ? formData.profile_picture_preview
-                          : `https://aissayrevise.pythonanywhere.com${formData.profile_picture_preview}`
+                          : formData.profile_picture_preview
                       }
                       alt="Profile"
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "/default-avatar.png";
+                      }}
                     />
                   ) : (
                     <span className="text-gray-400 text-sm">No Image</span>
@@ -459,37 +404,6 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
-
-      {/* Delete Account Modal */}
-      {/* {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-md">
-            <div className="w-10 h-10 bg-red-100 rounded-lg mb-4 flex items-center justify-center">
-              <FaTrashCan className="text-red-500 text-xl" />
-            </div>
-            <h5 className="text-gray-600 font-semibold">
-              Are you sure you want to delete your account?
-            </h5>
-            <p className="mb-5">
-              Enter your current password you used to login with
-            </p>
-            <div className="flex justify-between gap-4 w-full">
-              <button
-                onClick={closeDeleteModal}
-                className="px-4 py-2 rounded-lg border border-base-300 text-gray-600 hover:bg-gray-100 w-full"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteAccount}
-                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 w-full"
-              >
-                Yes Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }

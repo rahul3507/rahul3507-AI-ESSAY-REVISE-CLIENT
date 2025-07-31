@@ -1,3 +1,5 @@
+/** @format */
+
 import { useState, useEffect, useCallback } from "react";
 import apiClient from "../../lib/api-client";
 
@@ -10,7 +12,7 @@ const useLoggedUser = () => {
     setLoading(true);
     try {
       const response = await apiClient.get("/auth/profile/");
-      console.log(response);
+      console.log("user data", response);
       setUser(response.data);
       setError(null);
     } catch (err) {

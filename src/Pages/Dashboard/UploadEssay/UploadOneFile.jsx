@@ -52,10 +52,10 @@ const UploadOneFile = () => {
   const [currentError, setCurrentError] = useState(null);
 
   const handleFileChange = async (e) => {
-    if (!user?.is_active) {
-      toast.error("You currently do not have an active subscription plan.");
-      return;
-    }
+    // if (!user?.is_active) {
+    //   toast.error("You currently do not have an active subscription plan.");
+    //   return;
+    // }
 
     const file = e.target.files[0];
     if (!file) return;

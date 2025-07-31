@@ -23,12 +23,12 @@ const ComparisonFile = () => {
   const navigate = useNavigate();
 
   const handleCompareClick = () => {
-    if (!user?.is_active) {
-      toast.error(
-        "You need an active subscription to access comparison tools."
-      );
-      return;
-    }
+    // if (!user?.is_active) {
+    //   toast.error(
+    //     "You need an active subscription to access comparison tools."
+    //   );
+    //   return;
+    // }
 
     toast.success("Redirecting to comparison tool...");
     navigate("/upload_comparison");
