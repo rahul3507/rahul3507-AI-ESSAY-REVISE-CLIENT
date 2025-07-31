@@ -25,8 +25,12 @@ const Signup = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await apiClient.post("/auth/otp/create/", {
+      await apiClient.post("http://10.10.12.15:8000/api/auth/register/", {
         email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        password: data.password,
+        user_type: data.role,
       });
       localStorage.setItem("pendingSignupData", JSON.stringify(data));
       navigate("/otp");

@@ -1,10 +1,10 @@
+/** @format */
+
 import axios from "axios";
 import { getCookie, setCookie, removeAuthTokens } from "./cookie-utils";
-const fallbackURL = "https://aissayrevise.pythonanywhere.com/api";
+const fallbackURL = "http://10.10.12.15:8000/api";
 const envUrl = import.meta.env.VITE_API_URL;
 const API_URL = envUrl && envUrl.startsWith("http") ? envUrl : fallbackURL;
-;
-
 const apiClient = axios.create({
   baseURL: API_URL,
   withCredentials: true,
@@ -54,7 +54,7 @@ apiClient.interceptors.response.use(
       const originalRequest = error.config;
       if (
         !originalRequest._retry &&
-        !originalRequest.url.includes("/auth/refresh-token")
+        !originalRequest.url.includes("/auth/refresh-token/")
       ) {
         if (isRefreshing) {
           try {
@@ -79,7 +79,7 @@ apiClient.interceptors.response.use(
 
         try {
           const response = await apiClient.get(
-            `/auth/refresh-token?refreshToken=${refreshToken}`
+            `/auth/refresh-token/?refreshToken=${refreshToken}`
           );
           const { accessToken } = response.data.data;
           setCookie("accessToken", accessToken, { maxAge: 30 * 24 * 60 * 60 });

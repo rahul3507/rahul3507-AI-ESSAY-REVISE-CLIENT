@@ -37,8 +37,6 @@ const OtpVerification = () => {
         otp: finalOtp,
       });
 
-      await apiClient.post("/auth/register/", signupData);
-
       localStorage.removeItem("pendingSignupData");
       navigate("/");
     } catch (error) {
