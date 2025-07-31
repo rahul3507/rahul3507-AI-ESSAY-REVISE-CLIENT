@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
-// import { FaTrashCan } from "react-icons/fa6";
 import { FiEdit2, FiExternalLink, FiLock, FiUpload } from "react-icons/fi";
 import useLoggedUser from "../../../components/hook/useLoggedUser";
 import apiClient from "../../../lib/api-client";
@@ -10,10 +9,11 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Mail, MapPin, Phone } from "lucide-react";
 import BillingHistoryTable from "./BillingHistoryTable";
 
+import { Bounce, toast, ToastContainer } from "react-toastify";
+
 export default function ProfilePage() {
   const { user, loading, refetch } = useLoggedUser([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -30,10 +30,9 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Fixed: Updated to match the actual API response structure
   useEffect(() => {
     if (user) {
-      console.log("User data received:", user); // Debug log
+      console.log("User data received:", user);
       setFormData({
         first_name: user.user_profile?.first_name || "",
         last_name: user.user_profile?.last_name || "",
@@ -43,12 +42,10 @@ export default function ProfilePage() {
         profile_picture: "",
         profile_picture_preview: user.user_profile?.profile_picture
           ? `http://10.10.12.15:8000${user.user_profile.profile_picture}`
-          : "/default-avatar.png", // Provide a default avatar
+          : "/default-avatar.png",
       });
     }
   }, [user]);
-
-  console.log("form Data:", formData);
 
   const openEditProfileModal = () => setIsEditProfileModalOpen(true);
   const closeEditProfileModal = () => setIsEditProfileModalOpen(false);
@@ -59,8 +56,6 @@ export default function ProfilePage() {
     setNewPassword("");
     setConfirmPassword("");
   };
-  // const openDeleteModal = () => setIsDeleteModalOpen(true);
-  // const closeDeleteModal = () => setIsDeleteModalOpen(false);
 
   const handleEditProfileChange = (e) => {
     const { name, value, files } = e.target;
@@ -99,59 +94,75 @@ export default function ProfilePage() {
 
       if (response?.data) {
         const updated = response.data;
-        refetch();
-        // Fixed: Update form data to match API response structure
+        // console.log("API response:", updated); // Debug log to inspect response
+
+        // Construct the profile picture URL
+        let profilePictureUrl = "/default-avatar.png"; // Default fallback
+        if (updated.user_profile?.profile_picture) {
+          // Check if the URL is absolute or relative
+          const isAbsoluteUrl =
+            updated.user_profile.profile_picture.startsWith("http");
+          profilePictureUrl = isAbsoluteUrl
+            ? updated.user_profile.profile_picture
+            : `http://10.10.12.15:8000${updated.user_profile.profile_picture}`;
+        }
+
+        // Update formData with validated URL
         setFormData((prev) => ({
           ...prev,
-          first_name: updated.user_profile?.first_name || "",
-          last_name: updated.user_profile?.last_name || "",
-          email: updated.email || "",
-          phone_number: updated.user_profile?.phone_number || "",
-          address: updated.user_profile?.address || "",
-          profile_picture_preview: updated.user_profile?.profile_picture
-            ? `http://10.10.12.15:8000${updated.user_profile.profile_picture}`
-            : "/default-avatar.png",
+          first_name: updated.user_profile?.first_name || prev.first_name,
+          last_name: updated.user_profile?.last_name || prev.last_name,
+          email: updated.email || prev.email,
+          phone_number: updated.user_profile?.phone_number || prev.phone_number,
+          address: updated.user_profile?.address || prev.address,
+          profile_picture: "", // Reset file input
+          profile_picture_preview: profilePictureUrl,
         }));
-        alert("Profile updated successfully!");
+
+        refetch(); // Refresh user data
+        toast.success("Profile updated successfully!");
         closeEditProfileModal();
       }
     } catch (error) {
       console.error("Profile update failed:", error);
-      alert("Failed to update profile.");
+      toast.error("Failed to update profile. Please try again.");
     }
   };
 
   const handleSavePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      alert("Please fill in all fields!");
+      toast.error("Please fill in all fields!");
       return;
     }
     if (newPassword !== confirmPassword) {
-      alert("New passwords do not match!");
+      toast.error("New passwords do not match!");
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters long!");
       return;
     }
 
     try {
-      const response = await apiClient.put("/auth/password-change/", {
+      const response = await apiClient.post("/auth/password-change/", {
         current_password: currentPassword,
         new_password: newPassword,
+        confirm_new_password: confirmPassword, // Include if required by API
       });
 
       if (response?.data) {
-        alert("Password changed successfully!");
+        toast.success("Password changed successfully!");
         closePasswordModal();
       }
     } catch (error) {
-      console.error("Password change failed:", error);
-      alert("Failed to change password. Please check your current password.");
+      // console.error("Password change failed:", error.response?.data);
+      const errorMessage =
+        error.response?.data?.details ||
+        error.response?.data?.message ||
+        "Please check your current password.";
+      toast.error(`Failed to change password: ${errorMessage}`);
     }
   };
-
-  // const handleDeleteAccount = () => {
-  //   console.log("Account deleted!");
-  //   alert("Your account has been deleted!");
-  //   closeDeleteModal();
-  // };
 
   if (loading) return <LoadingSpinner />;
   if (!user) return <div>User not found.</div>;
@@ -167,7 +178,7 @@ export default function ProfilePage() {
                 src={formData.profile_picture_preview}
                 alt="Profile"
                 crossOrigin="anonymous"
-                className="w-full h-full rounded-full object-cover"
+                className="w-full h-full rounded-full object-cover bg-gray-200"
                 onError={(e) => {
                   e.target.src = "/default-avatar.png"; // Fallback image
                 }}
@@ -287,6 +298,7 @@ export default function ProfilePage() {
                   <input
                     type="file"
                     accept="image/*"
+                    name="profile_picture"
                     onChange={handleEditProfileChange}
                     className="absolute inset-0 opacity-0 cursor-pointer"
                   />
@@ -319,7 +331,8 @@ export default function ProfilePage() {
                 value={formData.email}
                 onChange={handleEditProfileChange}
                 placeholder="Email"
-                className="p-2 border border-gray-200 rounded-lg"
+                disabled
+                className="p-2 border border-gray-200 rounded-lg bg-gray-100 cursor-not-allowed"
               />
               <input
                 type="text"
@@ -404,6 +417,20 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 }
