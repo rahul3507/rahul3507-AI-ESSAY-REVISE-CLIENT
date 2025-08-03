@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { PureComponent } from "react";
+import { PureComponent } from "react";
 import {
   Radar,
   RadarChart,
@@ -10,67 +10,81 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+// Add custom CSS to remove focus outline
+const styles = `
+  .recharts-wrapper,
+  .recharts-surface,
+  .recharts-responsive-container,
+  .recharts-radar,
+  .recharts-polar-grid,
+  .recharts-polar-angle-axis,
+  .recharts-polar-radius-axis {
+    outline: none !important;
+    border: none !important;
+  }
+  .recharts-wrapper:focus,
+  .recharts-surface:focus,
+  .recharts-responsive-container:focus,
+  .recharts-radar:focus,
+  .recharts-polar-grid:focus,
+  .recharts-polar-angle-axis:focus,
+  .recharts-polar-radius-axis:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+`;
+
+// Inject the styles into the document
+const styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
+
 const data = [
   {
-    subject: "Math",
-    A: 120,
-    B: 110,
-    fullMark: 150,
+    subject: "Argumentative",
+    A: 95,
+    fullMark: 100,
   },
   {
-    subject: "Chinese",
-    A: 98,
-    B: 130,
-    fullMark: 150,
+    subject: "Descriptive",
+    A: 33,
+    fullMark: 100,
   },
   {
-    subject: "English",
-    A: 86,
-    B: 130,
-    fullMark: 150,
+    subject: "Expository",
+    A: 77,
+    fullMark: 100,
   },
   {
-    subject: "Geography",
-    A: 99,
-    B: 100,
-    fullMark: 150,
+    subject: "Literary",
+    A: 66,
+    fullMark: 100,
   },
   {
-    subject: "Physics",
-    A: 85,
-    B: 90,
-    fullMark: 150,
-  },
-  {
-    subject: "History",
-    A: 65,
-    B: 85,
-    fullMark: 150,
+    subject: "Narrative",
+    A: 70,
+    fullMark: 100,
   },
 ];
 
-const EssayRadarCard = () => {
-  return (
-    <div>
-      <h2 className="text-black text-sm md:text-base ">
-        Essay Types Performance
-      </h2>
+export default class EssayRadarCard extends PureComponent {
+  render() {
+    return (
       <ResponsiveContainer width="100%" height="100%">
-        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+        <RadarChart cx="50%" cy="47%" outerRadius="70%" data={data}>
           <PolarGrid />
           <PolarAngleAxis dataKey="subject" />
-          <PolarRadiusAxis />
+          <PolarRadiusAxis angle={90} />
           <Radar
             name="Mike"
             dataKey="A"
             stroke="#8884d8"
             fill="#8884d8"
-            fillOpacity={0.6}
+            fillOpacity={0.2}
           />
         </RadarChart>
       </ResponsiveContainer>
-    </div>
-  );
-};
-
-export default EssayRadarCard;
+    );
+  }
+}
