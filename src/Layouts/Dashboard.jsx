@@ -79,7 +79,7 @@ const Dashboard = () => {
       title: "Analytics",
       path: "/analytics",
       icon: iconMappings.Analytics,
-      role: "student",
+      role: "teacher",
     },
     {
       title: "Upload Essay",
@@ -97,7 +97,7 @@ const Dashboard = () => {
       title: "Assignment",
       path: "/assignment",
       icon: iconMappings.Assignment,
-      role: "student",
+      role: "user",
     },
     {
       title: "Teachers",
