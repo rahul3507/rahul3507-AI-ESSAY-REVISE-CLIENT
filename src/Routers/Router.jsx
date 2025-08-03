@@ -21,6 +21,7 @@ import TermsAndConditions from "../Pages/Authentication/TermsAndConditions";
 import Assignment from "../Pages/Dashboard/Assignment/Assignment";
 import Teachers from "../Pages/Dashboard/Teachers/Teachers";
 import Analytics from "../Pages/Dashboard/Analytics/Analytics";
+import Essays from "../Pages/Dashboard/Essays/Essays";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: "/assignment",
         element: <Assignment />,
+      },
+      {
+        path: "/essays",
+        element: <Essays />,
       },
       {
         path: "/teachers",

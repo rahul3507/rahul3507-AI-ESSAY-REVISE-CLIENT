@@ -12,6 +12,7 @@ import {
   RiArrowLeftSLine,
   RiBookletLine,
   RiBarChartBoxLine,
+  RiGraduationCapFill,
 } from "react-icons/ri";
 import { removeAuthTokens } from "../lib/cookie-utils";
 import useLoggedUser from "../components/hook/useLoggedUser";
@@ -65,6 +66,7 @@ const Dashboard = () => {
     Assignment: RiBookletLine,
     Teachers: FaUsers, // Assuming Teachers is a component that renders the Teachers page
     Analytics: RiBarChartBoxLine,
+    Essays: RiGraduationCapFill,
   };
 
   const Menus = [
@@ -98,6 +100,12 @@ const Dashboard = () => {
       path: "/assignment",
       icon: iconMappings.Assignment,
       role: "user",
+    },
+    {
+      title: "Essays",
+      path: "/essays",
+      icon: iconMappings.Essays,
+      role: "teacher",
     },
     {
       title: "Teachers",
