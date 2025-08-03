@@ -1,5 +1,6 @@
 /** @format */
 import EssayRadarCard from "./EssayRadarCard";
+import EssayPieChart from "./EssayPieChart";
 const Analytics = () => {
   return (
     <div className="px-4">
@@ -13,6 +14,10 @@ const Analytics = () => {
             Essay Types Performance
           </h1>
           <EssayRadarCard />
+        </div>
+        <div className="border border-gray-200 rounded-2xl col-span-1 h-80 py-3 px-5">
+          <h1 className="text-black text-sm md:text-lg">Category Analytics</h1>
+          <EssayPieChart />
         </div>
       </div>
     </div>
