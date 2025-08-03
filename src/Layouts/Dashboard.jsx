@@ -114,6 +114,12 @@ const Dashboard = () => {
       role: "student",
     },
     {
+      title: "Students",
+      path: "/students",
+      icon: iconMappings.Teachers,
+      role: "teacher",
+    },
+    {
       title: "Upgrade",
       path: "/upgrade",
       icon: iconMappings.Upgrade,
