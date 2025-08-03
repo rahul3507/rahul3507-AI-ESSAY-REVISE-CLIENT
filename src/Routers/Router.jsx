@@ -22,6 +22,7 @@ import Assignment from "../Pages/Dashboard/Assignment/Assignment";
 import Teachers from "../Pages/Dashboard/Teachers/Teachers";
 import Analytics from "../Pages/Dashboard/Analytics/Analytics";
 import Essays from "../Pages/Dashboard/Essays/Essays";
+import Students from "../Pages/Dashboard/Students/Students";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "/teachers",
         element: <Teachers />,
+      },
+      {
+        path: "/students",
+        element: <Students />,
       },
       {
         path: "/upgrade",
