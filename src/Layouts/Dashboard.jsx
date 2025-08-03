@@ -11,6 +11,7 @@ import {
   RiFolderUploadLine,
   RiArrowLeftSLine,
   RiBookletLine,
+  RiBarChartBoxLine,
 } from "react-icons/ri";
 import { removeAuthTokens } from "../lib/cookie-utils";
 import useLoggedUser from "../components/hook/useLoggedUser";
@@ -63,6 +64,7 @@ const Dashboard = () => {
     Home: RiHome9Line,
     Assignment: RiBookletLine,
     Teachers: FaUsers, // Assuming Teachers is a component that renders the Teachers page
+    Analytics: RiBarChartBoxLine,
   };
 
   const Menus = [
@@ -72,6 +74,12 @@ const Dashboard = () => {
       icon: iconMappings.Home,
       role: "user",
       gap: true,
+    },
+    {
+      title: "Analytics",
+      path: "/analytics",
+      icon: iconMappings.Analytics,
+      role: "student",
     },
     {
       title: "Upload Essay",

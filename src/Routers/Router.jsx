@@ -20,6 +20,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import TermsAndConditions from "../Pages/Authentication/TermsAndConditions";
 import Assignment from "../Pages/Dashboard/Assignment/Assignment";
 import Teachers from "../Pages/Dashboard/Teachers/Teachers";
+import Analytics from "../Pages/Dashboard/Analytics/Analytics";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "/analytics",
+        element: <Analytics />,
       },
     ],
   },
