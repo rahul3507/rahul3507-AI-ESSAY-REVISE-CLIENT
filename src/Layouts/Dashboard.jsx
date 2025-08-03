@@ -70,32 +70,32 @@ const Dashboard = () => {
       title: "Home",
       path: "/",
       icon: iconMappings.Home,
-      role: "user",
+      role: "student",
       gap: true,
     },
     {
       title: "Upload Essay",
       path: "/upload_essay",
       icon: iconMappings.Book,
-      role: "user",
+      role: "student",
     },
     {
       title: "Compare Essay",
       path: "/compare_essay",
       icon: iconMappings.Book,
-      role: "user",
+      role: "student",
     },
     {
       title: "Assignment",
       path: "/assignment",
       icon: iconMappings.Assignment,
-      role: "user",
+      role: "student",
     },
     {
       title: "Teachers",
       path: "/teachers",
       icon: iconMappings.Teachers,
-      role: "user",
+      role: "student",
     },
     {
       title: "Upgrade",
@@ -105,7 +105,9 @@ const Dashboard = () => {
     },
   ];
 
-  const userMenus = Menus.filter((menu) => menu.role === "user");
+  const userMenus = Menus.filter(
+    (menu) => menu.role === "user" || menu.role === user?.role
+  );
   return (
     <div className="flex">
       {/* Sidebar */}
