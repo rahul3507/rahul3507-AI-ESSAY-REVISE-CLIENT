@@ -70,7 +70,7 @@ const Dashboard = () => {
       title: "Home",
       path: "/",
       icon: iconMappings.Home,
-      role: "student",
+      role: "user",
       gap: true,
     },
     {
