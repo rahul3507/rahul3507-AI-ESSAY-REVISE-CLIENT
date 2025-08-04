@@ -14,13 +14,11 @@ const ProfileDialog = ({ teacher }) => {
               src={teacher.profileImg || "https://i.pravatar.cc/150?img=32"}
               alt="Profile"
               crossOrigin="anonymous"
-              className="w-full h-full rounded-full object-cover"
+              className="w-full h-full rounded-full object-cover bg-gray-200"
             />
           </div>
           <div className="text-left">
-            <h2 className="text-lg font-semibold mt-2">
-              {teacher.teacherName}
-            </h2>
+            <h2 className="text-lg font-semibold mt-2">{teacher.name}</h2>
             <p className="text-gray-400">{teacher.email || "N/A"}</p>
           </div>
         </div>
@@ -65,7 +63,7 @@ const ProfileDialog = ({ teacher }) => {
 ProfileDialog.propTypes = {
   teacher: PropTypes.shape({
     profileImg: PropTypes.string,
-    teacherName: PropTypes.string,
+    name: PropTypes.string,
     email: PropTypes.string,
     phoneNumber: PropTypes.string,
     address: PropTypes.string,

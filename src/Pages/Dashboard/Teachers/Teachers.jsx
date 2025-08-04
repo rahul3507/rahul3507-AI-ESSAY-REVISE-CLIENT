@@ -26,7 +26,7 @@ import ProfileDialog from "./ProfileDialog";
 const Teachers = () => {
   const [teachersData, setBillingData] = useState([
     {
-      teacherName: "John Smith",
+      name: "John Smith",
       email: "john.smith@student.edu",
       assignments: 12,
       reviewed: 124,
@@ -37,7 +37,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/john_smith.jpg",
     },
     {
-      teacherName: "Jane Doe",
+      name: "Jane Doe",
       email: "jane.doe@teacher.edu",
       assignments: 230,
       reviewed: 124,
@@ -48,7 +48,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/jane_doe.jpg",
     },
     {
-      teacherName: "Alice Johnson",
+      name: "Alice Johnson",
       email: "alice.johnson@teacher.edu",
       assignments: 20,
       reviewed: 124,
@@ -59,7 +59,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/alice_johnson.jpg",
     },
     {
-      teacherName: "Bob Wilson",
+      name: "Bob Wilson",
       email: "bob.wilson@teacher.edu",
       assignments: 45,
       reviewed: 134,
@@ -70,7 +70,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/bob_wilson.jpg",
     },
     {
-      teacherName: "Emma Brown",
+      name: "Emma Brown",
       email: "emma.brown@teacher.edu",
       assignments: 12,
       reviewed: 164,
@@ -81,7 +81,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/emma_brown.jpg",
     },
     {
-      teacherName: "Michael Lee",
+      name: "Michael Lee",
       email: "michael.lee@teacher.edu",
       assignments: 56,
       reviewed: 184,
@@ -92,7 +92,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/michael_lee.jpg",
     },
     {
-      teacherName: "Sarah Davis",
+      name: "Sarah Davis",
       email: "sarah.davis@teacher.edu",
       assignments: 80,
       reviewed: 1254,
@@ -103,7 +103,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/sarah_davis.jpg",
     },
     {
-      teacherName: "David Clark",
+      name: "David Clark",
       email: "david.clark@teacher.edu",
       assignments: 15,
       reviewed: 1243,
@@ -114,7 +114,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/david_clark.jpg",
     },
     {
-      teacherName: "Laura Adams",
+      name: "Laura Adams",
       email: "laura.adams@teacher.edu",
       assignments: 30,
       reviewed: 124,
@@ -125,7 +125,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/laura_adams.jpg",
     },
     {
-      teacherName: "James Taylor",
+      name: "James Taylor",
       email: "james.taylor@teacher.edu",
       assignments: 25,
       reviewed: 124,
@@ -136,7 +136,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/james_taylor.jpg",
     },
     {
-      teacherName: "Emily White",
+      name: "Emily White",
       email: "emily.white@teacher.edu",
       assignments: 40,
       reviewed: 1424,
@@ -147,7 +147,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/emily_white.jpg",
     },
     {
-      teacherName: "Thomas Green",
+      name: "Thomas Green",
       email: "thomas.green@teacher.edu",
       assignments: 60,
       reviewed: 1224,
@@ -158,7 +158,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/thomas_green.jpg",
     },
     {
-      teacherName: "Olivia Harris",
+      name: "Olivia Harris",
       email: "olivia.harris@teacher.edu",
       assignments: 70,
       reviewed: 424,
@@ -169,7 +169,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/olivia_harris.jpg",
     },
     {
-      teacherName: "William Lewis",
+      name: "William Lewis",
       email: "william.lewis@teacher.edu",
       assignments: 35,
       reviewed: 1324,
@@ -180,7 +180,7 @@ const Teachers = () => {
       profileImg: "https://example.com/profiles/william_lewis.jpg",
     },
     {
-      teacherName: "Sophia Walker",
+      name: "Sophia Walker",
       email: "sophia.walker@teacher.edu",
       assignments: 90,
       reviewed: 1124,
@@ -207,7 +207,7 @@ const Teachers = () => {
     .filter(
       (item) =>
         item.action === "accepted" &&
-        item.teacherName.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
       if (filterOption === "high") {
@@ -323,7 +323,7 @@ const Teachers = () => {
               {filteredData.map((item, index) => (
                 <TableRow key={index} className="border-0">
                   <TableCell className="py-3">
-                    {item.teacherName}
+                    {item.name}
                     <div className="text-gray-500 text-sm">{item.email}</div>
                   </TableCell>
                   <TableCell className="text-center">

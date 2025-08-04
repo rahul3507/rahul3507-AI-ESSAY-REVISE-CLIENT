@@ -20,20 +20,20 @@ import {
 import { Input } from "../../../components/ui/input";
 import { useState } from "react";
 import { Eye } from "lucide-react";
-import ProfileDialog from "./ProfileDialog";
+import ProfileDialog from "../Teachers/ProfileDialog";
 
-const TeacherRequestDialog = ({
+const StudentRequestDialog = ({
   isOpen,
   onClose,
-  teachers,
+  students,
   onAccept,
   onAcceptAll,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Filter teachers based on search term (case-insensitive)
-  const filteredTeachers = teachers.filter((teacher) =>
-    [teacher.name, teacher.email].some((field) =>
+  // Filter students based on search term (case-insensitive)
+  const filteredStudents = students.filter((student) =>
+    [student.name, student.email].some((field) =>
       field.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
@@ -42,36 +42,36 @@ const TeacherRequestDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose} className="bg-white">
       <DialogContent className="bg-white max-w-[90vw] sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Teacher Requests</DialogTitle>
+          <DialogTitle>Student Requests</DialogTitle>
           <Input
             type="text"
-            placeholder="Search Teacher by Name or Email"
+            placeholder="Search Student by Name or Email"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-1/2 mt-3"
           />
         </DialogHeader>
         <div className="overflow-x-auto">
-          {filteredTeachers.length === 0 ? (
+          {filteredStudents.length === 0 ? (
             <p className="text-gray-500">
               {searchTerm
-                ? "No teachers match your search."
-                : "No pending teacher requests."}
+                ? "No students match your search."
+                : "No pending student requests."}
             </p>
           ) : (
             <div className="space-y-4">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-white rounded-5xl border-0">
-                    <TableHead className="p-2">Teacher Name</TableHead>
-                    <TableHead className="text-center">Assignments</TableHead>
+                    <TableHead className="p-2">Student Name</TableHead>
+                    <TableHead className="text-center">Score</TableHead>
                     <TableHead className="text-center">Reviewed</TableHead>
                     <TableHead className="text-center">Profile</TableHead>
                     <TableHead className="text-center">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredTeachers.map((item, index) => (
+                  {filteredStudents.map((item, index) => (
                     <TableRow key={index} className="border-0">
                       <TableCell className="py-3">
                         {item.name}
@@ -80,7 +80,7 @@ const TeacherRequestDialog = ({
                         </div>
                       </TableCell>
                       <TableCell className="text-center">
-                        {item.assignments}
+                        {item.score}
                       </TableCell>
                       <TableCell className="text-center">
                         {item.reviewed}
@@ -121,7 +121,7 @@ const TeacherRequestDialog = ({
           >
             Cancel
           </Button>
-          {filteredTeachers.length > 0 && (
+          {filteredStudents.length > 0 && (
             <Button
               className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
               onClick={onAcceptAll}
@@ -135,20 +135,19 @@ const TeacherRequestDialog = ({
   );
 };
 
-TeacherRequestDialog.propTypes = {
+StudentRequestDialog.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  teachers: PropTypes.arrayOf(
+  students: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
-      assignments: PropTypes.number,
+      score: PropTypes.number,
       reviewed: PropTypes.number,
-      action: PropTypes.string,
     })
   ).isRequired,
   onAccept: PropTypes.func.isRequired,
   onAcceptAll: PropTypes.func.isRequired,
 };
 
-export default TeacherRequestDialog;
+export default StudentRequestDialog;
