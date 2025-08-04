@@ -49,13 +49,23 @@ const EssayBarChart = () => {
           bottom: 5,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
-        <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
-        <Tooltip />
-        <Legend />
-        <Bar yAxisId="left" dataKey="student" fill="#8884d8" />
+
+        <Tooltip cursor={false} />
+
+        <Bar yAxisId="left" dataKey="student" radius={[12, 12, 0, 0]}>
+          {data.map((entry, index) => {
+            const colors = [
+              "#EF4444",
+              "#FF7700",
+              "#FFB01C",
+              "#34C724",
+              "#1155FF",
+            ];
+            return <Cell key={`cell-${index}`} fill={colors[index]} />;
+          })}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );

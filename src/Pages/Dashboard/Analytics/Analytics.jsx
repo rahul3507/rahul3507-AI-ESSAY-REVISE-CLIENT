@@ -10,7 +10,7 @@ const Analytics = () => {
       </h1>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mr-4">
-        <div className="border border-gray-200 rounded-2xl col-span-1 h-80 py-3 px-5">
+        <div className="border pb-8 border-gray-200 rounded-2xl col-span-1 h-80 py-3 px-5">
           <h1 className="text-black text-sm md:text-lg">Score Distribution</h1>
           <EssayBarChart />
         </div>
