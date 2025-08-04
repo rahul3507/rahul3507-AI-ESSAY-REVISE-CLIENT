@@ -24,7 +24,7 @@ import { Eye } from "lucide-react";
 import ProfileDialog from "./ProfileDialog";
 
 const Teachers = () => {
-  const [teachersData, setBillingData] = useState([
+  const [teachersData, setTeachersData] = useState([
     {
       name: "John Smith",
       email: "john.smith@student.edu",
@@ -220,7 +220,7 @@ const Teachers = () => {
 
   // Handle accepting a single teacher
   const handleAccept = (email) => {
-    setBillingData((prevData) =>
+    setTeachersData((prevData) =>
       prevData.map((item) =>
         item.email === email ? { ...item, action: "accepted" } : item
       )
@@ -229,7 +229,7 @@ const Teachers = () => {
 
   // Handle accepting all teachers
   const handleAcceptAll = () => {
-    setBillingData((prevData) =>
+    setTeachersData((prevData) =>
       prevData.map((item) =>
         item.action === "accept" ? { ...item, action: "accepted" } : item
       )

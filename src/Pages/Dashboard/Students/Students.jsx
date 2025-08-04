@@ -27,29 +27,31 @@ const Students = () => {
       name: "John Smith",
       email: "john.smith@student.edu",
       score: 12,
-      reviewed: 124,
+      essay: 124,
       action: "accepted",
       phoneNumber: "555-0101-1234",
       role: "student",
       address: "123 Maple St, Springfield, IL 62701",
       profileImg: "https://example.com/profiles/john_smith.jpg",
+      assignDate: "2025-07-15",
     },
     {
       name: "Jane Doe",
       email: "jane.doe@student.edu",
       score: 30,
-      reviewed: 124,
+      essay: 124,
       action: "accept",
       phoneNumber: "555-0102-5678",
       role: "student",
       address: "456 Oak Ave, Chicago, IL 60601",
       profileImg: "https://example.com/profiles/jane_doe.jpg",
+      assignDate: "2025-07-20",
     },
     {
       name: "Alice Johnson",
       email: "alice.johnson@student.edu",
       score: 20,
-      reviewed: 124,
+      essay: 124,
       action: "accepted",
       phoneNumber: "555-0103-9012",
       role: "student",
@@ -60,7 +62,7 @@ const Students = () => {
       name: "Bob Wilson",
       email: "bob.wilson@student.edu",
       score: 45,
-      reviewed: 134,
+      essay: 134,
       action: "accept",
       phoneNumber: "555-0104-3456",
       role: "student",
@@ -71,7 +73,7 @@ const Students = () => {
       name: "Emma Brown",
       email: "emma.brown@student.edu",
       score: 12,
-      reviewed: 164,
+      essay: 164,
       action: "accepted",
       phoneNumber: "555-0105-7890",
       role: "student",
@@ -82,7 +84,7 @@ const Students = () => {
       name: "Michael Lee",
       email: "michael.lee@student.edu",
       score: 56,
-      reviewed: 184,
+      essay: 184,
       action: "accept",
       phoneNumber: "555-0106-2345",
       role: "student",
@@ -93,7 +95,7 @@ const Students = () => {
       name: "Sarah Davis",
       email: "sarah.davis@student.edu",
       score: 80,
-      reviewed: 1254,
+      essay: 1254,
       action: "accepted",
       phoneNumber: "555-0107-6789",
       role: "student",
@@ -104,7 +106,7 @@ const Students = () => {
       name: "David Clark",
       email: "david.clark@student.edu",
       score: 15,
-      reviewed: 1243,
+      essay: 1243,
       action: "accept",
       phoneNumber: "555-0108-1234",
       role: "student",
@@ -115,7 +117,7 @@ const Students = () => {
       name: "Laura Adams",
       email: "laura.adams@student.edu",
       score: 30,
-      reviewed: 124,
+      essay: 124,
       action: "accepted",
       phoneNumber: "555-0109-5678",
       role: "student",
@@ -126,7 +128,7 @@ const Students = () => {
       name: "James Taylor",
       email: "james.taylor@student.edu",
       score: 25,
-      reviewed: 124,
+      essay: 124,
       action: "accept",
       phoneNumber: "555-0110-9012",
       role: "student",
@@ -137,7 +139,7 @@ const Students = () => {
       name: "Emily White",
       email: "emily.white@student.edu",
       score: 40,
-      reviewed: 1424,
+      essay: 1424,
       action: "accepted",
       phoneNumber: "555-0111-3456",
       role: "student",
@@ -148,7 +150,7 @@ const Students = () => {
       name: "Thomas Green",
       email: "thomas.green@student.edu",
       score: 60,
-      reviewed: 1224,
+      essay: 1224,
       action: "accept",
       phoneNumber: "555-0112-7890",
       role: "student",
@@ -159,7 +161,7 @@ const Students = () => {
       name: "Olivia Harris",
       email: "olivia.harris@student.edu",
       score: 70,
-      reviewed: 424,
+      essay: 424,
       action: "accepted",
       phoneNumber: "555-0113-2345",
       role: "student",
@@ -170,7 +172,7 @@ const Students = () => {
       name: "William Lewis",
       email: "william.lewis@student.edu",
       score: 35,
-      reviewed: 1324,
+      essay: 1324,
       action: "accept",
       phoneNumber: "555-0114-6789",
       role: "student",
@@ -181,7 +183,7 @@ const Students = () => {
       name: "Sophia Walker",
       email: "sophia.walker@student.edu",
       score: 90,
-      reviewed: 1124,
+      essay: 1124,
       action: "accepted",
       phoneNumber: "555-0115-1234",
       role: "student",
@@ -311,7 +313,8 @@ const Students = () => {
               <TableRow className="bg-white rounded-5xl border-0">
                 <TableHead className="p-2">Student Name</TableHead>
                 <TableHead className="text-center">Score</TableHead>
-                <TableHead className="text-center">Reviewed</TableHead>
+                <TableHead className="text-center">Essay</TableHead>
+                <TableHead className="text-center">Assign Date</TableHead>
                 <TableHead className="text-center">Profile</TableHead>
               </TableRow>
             </TableHeader>
@@ -323,7 +326,10 @@ const Students = () => {
                     <div className="text-gray-500 text-sm">{item.email}</div>
                   </TableCell>
                   <TableCell className="text-center">{item.score}</TableCell>
-                  <TableCell className="text-center">{item.reviewed}</TableCell>
+                  <TableCell className="text-center">{item.essay}</TableCell>
+                  <TableCell className="text-center">
+                    {item.assignDate}
+                  </TableCell>
                   <TableCell className="text-center">
                     <Dialog>
                       <DialogTrigger asChild>
