@@ -41,7 +41,7 @@ const Teachers = () => {
       email: "jane.doe@teacher.edu",
       assignments: 230,
       reviewed: 124,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0102-5678",
       role: "teacher",
       address: "456 Oak Ave, Chicago, IL 60601",
@@ -63,7 +63,7 @@ const Teachers = () => {
       email: "bob.wilson@teacher.edu",
       assignments: 45,
       reviewed: 134,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0104-3456",
       role: "teacher",
       address: "321 Elm St, Naperville, IL 60540",
@@ -85,7 +85,7 @@ const Teachers = () => {
       email: "michael.lee@teacher.edu",
       assignments: 56,
       reviewed: 184,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0106-2345",
       role: "teacher",
       address: "987 Birch Dr, Peoria, IL 61604",
@@ -107,7 +107,7 @@ const Teachers = () => {
       email: "david.clark@teacher.edu",
       assignments: 15,
       reviewed: 1243,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0108-1234",
       role: "teacher",
       address: "258 Willow Way, Joliet, IL 60435",
@@ -129,7 +129,7 @@ const Teachers = () => {
       email: "james.taylor@teacher.edu",
       assignments: 25,
       reviewed: 124,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0110-9012",
       role: "teacher",
       address: "741 Chestnut Blvd, Bloomington, IL 61701",
@@ -151,7 +151,7 @@ const Teachers = () => {
       email: "thomas.green@teacher.edu",
       assignments: 60,
       reviewed: 1224,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0112-7890",
       role: "teacher",
       address: "963 Laurel Dr, Elgin, IL 60120",
@@ -173,7 +173,7 @@ const Teachers = () => {
       email: "william.lewis@teacher.edu",
       assignments: 35,
       reviewed: 1324,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0114-6789",
       role: "teacher",
       address: "357 Aspen Ct, Cicero, IL 60804",
@@ -199,7 +199,7 @@ const Teachers = () => {
 
   // Calculate the number of accepted teachers
   const acceptedCount = teachersData.filter(
-    (item) => item.action === "accept"
+    (item) => item.action === "pending"
   ).length;
 
   // Filter and sort data based on search term and filter option
@@ -231,7 +231,7 @@ const Teachers = () => {
   const handleAcceptAll = () => {
     setTeachersData((prevData) =>
       prevData.map((item) =>
-        item.action === "accept" ? { ...item, action: "accepted" } : item
+        item.action === "pending" ? { ...item, action: "accepted" } : item
       )
     );
     setIsDialogOpen(false);
@@ -353,7 +353,7 @@ const Teachers = () => {
       <TeacherRequestDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        teachers={teachersData.filter((item) => item.action === "accept")}
+        teachers={teachersData.filter((item) => item.action === "pending")}
         onAccept={handleAccept}
         onAcceptAll={handleAcceptAll}
       />
