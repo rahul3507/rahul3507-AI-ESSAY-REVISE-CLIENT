@@ -40,7 +40,7 @@ const Students = () => {
       email: "jane.doe@student.edu",
       score: 30,
       essay: 124,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0102-5678",
       role: "student",
       address: "456 Oak Ave, Chicago, IL 60601",
@@ -63,7 +63,7 @@ const Students = () => {
       email: "bob.wilson@student.edu",
       score: 45,
       essay: 134,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0104-3456",
       role: "student",
       address: "321 Elm St, Naperville, IL 60540",
@@ -85,7 +85,7 @@ const Students = () => {
       email: "michael.lee@student.edu",
       score: 56,
       essay: 184,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0106-2345",
       role: "student",
       address: "987 Birch Dr, Peoria, IL 61604",
@@ -107,7 +107,7 @@ const Students = () => {
       email: "david.clark@student.edu",
       score: 15,
       essay: 1243,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0108-1234",
       role: "student",
       address: "258 Willow Way, Joliet, IL 60435",
@@ -129,7 +129,7 @@ const Students = () => {
       email: "james.taylor@student.edu",
       score: 25,
       essay: 124,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0110-9012",
       role: "student",
       address: "741 Chestnut Blvd, Bloomington, IL 61701",
@@ -151,7 +151,7 @@ const Students = () => {
       email: "thomas.green@student.edu",
       score: 60,
       essay: 1224,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0112-7890",
       role: "student",
       address: "963 Laurel Dr, Elgin, IL 60120",
@@ -173,7 +173,7 @@ const Students = () => {
       email: "william.lewis@student.edu",
       score: 35,
       essay: 1324,
-      action: "accept",
+      action: "pending",
       phoneNumber: "555-0114-6789",
       role: "student",
       address: "357 Aspen Ct, Cicero, IL 60804",
@@ -199,7 +199,7 @@ const Students = () => {
 
   // Calculate the number of accepted students
   const acceptedCount = studentsData.filter(
-    (item) => item.action === "accept"
+    (item) => item.action === "pending"
   ).length;
 
   // Filter and sort data based on search term and filter option
@@ -231,7 +231,7 @@ const Students = () => {
   const handleAcceptAll = () => {
     setStudentsData((prevData) =>
       prevData.map((item) =>
-        item.action === "accept" ? { ...item, action: "accepted" } : item
+        item.action === "pending" ? { ...item, action: "accepted" } : item
       )
     );
     setIsDialogOpen(false);
@@ -353,7 +353,7 @@ const Students = () => {
       <StudentRequestDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        students={studentsData.filter((item) => item.action === "accept")}
+        students={studentsData.filter((item) => item.action === "pending")}
         onAccept={handleAccept}
         onAcceptAll={handleAcceptAll}
       />
