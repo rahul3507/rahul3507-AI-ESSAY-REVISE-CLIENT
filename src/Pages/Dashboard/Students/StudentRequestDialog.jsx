@@ -68,7 +68,7 @@ const StudentRequestDialog = ({
                       <TableHead className="p-2">Student Name</TableHead>
                       <TableHead className="text-center">Score</TableHead>
                       <TableHead className="text-center">Essay</TableHead>
-                      <TableHead className="text-center">Assign Date</TableHead>
+
                       <TableHead className="text-center">Profile</TableHead>
                       <TableHead className="text-center">Action</TableHead>
                     </TableRow>
@@ -88,9 +88,7 @@ const StudentRequestDialog = ({
                         <TableCell className="text-center">
                           {item.essay}
                         </TableCell>
-                        <TableCell className="text-center">
-                          {item.assignDate}
-                        </TableCell>
+
                         <TableCell className="text-center">
                           <Dialog>
                             <DialogTrigger asChild>

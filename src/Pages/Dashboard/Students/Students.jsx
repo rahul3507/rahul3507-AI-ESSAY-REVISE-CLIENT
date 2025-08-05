@@ -45,7 +45,7 @@ const Students = () => {
       role: "student",
       address: "456 Oak Ave, Chicago, IL 60601",
       profileImg: "https://example.com/profiles/jane_doe.jpg",
-      assignDate: "2025-07-20",
+      assignDate: "",
     },
     {
       name: "Alice Johnson",
@@ -57,6 +57,7 @@ const Students = () => {
       role: "student",
       address: "789 Pine Rd, Aurora, IL 60504",
       profileImg: "https://example.com/profiles/alice_johnson.jpg",
+      assignDate: "2025-07-15",
     },
     {
       name: "Bob Wilson",
@@ -68,6 +69,7 @@ const Students = () => {
       role: "student",
       address: "321 Elm St, Naperville, IL 60540",
       profileImg: "https://example.com/profiles/bob_wilson.jpg",
+      assignDate: "",
     },
     {
       name: "Emma Brown",
@@ -79,6 +81,7 @@ const Students = () => {
       role: "student",
       address: "654 Cedar Ln, Evanston, IL 60201",
       profileImg: "https://example.com/profiles/emma_brown.jpg",
+      assignDate: "2025-07-15",
     },
     {
       name: "Michael Lee",
@@ -90,6 +93,7 @@ const Students = () => {
       role: "student",
       address: "987 Birch Dr, Peoria, IL 61604",
       profileImg: "https://example.com/profiles/michael_lee.jpg",
+      assignDate: "",
     },
     {
       name: "Sarah Davis",
@@ -101,6 +105,7 @@ const Students = () => {
       role: "student",
       address: "147 Spruce Ct, Rockford, IL 61101",
       profileImg: "https://example.com/profiles/sarah_davis.jpg",
+      assignDate: "2025-07-15",
     },
     {
       name: "David Clark",
@@ -112,6 +117,7 @@ const Students = () => {
       role: "student",
       address: "258 Willow Way, Joliet, IL 60435",
       profileImg: "https://example.com/profiles/david_clark.jpg",
+      assignDate: "",
     },
     {
       name: "Laura Adams",
@@ -123,6 +129,7 @@ const Students = () => {
       role: "student",
       address: "369 Sycamore St, Champaign, IL 61820",
       profileImg: "https://example.com/profiles/laura_adams.jpg",
+      assignDate: "2025-07-15",
     },
     {
       name: "James Taylor",
@@ -134,6 +141,7 @@ const Students = () => {
       role: "student",
       address: "741 Chestnut Blvd, Bloomington, IL 61701",
       profileImg: "https://example.com/profiles/james_taylor.jpg",
+      assignDate: "",
     },
     {
       name: "Emily White",
@@ -145,6 +153,7 @@ const Students = () => {
       role: "student",
       address: "852 Magnolia Ave, Decatur, IL 62526",
       profileImg: "https://example.com/profiles/emily_white.jpg",
+      assignDate: "2025-07-15",
     },
     {
       name: "Thomas Green",
@@ -156,6 +165,7 @@ const Students = () => {
       role: "student",
       address: "963 Laurel Dr, Elgin, IL 60120",
       profileImg: "https://example.com/profiles/thomas_green.jpg",
+      assignDate: "",
     },
     {
       name: "Olivia Harris",
@@ -167,6 +177,7 @@ const Students = () => {
       role: "student",
       address: "159 Poplar St, Waukegan, IL 60085",
       profileImg: "https://example.com/profiles/olivia_harris.jpg",
+      assignDate: "2025-07-15",
     },
     {
       name: "William Lewis",
@@ -178,6 +189,7 @@ const Students = () => {
       role: "student",
       address: "357 Aspen Ct, Cicero, IL 60804",
       profileImg: "https://example.com/profiles/william_lewis.jpg",
+      assignDate: "",
     },
     {
       name: "Sophia Walker",
@@ -189,6 +201,7 @@ const Students = () => {
       role: "student",
       address: "468 Hazel Rd, Berwyn, IL 60402",
       profileImg: "https://example.com/profiles/sophia_walker.jpg",
+      assignDate: "2025-07-15",
     },
   ]);
 
@@ -220,18 +233,24 @@ const Students = () => {
 
   // Handle accepting a single student
   const handleAccept = (email) => {
+    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
     setStudentsData((prevData) =>
       prevData.map((item) =>
-        item.email === email ? { ...item, action: "accepted" } : item
+        item.email === email
+          ? { ...item, action: "accepted", assignDate: today }
+          : item
       )
     );
   };
 
   // Handle accepting all students
   const handleAcceptAll = () => {
+    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
     setStudentsData((prevData) =>
       prevData.map((item) =>
-        item.action === "pending" ? { ...item, action: "accepted" } : item
+        item.action === "pending"
+          ? { ...item, action: "accepted", assignDate: today }
+          : item
       )
     );
     setIsDialogOpen(false);
