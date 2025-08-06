@@ -149,10 +149,16 @@ const TeacherAssignment = () => {
             </CardContent>
             <CardFooter className="p-2 bg-gray-50 flex justify-between items-center mx-4 mb-4 rounded-2xl">
               <div className="text-base text-gray-600">
-                <span>
-                  {assignment.submission} Submission | {assignment.reviewed}{" "}
+                <button className="cursor-pointer">
+                  {assignment.submission} Submission
+                </button>
+              </div>
+              <span>|</span>
+              <div className="text-base text-gray-600">
+                <button>
+                  {assignment.reviewed} {""}
                   reviewed
-                </span>
+                </button>
               </div>
               <div className="flex space-x-2">
                 <Button
