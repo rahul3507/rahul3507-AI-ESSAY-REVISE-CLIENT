@@ -21,6 +21,8 @@ import { Input } from "../../../components/ui/input";
 import { Upload } from "lucide-react";
 import { DialogClose } from "../../../components/ui/dialog";
 
+import PropTypes from "prop-types";
+
 export default function AssignmentForm({ initialTitle, initialType }) {
   const [assignmentTitle, setAssignmentTitle] = useState(initialTitle || "");
   const [essayType, setEssayType] = useState(initialType || "");
@@ -226,3 +228,8 @@ export default function AssignmentForm({ initialTitle, initialType }) {
     </div>
   );
 }
+
+AssignmentForm.propTypes = {
+  initialTitle: PropTypes.string,
+  initialType: PropTypes.string,
+};
