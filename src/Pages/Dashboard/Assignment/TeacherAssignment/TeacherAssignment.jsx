@@ -11,6 +11,14 @@ import {
   CardTitle,
 } from "../../../../components/ui/card";
 import { Button } from "../../../../components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../../../components/ui/dialog";
 import TeacherAssignmentModal from "./TeacherAssignmentModal";
 
 const initialAssignments = [
@@ -65,6 +73,8 @@ const TeacherAssignment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAssignment, setEditingAssignment] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [assignmentToDelete, setAssignmentToDelete] = useState(null);
 
   const handleCreateAssignment = () => {
     setEditingAssignment(null);
@@ -94,6 +104,13 @@ const TeacherAssignment = () => {
     setAssignments((prev) =>
       prev.filter((assignment) => assignment.id !== assignmentId)
     );
+    setIsDialogOpen(false);
+    setAssignmentToDelete(null);
+  };
+
+  const handleOpenDeleteDialog = (assignment) => {
+    setAssignmentToDelete(assignment);
+    setIsDialogOpen(true);
   };
 
   const closeModal = () => {
@@ -115,7 +132,7 @@ const TeacherAssignment = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
         {assignments.map((assignment) => (
           <Card
             key={assignment.id}
@@ -168,7 +185,7 @@ const TeacherAssignment = () => {
                   <PenLine className="text-black size-5" />
                 </Button>
                 <Button
-                  onClick={() => handleDeleteAssignment(assignment.id)}
+                  onClick={() => handleOpenDeleteDialog(assignment)}
                   className="bg-white hover:bg-gray-50 border-none"
                 >
                   <Trash2 className="text-red-600 hover:text-red-800 size-5" />
@@ -178,6 +195,38 @@ const TeacherAssignment = () => {
           </Card>
         ))}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-red-400">Confirm Delete</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete the assignment{" "}
+              <span className="font-semibold text-red-400">
+                {assignmentToDelete?.title}
+              </span>
+              ? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+              className="hover:bg-gray-100"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="outline"
+              className="bg-red-500 text-white hover:bg-red-600"
+              onClick={() => handleDeleteAssignment(assignmentToDelete?.id)}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <TeacherAssignmentModal
         isOpen={isModalOpen}
