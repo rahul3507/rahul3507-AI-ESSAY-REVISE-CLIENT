@@ -192,9 +192,9 @@ const AssignmentTable = () => {
               <TableRow className="bg-white rounded-5xl border-0">
                 <TableHead className="p-2">Student Name</TableHead>
                 <TableHead className="text-center">Score</TableHead>
-                <TableHead className="text-center">Essay</TableHead>
-                <TableHead className="text-center">Assign Date</TableHead>
-                <TableHead className="text-center">Profile</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-center">Submission Date</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
