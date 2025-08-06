@@ -193,7 +193,7 @@ const StudentHomePage = () => {
         <div className="flex gap-5">
           <Button
             onClick={() => navigate("/upload_essay")}
-            className="flex gap-2 bg-black rounded-lg p-2 px-4 text-white cursor-pointer"
+            className="flex gap-2 bg-black hover:bg-black rounded-lg p-2 px-4 text-white cursor-pointer"
           >
             <Upload />
             Upload Essay
@@ -420,7 +420,7 @@ const StudentHomePage = () => {
                   <Button
                     className={
                       data.progress === "Complete"
-                        ? "bg-[#34C724] text-white cursor-pointer "
+                        ? "bg-[#34C724] hover:bg-[#34C724] text-white cursor-pointer "
                         : "bg-gray-400 text-white cursor-pointer "
                     }
                   >
