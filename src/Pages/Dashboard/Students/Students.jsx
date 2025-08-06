@@ -232,23 +232,23 @@ const Students = () => {
     });
 
   // Handle accepting a single student
-  const handleAccept = (email) => {
-    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-    setStudentsData((prevData) =>
-      prevData.map((item) =>
-        item.email === email
-          ? { ...item, action: "accepted", assignDate: today }
-          : item
-      )
-    );
-  };
+  // const handleAccept = (email) => {
+  //   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+  //   setStudentsData((prevData) =>
+  //     prevData.map((item) =>
+  //       item.email === email
+  //         ? { ...item, action: "accepted", assignDate: today }
+  //         : item
+  //     )
+  //   );
+  // };
 
   // Handle accepting all students
-  const handleAcceptAll = () => {
+  const handleAcceptAll = (selectedEmails) => {
     const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
     setStudentsData((prevData) =>
       prevData.map((item) =>
-        item.action === "pending"
+        selectedEmails.includes(item.email) && item.action === "pending"
           ? { ...item, action: "accepted", assignDate: today }
           : item
       )
@@ -373,7 +373,6 @@ const Students = () => {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         students={studentsData.filter((item) => item.action === "pending")}
-        onAccept={handleAccept}
         onAcceptAll={handleAcceptAll}
       />
     </section>

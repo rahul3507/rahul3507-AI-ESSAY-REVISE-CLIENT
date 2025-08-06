@@ -27,10 +27,11 @@ const StudentRequestDialog = ({
   isOpen,
   onClose,
   students,
-  onAccept,
+
   onAcceptAll,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStudents, setSelectedStudents] = useState(new Set());
 
   // Filter students based on search term (case-insensitive)
   const filteredStudents = students.filter((student) =>
@@ -38,6 +39,25 @@ const StudentRequestDialog = ({
       field.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
+  // Handle checkbox toggle for a student
+  const handleCheckboxChange = (email) => {
+    setSelectedStudents((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(email)) {
+        newSet.delete(email);
+      } else {
+        newSet.add(email);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle accepting all selected students
+  const handleAcceptSelected = () => {
+    onAcceptAll([...selectedStudents]);
+    setSelectedStudents(new Set()); // Clear selections after accepting
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose} className="bg-white">
@@ -65,17 +85,45 @@ const StudentRequestDialog = ({
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-white rounded-5xl border-0">
+                      <TableHead className="p-2 w-12">
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedStudents.size === filteredStudents.length
+                          }
+                          onChange={() => {
+                            if (
+                              selectedStudents.size === filteredStudents.length
+                            ) {
+                              setSelectedStudents(new Set());
+                            } else {
+                              setSelectedStudents(
+                                new Set(
+                                  filteredStudents.map(
+                                    (student) => student.email
+                                  )
+                                )
+                              );
+                            }
+                          }}
+                        />
+                      </TableHead>
                       <TableHead className="p-2">Student Name</TableHead>
                       <TableHead className="text-center">Score</TableHead>
                       <TableHead className="text-center">Essay</TableHead>
-
                       <TableHead className="text-center">Profile</TableHead>
-                      <TableHead className="text-center">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredStudents.map((item, index) => (
                       <TableRow key={index} className="border-0">
+                        <TableCell className="py-3 w-12">
+                          <input
+                            type="checkbox"
+                            checked={selectedStudents.has(item.email)}
+                            onChange={() => handleCheckboxChange(item.email)}
+                          />
+                        </TableCell>
                         <TableCell className="py-3">
                           {item.name}
                           <div className="text-gray-500 text-sm">
@@ -88,7 +136,6 @@ const StudentRequestDialog = ({
                         <TableCell className="text-center">
                           {item.essay}
                         </TableCell>
-
                         <TableCell className="text-center">
                           <Dialog>
                             <DialogTrigger asChild>
@@ -101,14 +148,6 @@ const StudentRequestDialog = ({
                               <ProfileDialog teacher={item} />
                             </DialogContent>
                           </Dialog>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Button
-                            className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
-                            onClick={() => onAccept(item.email)}
-                          >
-                            Accept
-                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -125,14 +164,13 @@ const StudentRequestDialog = ({
             >
               Cancel
             </Button>
-            {filteredStudents.length > 0 && (
-              <Button
-                className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
-                onClick={onAcceptAll}
-              >
-                Accept All
-              </Button>
-            )}
+
+            <Button
+              className="bg-black text-white hover:bg-gray-900 cursor-pointer"
+              onClick={handleAcceptSelected}
+            >
+              Asign Student
+            </Button>
           </div>
         </DialogDescription>
       </DialogContent>
@@ -148,7 +186,7 @@ StudentRequestDialog.propTypes = {
       name: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
       score: PropTypes.number,
-      reviewed: PropTypes.number,
+      essay: PropTypes.number,
       assignDate: PropTypes.string,
     })
   ).isRequired,
