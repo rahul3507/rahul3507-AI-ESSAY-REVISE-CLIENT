@@ -30,16 +30,14 @@ const TeacherAssignmentModal = ({
   onSave,
   isEditing,
 }) => {
-  const { user, loading, refetch } = useLoggedUser([]);
-  console.log(
-    "User in TeacherAssignmentModal:",
-    user?.user_profile?.first_name + " " + user?.user_profile?.last_name
-  );
+  const { user, loading } = useLoggedUser([]);
+  const teacherName =
+    user?.user_profile?.first_name + " " + user?.user_profile?.last_name ||
+    "N/A";
+
   const [formData, setFormData] = useState({
     title: "",
-    name:
-      user?.user_profile?.first_name + " " + user?.user_profile?.last_name ||
-      "",
+    name: teacherName,
     type: "",
     dueDate: "",
     description: "",
@@ -89,7 +87,7 @@ const TeacherAssignmentModal = ({
     if (isEditing && assignment) {
       setFormData({
         title: assignment.title || "",
-        name: user?.name || "",
+        name: teacherName,
         type: assignment.type || "",
         dueDate: formatDateForInput(assignment.dueDate) || "",
         description: assignment.description || "",
@@ -98,13 +96,13 @@ const TeacherAssignmentModal = ({
       // Reset form for new assignment
       setFormData({
         title: "",
-        name: "",
+        name: teacherName,
         type: "",
         dueDate: "",
         description: "",
       });
     }
-  }, [isEditing, assignment, isOpen]);
+  }, [isEditing, assignment, isOpen, teacherName]);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -141,7 +139,7 @@ const TeacherAssignmentModal = ({
   const resetForm = () => {
     setFormData({
       title: "",
-      name: "",
+      name: teacherName,
       type: "",
       dueDate: "",
       description: "",
@@ -184,16 +182,12 @@ const TeacherAssignmentModal = ({
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right font-semibold">
+            <Label className="text-right font-semibold">
               Teacher <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              className="col-span-3"
-              placeholder="Enter teacher name"
-            />
+            <div className="col-span-3 text-sm text-gray-600 py-2">
+              {loading ? "Loading..." : teacherName}
+            </div>
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">
@@ -204,16 +198,28 @@ const TeacherAssignmentModal = ({
               value={formData.type}
               onValueChange={(value) => handleInputChange("type", value)}
             >
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger className="col-span-3  cursor-pointer">
                 <SelectValue placeholder="Select assignment type" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Argumentative">Argumentative</SelectItem>
-                <SelectItem value="Analytical">Analytical</SelectItem>
-                <SelectItem value="Research">Research</SelectItem>
-                <SelectItem value="Expository">Expository</SelectItem>
-                <SelectItem value="Narrative">Narrative</SelectItem>
-                <SelectItem value="Creative">Creative</SelectItem>
+              <SelectContent className="bg-white">
+                <SelectItem value="Argumentative " className="cursor-pointer">
+                  Argumentative
+                </SelectItem>
+                <SelectItem value="Analytical" className="cursor-pointer">
+                  Analytical
+                </SelectItem>
+                <SelectItem value="Research" className="cursor-pointer">
+                  Research
+                </SelectItem>
+                <SelectItem value="Expository" className="cursor-pointer">
+                  Expository
+                </SelectItem>
+                <SelectItem value="Narrative" className="cursor-pointer">
+                  Narrative
+                </SelectItem>
+                <SelectItem value="Creative" className="cursor-pointer">
+                  Creative
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
