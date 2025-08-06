@@ -176,7 +176,9 @@ const AssignmentTable = () => {
   return (
     <section className="px-4">
       <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-        <h1 className="text-black text-xl md:text-3xl font-bold">Students</h1>
+        <h1 className="text-black text-xl md:text-3xl font-bold">
+          Assignment Details
+        </h1>
       </div>
 
       <div className="bg-transparent mt-4 border border-gray-200 rounded-xl p-6">
