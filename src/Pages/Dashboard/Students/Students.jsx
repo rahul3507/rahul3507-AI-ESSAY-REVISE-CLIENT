@@ -231,18 +231,6 @@ const Students = () => {
       return 0; // normal (no sorting)
     });
 
-  // Handle accepting a single student
-  // const handleAccept = (email) => {
-  //   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-  //   setStudentsData((prevData) =>
-  //     prevData.map((item) =>
-  //       item.email === email
-  //         ? { ...item, action: "accepted", assignDate: today }
-  //         : item
-  //     )
-  //   );
-  // };
-
   // Handle accepting all students
   const handleAcceptAll = (selectedEmails) => {
     const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
@@ -254,6 +242,17 @@ const Students = () => {
       )
     );
     setIsDialogOpen(false);
+  };
+
+  // Determine score cell styling based on score value
+  const getScoreStyles = (score) => {
+    if (score < 40) {
+      return "bg-red-400 text-red-900";
+    } else if (score >= 40 && score <= 69) {
+      return "bg-[#FF880033] text-[#D47305]";
+    } else {
+      return "bg-[#34C72433] text-[#238B17]";
+    }
   };
 
   return (
@@ -344,7 +343,15 @@ const Students = () => {
                     {item.name}
                     <div className="text-gray-500 text-sm">{item.email}</div>
                   </TableCell>
-                  <TableCell className="text-center">{item.score}</TableCell>
+                  <TableCell className={`text-center `}>
+                    <span
+                      className={`text-center rounded-full px-3 py-1 ${getScoreStyles(
+                        item.score
+                      )}`}
+                    >
+                      {item.score}
+                    </span>
+                  </TableCell>
                   <TableCell className="text-center">{item.essay}</TableCell>
                   <TableCell className="text-center">
                     {item.assignDate}

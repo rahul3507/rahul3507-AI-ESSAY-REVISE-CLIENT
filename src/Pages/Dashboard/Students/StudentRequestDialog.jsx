@@ -59,6 +59,17 @@ const StudentRequestDialog = ({
     setSelectedStudents(new Set()); // Clear selections after accepting
   };
 
+  // Determine score cell styling based on score value
+  const getScoreStyles = (score) => {
+    if (score < 40) {
+      return "bg-red-400 text-red-900";
+    } else if (score >= 40 && score <= 69) {
+      return "bg-[#FF880033] text-[#D47305]";
+    } else {
+      return "bg-[#34C72433] text-[#238B17]";
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose} className="bg-white">
       <DialogContent className="bg-white max-w-[90vw] sm:max-w-[600px]">
@@ -131,7 +142,13 @@ const StudentRequestDialog = ({
                           </div>
                         </TableCell>
                         <TableCell className="text-center">
-                          {item.score}
+                          <span
+                            className={`text-center rounded-full px-3 py-1 ${getScoreStyles(
+                              item.score
+                            )}`}
+                          >
+                            {item.score}
+                          </span>
                         </TableCell>
                         <TableCell className="text-center">
                           {item.essay}
