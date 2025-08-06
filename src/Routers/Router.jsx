@@ -23,6 +23,7 @@ import Teachers from "../Pages/Dashboard/Teachers/Teachers";
 import Analytics from "../Pages/Dashboard/Analytics/Analytics";
 import Essays from "../Pages/Dashboard/Essays/Essays";
 import Students from "../Pages/Dashboard/Students/Students";
+import AssignmentTable from "../Pages/Dashboard/Assignment/TeacherAssignment/AssignmentTable";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
       {
         path: "/assignment",
         element: <Assignment />,
+      },
+      {
+        path: "/assignment/submitted-assignments",
+        element: <AssignmentTable />,
       },
       {
         path: "/essays",

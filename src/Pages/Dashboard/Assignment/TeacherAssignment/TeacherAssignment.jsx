@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from "../../../../components/ui/dialog";
 import TeacherAssignmentModal from "./TeacherAssignmentModal";
+import { Link } from "react-router-dom";
 
 const initialAssignments = [
   {
@@ -166,9 +167,12 @@ const TeacherAssignment = () => {
             </CardContent>
             <CardFooter className="p-2 bg-gray-50 flex justify-between items-center mx-4 mb-4 rounded-2xl">
               <div className="text-base text-gray-600">
-                <button className="cursor-pointer">
+                <Link
+                  to="/assignment/submitted-assignments"
+                  className="cursor-pointer"
+                >
                   {assignment.submission} Submission
-                </button>
+                </Link>
               </div>
               <span>|</span>
               <div className="text-base text-gray-600">
