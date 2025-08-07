@@ -2,6 +2,8 @@
 
 import { Card, CardContent } from "../../../../components/ui/card";
 
+import TeachersEssayTable from "./TeachersEssayTable";
+
 const data2 = [
   {
     title: "Total Student",
@@ -62,6 +64,10 @@ const TeacherHome = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div>
+        <TeachersEssayTable />
       </div>
     </div>
   );
