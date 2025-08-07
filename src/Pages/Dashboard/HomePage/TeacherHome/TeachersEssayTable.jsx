@@ -16,7 +16,7 @@ import {
 } from "../../../../components/ui/dialog";
 import { Input } from "../../../../components/ui/input";
 import { Button } from "../../../../components/ui/button";
-import { FileText } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 
 const TeachersEssayTable = () => {
   const [studentsData, setStudentsData] = useState([
@@ -337,14 +337,15 @@ const TeachersEssayTable = () => {
                   <TableCell className="text-center text-gray-600">
                     {item.uploadDate}
                   </TableCell>
-                  <TableCell className="text-center">
-                    <span
-                      className={`font-medium ${getFeedbackStyles(
+                  <TableCell className=" flex justify-center">
+                    <Button
+                      className={`font-medium  bg-transparent text-center flex ${getFeedbackStyles(
                         item.teacherFeedback
                       )}`}
                     >
                       {item.teacherFeedback}
-                    </span>
+                      <ArrowRight />
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
