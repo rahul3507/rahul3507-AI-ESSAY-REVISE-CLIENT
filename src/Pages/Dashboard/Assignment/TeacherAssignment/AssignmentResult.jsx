@@ -94,13 +94,19 @@ export default function AssignmentResult() {
             </div>
             <div className="flex gap-2">
               <Select value={essayType} onValueChange={setEssayType}>
-                <SelectTrigger className="flex-1">
+                <SelectTrigger className="flex-1 cursor-pointer">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Argumentative">Argumentative</SelectItem>
-                  <SelectItem value="Narrative">Narrative</SelectItem>
-                  <SelectItem value="Descriptive">Descriptive</SelectItem>
+                <SelectContent className="bg-white">
+                  <SelectItem value="Argumentative" className="cursor-pointer">
+                    Argumentative
+                  </SelectItem>
+                  <SelectItem value="Narrative" className="cursor-pointer">
+                    Narrative
+                  </SelectItem>
+                  <SelectItem value="Descriptive" className="cursor-pointer">
+                    Descriptive
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <Button className="bg-[#1c274c] hover:bg-[#283347] text-white">
@@ -113,13 +119,19 @@ export default function AssignmentResult() {
                 Suggestion Aggressiveness
               </label>
               <Select value={aggressiveness} onValueChange={setAggressiveness}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full cursor-pointer">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Low">Low</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="High">High</SelectItem>
+                <SelectContent className="bg-white">
+                  <SelectItem value="Low" className="cursor-pointer ">
+                    Low
+                  </SelectItem>
+                  <SelectItem value="Medium" className="cursor-pointer">
+                    Medium
+                  </SelectItem>
+                  <SelectItem value="High" className="cursor-pointer">
+                    High
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -128,9 +140,9 @@ export default function AssignmentResult() {
 
         {/* Feedback Checklist */}
 
-        <div className="flex flex-col lg:flex-row gap-0 lg:gap-3 w-full justify-between">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-3 w-full justify-between">
           {/* Essay Content */}
-          <Card className="flex-1 border border-gray-200 bg-gray-200">
+          <Card className="flex-1  border border-gray-200 bg-gray-200">
             <CardHeader className="">
               <CardTitle className="text-lg font-semibold text-gray-700">
                 Untitled Name
@@ -190,7 +202,7 @@ export default function AssignmentResult() {
           {/* Right Sidebar */}
 
           {/* Rubric Scores */}
-          <Card className=" w-96  bg-white border border-gray-200">
+          <Card className=" lg:w-96  bg-white border border-gray-200">
             <CardHeader className="">
               <CardTitle className="text-lg font-semibold text-[#1c274c]">
                 Rubric Scores
