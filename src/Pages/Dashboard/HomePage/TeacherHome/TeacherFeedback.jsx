@@ -67,40 +67,6 @@ export default function TeacherFeedback() {
 
   return (
     <div className="flex h-screen bg-[#f9f9f9]">
-      {/* Sidebar */}
-      <div className="w-64 bg-[#e3e4e6] p-4 flex flex-col">
-        <div className="mb-8">
-          <h1 className="text-[#1e2839] font-bold text-lg">Logo</h1>
-        </div>
-
-        <nav className="flex-1 space-y-2">
-          {sidebarItems.map((item, index) => (
-            <div
-              key={index}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors ${
-                item.active
-                  ? "bg-[#1e2839] text-white"
-                  : "text-[#647187] hover:bg-[#d3d3d3]"
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              <span className="text-sm font-medium">{item.label}</span>
-            </div>
-          ))}
-        </nav>
-
-        <div className="border-t border-[#d3d3d3] pt-4 space-y-2">
-          <div className="flex items-center gap-3 px-4 py-3 text-[#647187] hover:bg-[#d3d3d3] rounded-lg cursor-pointer transition-colors">
-            <User className="w-5 h-5" />
-            <span className="text-sm font-medium">Profile</span>
-          </div>
-          <div className="flex items-center gap-3 px-4 py-3 text-[#f54a45] hover:bg-[#d3d3d3] rounded-lg cursor-pointer transition-colors">
-            <LogOut className="w-5 h-5" />
-            <span className="text-sm font-medium">Log Out</span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="flex-1 flex">
         {/* AI Scores Panel */}
