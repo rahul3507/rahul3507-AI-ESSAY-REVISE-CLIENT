@@ -121,7 +121,7 @@ const TeacherAssignment = () => {
   };
 
   return (
-    <section className="px-4">
+    <section className="">
       <div className="flex flex-col md:flex-row justify-between items-center mb-4">
         <h1 className="text-black text-xl md:text-3xl font-bold">Assignment</h1>
         <Button
