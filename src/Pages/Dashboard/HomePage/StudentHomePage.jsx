@@ -208,7 +208,9 @@ const StudentHomePage = () => {
         {data2.map((item, index) => (
           <Card key={index} className="border-[#e3e4e6]">
             <CardContent className="px-6">
-              <div className="text-lg text-black mb-1">{item.title}</div>
+              <div className="text-lg text-black mb-1 border-b border-gray-200">
+                {item.title}
+              </div>
               <div className="text-3xl font-bold text-black mb-1">
                 {item.totalMark !== null ? (
                   <>
