@@ -43,8 +43,8 @@ export default function AssignmentResult() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 w-full justify-between">
-          <Card className="mb-6 col-span-1 lg:col-span-3  xl:col-span-3 border border-gray-200">
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-3 w-full justify-between">
+          <Card className="mb-6  border border-gray-200">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -85,7 +85,7 @@ export default function AssignmentResult() {
           </Card>
 
           {/* Essay Type */}
-          <div className="mb-6  col-span-1 lg:col-span-2 xl:col-span-2  border border-gray-200 p-6 rounded-2xl">
+          <div className="mb-6  lg:w-96  border border-gray-200 p-6 rounded-2xl shadow-gray-200 shadow-2xl">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-6 h-6 bg-[#1c274c] rounded flex items-center justify-center">
                 <FileText className="w-4 h-4 text-white" />
@@ -128,69 +128,70 @@ export default function AssignmentResult() {
 
         {/* Feedback Checklist */}
 
-        {/* Essay Content */}
-        <Card className="flex-1">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold text-[#647187]">
-              Untitled Name
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-[#f9f9f9] rounded-lg p-6 min-h-[400px]">
-              <h2 className="text-xl font-bold text-[#1c274c] mb-4">
-                The Fourth Floor
-              </h2>
-              <div className="text-[#1c274c] leading-relaxed space-y-4">
-                <p>
-                  For years, the old Hamilton Hospital stood abandoned at the
-                  edge of town, draped in{" "}
-                  <span className="bg-red-200 text-red-800 px-1 rounded">
-                    ivy and silence
-                  </span>
-                  . She{" "}
-                  <span className="bg-red-200 text-red-800 px-1 rounded">
-                    don&apos;t goes to the school
-                  </span>{" "}
-                  yesterday because it raining hardly. The locals called it
-                  cursed, a place where screams once echoed in the hallways long
-                  after the patients were gone. No one had dared step
-                  inside—until Sarah.
-                </p>
-                <p>
-                  A curious urban explorer and freelance photographer, Sarah
-                  craved places forgotten by time. She ignored the warnings,
-                  brushing off stories about the hospital&apos;s "missing"
-                  fourth floor.
-                </p>
-                <p>The blueprints showed only three levels.</p>
-                <p>
-                  But residents claimed to have seen a fourth floor at night,
-                  glowing dimly through broken windows—always just one window,
-                  lit by flickering yellow light that{" "}
-                  <span className="bg-blue-200 text-blue-800 px-1 rounded">
-                    moved
-                  </span>{" "}
-                  slowly from left to right, like someone pacing inside.
-                </p>
-                <p>
-                  Sarah entered on a rainy afternoon, camera in hand. The ground
-                  floor groaned under her steps. Wallpaper{" "}
-                  <span className="bg-red-200 text-red-800 px-1 rounded">
-                    peeled
-                  </span>{" "}
-                  like old skin. Graffiti lined the walls. She found a crumbling
-                  staircase and climbed....
-                </p>
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-3 w-full justify-between">
+          {/* Essay Content */}
+          <Card className="flex-1 border border-gray-200 bg-gray-200">
+            <CardHeader className="">
+              <CardTitle className="text-lg font-semibold text-gray-700">
+                Untitled Name
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-[#f9f9f9] rounded-lg p-6 ">
+                <h2 className="text-xl font-bold text-[#1c274c] mb-4">
+                  The Fourth Floor
+                </h2>
+                <div className="text-[#1c274c] leading-relaxed space-y-4">
+                  <p>
+                    For years, the old Hamilton Hospital stood abandoned at the
+                    edge of town, draped in{" "}
+                    <span className="bg-red-200 text-red-800 px-1 rounded">
+                      ivy and silence
+                    </span>
+                    . She{" "}
+                    <span className="bg-red-200 text-red-800 px-1 rounded">
+                      don&apos;t goes to the school
+                    </span>{" "}
+                    yesterday because it raining hardly. The locals called it
+                    cursed, a place where screams once echoed in the hallways
+                    long after the patients were gone. No one had dared step
+                    inside—until Sarah.
+                  </p>
+                  <p>
+                    A curious urban explorer and freelance photographer, Sarah
+                    craved places forgotten by time. She ignored the warnings,
+                    brushing off stories about the hospital&apos;s "missing"
+                    fourth floor.
+                  </p>
+                  <p>The blueprints showed only three levels.</p>
+                  <p>
+                    But residents claimed to have seen a fourth floor at night,
+                    glowing dimly through broken windows—always just one window,
+                    lit by flickering yellow light that{" "}
+                    <span className="bg-blue-200 text-blue-800 px-1 rounded">
+                      moved
+                    </span>{" "}
+                    slowly from left to right, like someone pacing inside.
+                  </p>
+                  <p>
+                    Sarah entered on a rainy afternoon, camera in hand. The
+                    ground floor groaned under her steps. Wallpaper{" "}
+                    <span className="bg-red-200 text-red-800 px-1 rounded">
+                      peeled
+                    </span>{" "}
+                    like old skin. Graffiti lined the walls. She found a
+                    crumbling staircase and climbed....
+                  </p>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Right Sidebar */}
-        <div className="w-80 p-6 bg-white border-l border-[#e2e2e2]">
+          {/* Right Sidebar */}
+
           {/* Rubric Scores */}
-          <Card>
-            <CardHeader className="pb-4">
+          <Card className=" w-96  bg-white border border-gray-200">
+            <CardHeader className="">
               <CardTitle className="text-lg font-semibold text-[#1c274c]">
                 Rubric Scores
               </CardTitle>
@@ -199,7 +200,7 @@ export default function AssignmentResult() {
               {/* Total Score */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-[#1c274c]">
+                  <span className="font-semibold text-[#1c274c] border  border-gray-200 px-2 py-0.5 rounded-full">
                     Total Score: 82/100
                   </span>
                 </div>
