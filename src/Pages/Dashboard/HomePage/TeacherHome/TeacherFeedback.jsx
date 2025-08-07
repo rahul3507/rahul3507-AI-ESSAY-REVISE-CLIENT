@@ -25,33 +25,12 @@ import {
   TabsTrigger,
 } from "../../../../components/ui/tabs";
 
-import {
-  Home,
-  BarChart3,
-  FileText,
-  BookOpen,
-  Users,
-  ArrowUp,
-  User,
-  LogOut,
-  Menu,
-} from "lucide-react";
-
 export default function TeacherFeedback() {
   const [selectedGrammar, setSelectedGrammar] = useState("");
   const [selectedArgument, setSelectedArgument] = useState("");
   const [selectedClarity, setSelectedClarity] = useState("");
   const [selectedVocabulary, setSelectedVocabulary] = useState("");
   const [feedback, setFeedback] = useState("");
-
-  const sidebarItems = [
-    { icon: Home, label: "Home", active: true },
-    { icon: BarChart3, label: "Analytics" },
-    { icon: FileText, label: "Assignment" },
-    { icon: BookOpen, label: "Essays" },
-    { icon: Users, label: "Students" },
-    { icon: ArrowUp, label: "Upgrade" },
-  ];
 
   const feedbackOptions = [
     { label: "Inadequate", color: "bg-[#f54a45]", textColor: "text-white" },
