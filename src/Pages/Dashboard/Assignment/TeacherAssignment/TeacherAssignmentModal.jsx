@@ -198,7 +198,7 @@ const TeacherAssignmentModal = ({
               value={formData.type}
               onValueChange={(value) => handleInputChange("type", value)}
             >
-              <SelectTrigger className="col-span-3  cursor-pointer">
+              <SelectTrigger className="col-span-3  w-full cursor-pointer">
                 <SelectValue placeholder="Select assignment type" />
               </SelectTrigger>
               <SelectContent className="bg-white">
