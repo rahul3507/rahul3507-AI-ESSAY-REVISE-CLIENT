@@ -13,6 +13,7 @@ import {
 import { Button } from "../../../../components/ui/button";
 
 import { Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AssignmentTable = () => {
   const [studentsData, setStudentsData] = useState([
@@ -162,6 +163,8 @@ const AssignmentTable = () => {
     },
   ]);
 
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
   // Determine score cell styling based on score value
   const getScoreStyles = (score) => {
     if (score < 40) {
@@ -171,6 +174,15 @@ const AssignmentTable = () => {
     } else {
       return "bg-[#34C72433] text-[#238B17]";
     }
+  };
+
+  // Handle navigation on button click
+  const handleViewClick = (email) => {
+    navigate(
+      `/assignment/submitted-assignments/assignment-result?email=${encodeURIComponent(
+        email
+      )}`
+    );
   };
 
   return (
@@ -204,7 +216,7 @@ const AssignmentTable = () => {
                     {item.name}
                     <div className="text-gray-500 text-sm">{item.email}</div>
                   </TableCell>
-                  <TableCell className={`text-center `}>
+                  <TableCell className="text-center">
                     <span
                       className={`text-center rounded-full px-3 py-1 ${getScoreStyles(
                         item.score
@@ -218,7 +230,10 @@ const AssignmentTable = () => {
                     {item.assignDate}
                   </TableCell>
                   <TableCell className="text-center">
-                    <Button className="bg-gray-200 text-black hover:bg-gray-200 cursor-pointer">
+                    <Button
+                      className="bg-gray-200 text-black hover:bg-gray-200 cursor-pointer"
+                      onClick={() => handleViewClick(item.email)} // Add onClick handler
+                    >
                       <Eye />
                       View
                     </Button>

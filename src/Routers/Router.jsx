@@ -67,7 +67,7 @@ const router = createBrowserRouter([
         element: <AssignmentTable />,
       },
       {
-        path: "/assignment/submitted-assignments/assignmentresult",
+        path: "/assignment/submitted-assignments/assignment-result",
         element: <AssignmentResult />,
       },
       {
