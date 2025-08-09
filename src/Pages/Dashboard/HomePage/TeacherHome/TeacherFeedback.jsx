@@ -41,16 +41,26 @@ export default function TeacherFeedback() {
   const [feedback, setFeedback] = useState("");
 
   const feedbackOptions = [
-    { label: "Inadequate", color: "bg-[#f54a45]", textColor: "text-white" },
+    { label: "Inadequate", color: "bg-[#F5D8D8]", textColor: "text-[#F54A45]" },
     {
       label: "Needs Improvement",
-      color: "bg-[#ff8800]",
-      textColor: "text-white",
+      color: "bg-[#FFDBB2]",
+      textColor: "text-[#FF8800]",
     },
-    { label: "Satisfactory", color: "bg-[#e89908]", textColor: "text-white" },
-    { label: "Good", color: "bg-[#34c724]", textColor: "text-white" },
-    { label: "Excellent", color: "bg-[#1155ff]", textColor: "text-white" },
+    {
+      label: "Satisfactory",
+      color: "bg-[#FFEBB2]",
+      textColor: "text-[#E89908]",
+    },
+    { label: "Good", color: "bg-[#E8FFE5]", textColor: "text-[#34C724]" },
+    { label: "Excellent", color: "bg-[#E5EDFF]", textColor: "text-[#1155FF]" },
   ];
+
+  const [selectedFeedback, setSelectedFeedback] = useState("");
+
+  const handleFeedbackChange = (value) => {
+    setSelectedFeedback(value);
+  };
 
   return (
     <div className="flex h-screen bg-[#f9f9f9]">
@@ -243,18 +253,24 @@ export default function TeacherFeedback() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
               <CardTitle className="text-lg text-[#1e2839]">
                 Teacher Feedback
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {feedbackOptions.map((option, index) => (
+              {feedbackOptions.map((option) => (
                 <div
-                  key={index}
-                  className={`px-4 py-2 rounded-lg ${option.color} ${option.textColor} text-sm font-medium`}
+                  key={option.label}
+                  className={`flex items-center px-4 py-2 rounded-lg ${option.color} ${option.textColor} text-sm font-medium`}
                 >
+                  <input
+                    type="checkbox"
+                    checked={selectedFeedback === option.label}
+                    onChange={() => handleFeedbackChange(option.label)}
+                    className="mr-2 w-5 h-5  rounded-2xl cursor-pointer"
+                  />
                   {option.label}
                 </div>
               ))}
@@ -270,7 +286,7 @@ export default function TeacherFeedback() {
 
         {/* Essay Content Panel */}
         <div className="flex-1 p-6 bg-[#f9f9f9]">
-          <Tabs defaultValue="original" className="h-full">
+          <Tabs defaultValue="original" className="h-full ">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger
                 value="original"
@@ -287,8 +303,8 @@ export default function TeacherFeedback() {
             </TabsList>
 
             <TabsContent value="original" className="h-full">
-              <Card className="h-full">
-                <CardContent className="p-8 h-full overflow-auto">
+              <Card className="h-full border-gray-200">
+                <CardContent className="p-8 h-full overflow-auto bg-white mt-0 ">
                   <h1 className="text-2xl font-bold text-[#1e2839] mb-6">
                     The Fourth Floor
                   </h1>
@@ -297,8 +313,8 @@ export default function TeacherFeedback() {
             </TabsContent>
 
             <TabsContent value="suggestions" className="h-full">
-              <Card className="h-full">
-                <CardContent className="p-8 h-full overflow-auto">
+              <Card className="h-full border-gray-200 ">
+                <CardContent className="p-8 h-full overflow-auto bg-white mt-0">
                   <div className="text-center text-[#acacac] mt-20">
                     AI suggestions would appear here...
                   </div>
