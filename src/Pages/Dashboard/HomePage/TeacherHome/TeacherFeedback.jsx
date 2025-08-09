@@ -3,7 +3,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLocation } from "react-router-dom"; // Import useLocation
+import { useLocation } from "react-router-dom";
 import { Button } from "../../../../components/ui/button";
 import {
   Card,
@@ -27,13 +27,17 @@ import {
 } from "../../../../components/ui/tabs";
 
 export default function TeacherFeedback() {
-  const location = useLocation(); // Access location to get passed state
-  const { item } = location.state || {}; // Extract item from state
+  const location = useLocation();
+  const { item } = location.state || {};
 
   const [selectedGrammar, setSelectedGrammar] = useState("");
+  const [grammarReason, setGrammarReason] = useState("");
   const [selectedArgument, setSelectedArgument] = useState("");
+  const [argumentReason, setArgumentReason] = useState("");
   const [selectedClarity, setSelectedClarity] = useState("");
+  const [clarityReason, setClarityReason] = useState("");
   const [selectedVocabulary, setSelectedVocabulary] = useState("");
+  const [vocabularyReason, setVocabularyReason] = useState("");
   const [feedback, setFeedback] = useState("");
 
   const feedbackOptions = [
@@ -136,14 +140,17 @@ export default function TeacherFeedback() {
                     ))}
                   </SelectContent>
                 </Select>
-                <div className="text-xs text-[#acacac] mt-1">
-                  Reason for score...
-                </div>
+                <Textarea
+                  placeholder="Reason for grammar score..."
+                  value={grammarReason}
+                  onChange={(e) => setGrammarReason(e.target.value)}
+                  className="mt-2 min-h-[60px] text-sm"
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                  Argument strength
+                  Argument Strength
                 </label>
                 <Select
                   value={selectedArgument}
@@ -164,9 +171,12 @@ export default function TeacherFeedback() {
                     ))}
                   </SelectContent>
                 </Select>
-                <div className="text-xs text-[#acacac] mt-1">
-                  Reason for score...
-                </div>
+                <Textarea
+                  placeholder="Reason for argument strength score..."
+                  value={argumentReason}
+                  onChange={(e) => setArgumentReason(e.target.value)}
+                  className="mt-2 min-h-[60px] text-sm"
+                />
               </div>
 
               <div>
@@ -192,9 +202,12 @@ export default function TeacherFeedback() {
                     ))}
                   </SelectContent>
                 </Select>
-                <div className="text-xs text-[#acacac] mt-1">
-                  Reason for score...
-                </div>
+                <Textarea
+                  placeholder="Reason for clarity score..."
+                  value={clarityReason}
+                  onChange={(e) => setClarityReason(e.target.value)}
+                  className="mt-2 min-h-[60px] text-sm"
+                />
               </div>
 
               <div>
@@ -220,9 +233,12 @@ export default function TeacherFeedback() {
                     ))}
                   </SelectContent>
                 </Select>
-                <div className="text-xs text-[#acacac] mt-1">
-                  Reason for score...
-                </div>
+                <Textarea
+                  placeholder="Reason for vocabulary score..."
+                  value={vocabularyReason}
+                  onChange={(e) => setVocabularyReason(e.target.value)}
+                  className="mt-2 min-h-[60px] text-sm"
+                />
               </div>
             </CardContent>
           </Card>
