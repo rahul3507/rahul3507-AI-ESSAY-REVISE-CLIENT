@@ -29,6 +29,8 @@ import TeachersFeedback from "../Pages/Dashboard/HomePage/TeacherHome/TeacherFee
 import ForgetPassEmail from "../Pages/Authentication/ForgetPassEmail";
 import ResetOtpVerification from "../Pages/Authentication/ResetOtpVerification";
 
+import ResetPassword from "../Pages/Authentication/ResetPassword";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -134,6 +136,11 @@ const router = createBrowserRouter([
     path: "/reset_otp",
     element: <ResetOtpVerification />,
   },
+  {
+    path: "/reset_password",
+    element: <ResetPassword />,
+  },
+
   {
     path: "/terms",
     element: <TermsAndConditions />,
