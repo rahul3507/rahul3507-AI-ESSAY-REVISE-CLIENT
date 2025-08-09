@@ -262,7 +262,7 @@ export default function TeacherFeedback() {
                 placeholder="Provide general feedback for the student..."
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                className="mt-4 min-h-[80px] text-sm"
+                className="mt-4 min-h-[80px] text-sm border-gray-200"
               />
             </CardContent>
           </Card>
