@@ -206,7 +206,7 @@ export default function TeacherFeedback() {
                   placeholder="Reason for clarity score..."
                   value={clarityReason}
                   onChange={(e) => setClarityReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm"
+                  className="mt-2 min-h-[60px] text-sm border-gray-200"
                 />
               </div>
 
