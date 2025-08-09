@@ -124,7 +124,7 @@ export default function TeacherFeedback() {
                   <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select score" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white cursor-pointer">
                     {Array.from({ length: 25 }, (_, i) => (
                       <SelectItem key={i + 1} value={(i + 1).toString()}>
                         {i + 1}
@@ -148,7 +148,7 @@ export default function TeacherFeedback() {
                   <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select score" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white cursor-pointer">
                     {Array.from({ length: 25 }, (_, i) => (
                       <SelectItem key={i + 1} value={(i + 1).toString()}>
                         {i + 1}
@@ -200,7 +200,7 @@ export default function TeacherFeedback() {
                   <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select score" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white cursor-pointer">
                     {Array.from({ length: 25 }, (_, i) => (
                       <SelectItem key={i + 1} value={(i + 1).toString()}>
                         {i + 1}
