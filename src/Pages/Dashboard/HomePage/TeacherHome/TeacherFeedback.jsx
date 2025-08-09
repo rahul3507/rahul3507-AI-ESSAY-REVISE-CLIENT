@@ -237,7 +237,7 @@ export default function TeacherFeedback() {
                   placeholder="Reason for vocabulary score..."
                   value={vocabularyReason}
                   onChange={(e) => setVocabularyReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm"
+                  className="mt-2 min-h-[60px] text-sm border-gray-200"
                 />
               </div>
             </CardContent>
