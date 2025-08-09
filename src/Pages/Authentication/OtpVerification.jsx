@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { FaLeftLong } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../lib/api-client";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 const OtpVerification = () => {
   const {
@@ -26,7 +27,7 @@ const OtpVerification = () => {
     const signupData = JSON.parse(localStorage.getItem("pendingSignupData"));
 
     if (!signupData || !signupData.email) {
-      alert("Missing signup data. Please try signing up again.");
+      toast.error("Missing signup data. Please try signing up again.");
       return;
     }
 
@@ -41,7 +42,7 @@ const OtpVerification = () => {
       navigate("/");
     } catch (error) {
       console.error("OTP verification or registration failed", error);
-      alert("Invalid OTP or registration failed");
+      toast.error("Invalid OTP or registration failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -62,17 +63,17 @@ const OtpVerification = () => {
     if (resendEnabled) {
       const signupData = JSON.parse(localStorage.getItem("pendingSignupData"));
       if (!signupData || !signupData.email) {
-        alert("Missing email to resend OTP.");
+        toast.error("Missing email to resend OTP.");
         return;
       }
       try {
         await apiClient.post("/auth/otp/create/", { email: signupData.email });
         setTimer(60);
         setResendEnabled(false);
-        alert("OTP resent successfully");
+        toast.success("OTP resent successfully");
       } catch (error) {
         console.error("Error resending OTP", error);
-        alert("Failed to resend OTP");
+        toast.error("Failed to resend OTP");
       }
     }
   };
@@ -198,6 +199,19 @@ const OtpVerification = () => {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 };

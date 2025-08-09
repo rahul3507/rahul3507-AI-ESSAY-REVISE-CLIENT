@@ -7,6 +7,7 @@ import { FaUser } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import apiClient from "../../lib/api-client";
 import toast from "react-hot-toast";
+import { Bounce, ToastContainer } from "react-toastify";
 
 const SignIn = () => {
   const {
@@ -197,6 +198,19 @@ const SignIn = () => {
           </p>
         </div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 };
