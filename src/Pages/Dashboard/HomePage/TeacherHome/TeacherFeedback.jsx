@@ -285,8 +285,8 @@ export default function TeacherFeedback() {
         </div>
 
         {/* Essay Content Panel */}
-        <div className="flex-1 p-6 bg-[#f9f9f9]">
-          <Tabs defaultValue="original" className="h-full ">
+        <div className="flex-1 p-6 bg-[#f9f9f9] rounder-2xl">
+          <Tabs defaultValue="original" className="h-full  rounded-2xl">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger
                 value="original"
