@@ -27,6 +27,7 @@ import AssignmentTable from "../Pages/Dashboard/Assignment/TeacherAssignment/Ass
 import AssignmentResult from "../Pages/Dashboard/Assignment/TeacherAssignment/AssignmentResult";
 import TeachersFeedback from "../Pages/Dashboard/HomePage/TeacherHome/TeacherFeedback";
 import ForgetPassEmail from "../Pages/Authentication/ForgetPassEmail";
+import ResetOtpVerification from "../Pages/Authentication/ResetOtpVerification";
 
 const router = createBrowserRouter([
   {
@@ -128,6 +129,10 @@ const router = createBrowserRouter([
   {
     path: "/otp",
     element: <OtpVerification />,
+  },
+  {
+    path: "/reset_otp",
+    element: <ResetOtpVerification />,
   },
   {
     path: "/terms",
