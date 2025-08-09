@@ -58,20 +58,20 @@ export default function TeacherFeedback() {
             Review {item?.name || "Student"}'s Essay
           </h2>
 
-          <Card className="mb-6">
+          <Card className="mb-6 border border-gray-200">
             <CardHeader>
-              <CardTitle className="text-lg text-[#1e2839]">
+              <CardTitle className="text-lg text-[#1e2839] ">
                 AI Scores
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 border border-gray-200 mx-1 rounded-2xl py-3">
               <div className="text-center">
-                <div className="text-2xl font-bold text-[#1e2839]">
+                <div className="text-lg font-bold text-[#1e2839] border-b border-gray-200">
                   Total Score: {item?.score || "N/A"}/100
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-0 text-sm space-y-2">
                 <div>
                   <div className="text-[#647187]">Grammar</div>
                   <div className="font-semibold text-[#1e2839]">
@@ -106,7 +106,7 @@ export default function TeacherFeedback() {
             </CardContent>
           </Card>
 
-          <Card className="mb-6">
+          <Card className="mb-6 border border-gray-200">
             <CardHeader>
               <CardTitle className="text-lg text-[#1e2839]">
                 Teacher Rubric (1-25 Scale)
@@ -121,7 +121,7 @@ export default function TeacherFeedback() {
                   value={selectedGrammar}
                   onValueChange={setSelectedGrammar}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select score" />
                   </SelectTrigger>
                   <SelectContent>
@@ -145,7 +145,7 @@ export default function TeacherFeedback() {
                   value={selectedArgument}
                   onValueChange={setSelectedArgument}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select score" />
                   </SelectTrigger>
                   <SelectContent>
@@ -169,12 +169,16 @@ export default function TeacherFeedback() {
                   value={selectedClarity}
                   onValueChange={setSelectedClarity}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select score" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white cursor-pointer">
                     {Array.from({ length: 25 }, (_, i) => (
-                      <SelectItem key={i + 1} value={(i + 1).toString()}>
+                      <SelectItem
+                        key={i + 1}
+                        value={(i + 1).toString()}
+                        className="cursor-pointer"
+                      >
                         {i + 1}
                       </SelectItem>
                     ))}
@@ -193,7 +197,7 @@ export default function TeacherFeedback() {
                   value={selectedVocabulary}
                   onValueChange={setSelectedVocabulary}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Select score" />
                   </SelectTrigger>
                   <SelectContent>
