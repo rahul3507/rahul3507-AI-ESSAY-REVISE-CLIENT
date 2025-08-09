@@ -26,6 +26,7 @@ import Students from "../Pages/Dashboard/Students/Students";
 import AssignmentTable from "../Pages/Dashboard/Assignment/TeacherAssignment/AssignmentTable";
 import AssignmentResult from "../Pages/Dashboard/Assignment/TeacherAssignment/AssignmentResult";
 import TeachersFeedback from "../Pages/Dashboard/HomePage/TeacherHome/TeacherFeedback";
+import TeacherFeedback from "../Pages/Dashboard/HomePage/TeacherHome/TeacherFeedback";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
         path: "/",
         element: <HomePage />,
       },
+
       {
         path: "/upload_one",
         element: <UploadOneFile />,

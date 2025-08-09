@@ -1,6 +1,7 @@
 /** @format */
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import {
   Table,
   TableBody,
@@ -9,16 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "../../../../components/ui/dialog";
+
 import { Input } from "../../../../components/ui/input";
 import { Button } from "../../../../components/ui/button";
 import { ArrowRight, FileText } from "lucide-react";
 
 const TeachersEssayTable = () => {
+  const navigate = useNavigate(); // Initialize navigate hook
   const [studentsData, setStudentsData] = useState([
     {
       name: "John Smith",
@@ -227,6 +225,11 @@ const TeachersEssayTable = () => {
     }
   };
 
+  // Handle navigation to feedback page
+  const handleFeedbackClick = (item) => {
+    navigate("/essays/feedback", { state: { item } }); // Pass item data as state
+  };
+
   return (
     <section className="">
       <div className="bg-transparent mt-4 border border-gray-200 rounded-xl p-6">
@@ -337,11 +340,12 @@ const TeachersEssayTable = () => {
                   <TableCell className="text-center text-gray-600">
                     {item.uploadDate}
                   </TableCell>
-                  <TableCell className=" flex justify-center">
+                  <TableCell className="flex justify-center">
                     <Button
-                      className={`font-medium  bg-transparent text-center flex ${getFeedbackStyles(
+                      className={`font-medium bg-transparent text-center flex ${getFeedbackStyles(
                         item.teacherFeedback
                       )}`}
+                      onClick={() => handleFeedbackClick(item)} // Navigate on click
                     >
                       {item.teacherFeedback}
                       <ArrowRight />

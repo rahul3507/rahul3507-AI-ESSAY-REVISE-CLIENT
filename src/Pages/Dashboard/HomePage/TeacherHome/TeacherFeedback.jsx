@@ -3,6 +3,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocation } from "react-router-dom"; // Import useLocation
 import { Button } from "../../../../components/ui/button";
 import {
   Card,
@@ -26,6 +27,9 @@ import {
 } from "../../../../components/ui/tabs";
 
 export default function TeacherFeedback() {
+  const location = useLocation(); // Access location to get passed state
+  const { item } = location.state || {}; // Extract item from state
+
   const [selectedGrammar, setSelectedGrammar] = useState("");
   const [selectedArgument, setSelectedArgument] = useState("");
   const [selectedClarity, setSelectedClarity] = useState("");
@@ -51,7 +55,7 @@ export default function TeacherFeedback() {
         {/* AI Scores Panel */}
         <div className="w-96 p-6 bg-white border-r border-[#e3e4e6]">
           <h2 className="text-xl font-semibold text-[#1e2839] mb-6">
-            Review John Smith Essay
+            Review {item?.name || "Student"}'s Essay
           </h2>
 
           <Card className="mb-6">
@@ -63,7 +67,7 @@ export default function TeacherFeedback() {
             <CardContent className="space-y-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-[#1e2839]">
-                  Total Score: 82/100
+                  Total Score: {item?.score || "N/A"}/100
                 </div>
               </div>
 
@@ -92,6 +96,12 @@ export default function TeacherFeedback() {
                     (20%): 18/20
                   </div>
                 </div>
+              </div>
+              <div className="text-sm text-[#647187]">
+                File: {item?.fileName || "N/A"} ({item?.fileType || "N/A"})
+              </div>
+              <div className="text-sm text-[#647187]">
+                Uploaded: {item?.uploadDate || "N/A"}
               </div>
             </CardContent>
           </Card>
