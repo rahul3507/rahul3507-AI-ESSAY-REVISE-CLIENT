@@ -26,7 +26,8 @@ import Students from "../Pages/Dashboard/Students/Students";
 import AssignmentTable from "../Pages/Dashboard/Assignment/TeacherAssignment/AssignmentTable";
 import AssignmentResult from "../Pages/Dashboard/Assignment/TeacherAssignment/AssignmentResult";
 import TeachersFeedback from "../Pages/Dashboard/HomePage/TeacherHome/TeacherFeedback";
-import TeacherFeedback from "../Pages/Dashboard/HomePage/TeacherHome/TeacherFeedback";
+import ForgetPassEmail from "../Pages/Authentication/ForgetPassEmail";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -131,6 +132,10 @@ const router = createBrowserRouter([
   {
     path: "/terms",
     element: <TermsAndConditions />,
+  },
+  {
+    path: "/forget_password",
+    element: <ForgetPassEmail />,
   },
 ]);
 
