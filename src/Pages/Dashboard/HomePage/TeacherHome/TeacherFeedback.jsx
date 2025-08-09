@@ -327,7 +327,7 @@ export default function TeacherFeedback() {
             <Button variant="outline" className="px-8">
               Cancel
             </Button>
-            <Button className="px-8 bg-[#1155ff] hover:bg-[#0d47d9]">
+            <Button className="px-8 bg-[#1155ff] hover:bg-[#0d47d9] text-white">
               Submit
             </Button>
           </div>
