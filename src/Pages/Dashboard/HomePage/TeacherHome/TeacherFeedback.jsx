@@ -175,7 +175,7 @@ export default function TeacherFeedback() {
                   placeholder="Reason for argument strength score..."
                   value={argumentReason}
                   onChange={(e) => setArgumentReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm"
+                  className="mt-2 min-h-[60px] text-sm border-gray-200"
                 />
               </div>
 
