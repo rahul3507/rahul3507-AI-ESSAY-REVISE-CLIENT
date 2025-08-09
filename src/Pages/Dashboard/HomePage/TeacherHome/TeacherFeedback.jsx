@@ -144,7 +144,7 @@ export default function TeacherFeedback() {
                   placeholder="Reason for grammar score..."
                   value={grammarReason}
                   onChange={(e) => setGrammarReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm"
+                  className="mt-2 min-h-[60px] text-sm border-gray-200"
                 />
               </div>
 
