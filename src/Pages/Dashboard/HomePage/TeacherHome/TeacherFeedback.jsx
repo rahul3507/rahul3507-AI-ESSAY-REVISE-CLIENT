@@ -187,10 +187,10 @@ export default function TeacherFeedback() {
                   value={selectedClarity}
                   onValueChange={setSelectedClarity}
                 >
-                  <SelectTrigger className="w-full cursor-pointer">
+                  <SelectTrigger className="w-full cursor-pointer border-gray-200">
                     <SelectValue placeholder="Select score" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer">
+                  <SelectContent className="bg-white cursor-pointer border-gray-200">
                     {Array.from({ length: 25 }, (_, i) => (
                       <SelectItem
                         key={i + 1}
