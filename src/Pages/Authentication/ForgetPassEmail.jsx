@@ -21,14 +21,11 @@ const ForgetPasswordEmail = () => {
     console.log("Forget Password Data:", data);
     setLoading(true);
     try {
-      await apiClient.post(
-        "http://10.10.12.15:8000/api/auth/forgot-password/",
-        {
-          email: data.email,
-        }
-      );
+      await apiClient.post("/auth/password-reset/request/", {
+        email: data.email,
+      });
       localStorage.setItem("pendingForgotPasswordData", JSON.stringify(data));
-      navigate("/otp");
+      navigate("/reset_otp");
     } catch (error) {
       console.error("Reset Password Email Send Failed:", error);
       toast.error("Failed to send reset email. Please try again.");

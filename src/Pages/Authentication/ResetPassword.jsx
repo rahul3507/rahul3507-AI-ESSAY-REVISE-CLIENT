@@ -26,12 +26,12 @@ const ResetPassword = () => {
     console.log("Reset Password Data:", data);
     setLoading(true);
     try {
-      await apiClient.post("http://10.10.12.15:8000/api/auth/reset-password/", {
+      await apiClient.post("/auth/password-reset/confirm/", {
         password: data.password,
       });
       toast.success("Password reset successfully!");
       setTimeout(() => {
-        navigate("/signin");
+        navigate("/");
       }, 2000);
     } catch (error) {
       console.error("Password Reset Failed:", error);

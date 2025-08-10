@@ -24,25 +24,37 @@ const ResetOtpVerification = () => {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     const finalOtp = Object.values(data).join("");
-    const signupData = JSON.parse(localStorage.getItem("pendingSignupData"));
 
-    if (!signupData || !signupData.email) {
-      toast.error("Missing signup data. Please try signing up again.");
+    // FIXED: Changed from "pendingSignupData" to "pendingForgotPasswordData" to match the key used in ForgetPasswordEmail
+    const forgotPasswordData = JSON.parse(
+      localStorage.getItem("pendingForgotPasswordData")
+    );
+
+    console.log("OTP Verification Data:", forgotPasswordData);
+
+    // FIXED: Updated variable name and error message to reflect forgot password flow
+    if (!forgotPasswordData || !forgotPasswordData.email) {
+      toast.error(
+        "Missing forgot password data. Please try the forgot password process again."
+      );
+      setIsSubmitting(false); // FIXED: Added missing setIsSubmitting(false) for early return
       return;
     }
 
     try {
-      // Verify OTP
-      await apiClient.post("/auth/otp/verify/", {
-        email: signupData.email,
+      // Verify OTP for password reset
+      await apiClient.post("/auth/reset/otp-verify/", {
+        email: forgotPasswordData.email, // FIXED: Using correct variable name
         otp: finalOtp,
       });
 
-      localStorage.removeItem("pendingSignupData");
-      navigate("/");
+      // FIXED: Remove the correct localStorage key
+      localStorage.removeItem("pendingForgotPasswordData");
+      navigate("/reset_password");
     } catch (error) {
-      console.error("OTP verification or registration failed", error);
-      toast.error("Invalid OTP or registration failed");
+      console.error("OTP verification failed", error);
+      // FIXED: Updated error message to be more specific to password reset flow
+      toast.error("Invalid OTP. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -61,13 +73,21 @@ const ResetOtpVerification = () => {
 
   const handleResendOtp = async () => {
     if (resendEnabled) {
-      const signupData = JSON.parse(localStorage.getItem("pendingSignupData"));
-      if (!signupData || !signupData.email) {
+      // FIXED: Changed from "pendingSignupData" to "pendingForgotPasswordData"
+      const forgotPasswordData = JSON.parse(
+        localStorage.getItem("pendingForgotPasswordData")
+      );
+
+      if (!forgotPasswordData || !forgotPasswordData.email) {
         toast.error("Missing email to resend OTP.");
         return;
       }
+
       try {
-        await apiClient.post("/auth/otp/create/", { email: signupData.email });
+        // Resend password reset OTP
+        await apiClient.post("/auth/password-reset/request/", {
+          email: forgotPasswordData.email, // FIXED: Using correct variable name
+        });
         setTimer(60);
         setResendEnabled(false);
         toast.success("OTP resent successfully");
@@ -98,17 +118,20 @@ const ResetOtpVerification = () => {
     <div className="grid grid-cols-1 md:grid-cols-7 min-h-screen bg-base-200">
       <div className="hidden md:col-span-3 md:flex items-center justify-center bg-[#1E2839] p-8">
         <h2 className="text-white text-4xl font-semibold leading-relaxed">
-          Confirm Your Email to <br /> Access Educational <br /> Resources!
+          {/* FIXED: Updated text to reflect password reset flow instead of signup */}
+          Verify Your Email to <br /> Reset Your <br /> Password!
         </h2>
       </div>
 
       <div className="col-span-4 md:col-span-4 flex items-center justify-center p-8">
         <div className="max-w-xl w-full bg-white border border-gray-200 rounded-3xl shadow-md p-6 md:p-20 relative">
           <h2 className="text-2xl font-semibold text-center mb-2">
-            Verify Your E-mail
+            {/* FIXED: Updated heading to be more specific to password reset */}
+            Verify OTP for Password Reset
           </h2>
           <p className="text-center text-sm mb-6">
-            We have sent a 6-digit verification code to your email.
+            We have sent a 6-digit verification code to your email for password
+            reset.
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -198,20 +221,20 @@ const ResetOtpVerification = () => {
             </button>
           </div>
         </div>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          transition={Bounce}
+        />
       </div>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
     </div>
   );
 };
