@@ -190,7 +190,7 @@ const TeacherAssignmentModal = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-4 items-center gap-4">
+          {/* <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="type" className="text-right font-semibold">
               Type <span className="text-red-500">*</span>
             </Label>
@@ -222,7 +222,7 @@ const TeacherAssignmentModal = ({
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="dueDate" className="text-right font-semibold">
@@ -255,7 +255,7 @@ const TeacherAssignmentModal = ({
             />
           </div>
 
-          {!isEditing && (
+          {/* {!isEditing && (
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="text-right font-semibold text-gray-500">
                 Issue Date
@@ -264,7 +264,7 @@ const TeacherAssignmentModal = ({
                 Will be set to today: {formatDateForDisplay(getCurrentDate())}
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         <DialogFooter>
