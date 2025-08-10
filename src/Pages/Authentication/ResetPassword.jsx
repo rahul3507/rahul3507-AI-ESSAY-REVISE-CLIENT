@@ -25,11 +25,24 @@ const ResetPassword = () => {
   const onSubmit = async (data) => {
     console.log("Reset Password Data:", data);
     setLoading(true);
+    const resetCredentials = JSON.parse(
+      localStorage.getItem("resetCredentials")
+    );
+    if (!resetCredentials || !resetCredentials.email || !resetCredentials.otp) {
+      toast.error(
+        "Missing reset credentials. Please restart the password reset process."
+      );
+      setLoading(false);
+      return;
+    }
     try {
       await apiClient.post("/auth/password-reset/confirm/", {
-        password: data.password,
+        email: resetCredentials.email,
+        otp: resetCredentials.otp,
+        new_password: data.password,
       });
       toast.success("Password reset successfully!");
+      localStorage.removeItem("resetCredentials");
       setTimeout(() => {
         navigate("/");
       }, 2000);

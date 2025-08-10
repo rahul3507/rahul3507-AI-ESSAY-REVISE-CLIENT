@@ -50,6 +50,10 @@ const ResetOtpVerification = () => {
 
       // FIXED: Remove the correct localStorage key
       localStorage.removeItem("pendingForgotPasswordData");
+      localStorage.setItem(
+        "resetCredentials",
+        JSON.stringify({ email: forgotPasswordData.email, otp: finalOtp })
+      );
       navigate("/reset_password");
     } catch (error) {
       console.error("OTP verification failed", error);
