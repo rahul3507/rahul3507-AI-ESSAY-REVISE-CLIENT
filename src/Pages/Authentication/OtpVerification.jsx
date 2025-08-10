@@ -32,7 +32,6 @@ const OtpVerification = () => {
     }
 
     try {
-      // Verify OTP
       await apiClient.post("/auth/otp/verify/", {
         email: signupData.email,
         otp: finalOtp,
@@ -94,6 +93,22 @@ const OtpVerification = () => {
     }
   };
 
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").trim();
+    if (/^[0-9]{6}$/.test(pastedData)) {
+      pastedData.split("").forEach((char, index) => {
+        setValue(`otp${index}`, char, { shouldValidate: true });
+        if (inputRefs.current[index]) {
+          inputRefs.current[index].value = char;
+        }
+      });
+      inputRefs.current[5]?.focus();
+    } else {
+      toast.error("Please paste a valid 6-digit OTP");
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 min-h-screen bg-base-200">
       <div className="hidden md:col-span-3 md:flex items-center justify-center bg-[#1E2839] p-8">
@@ -129,6 +144,7 @@ const OtpVerification = () => {
                   ref={(el) => (inputRefs.current[index] = el)}
                   onChange={(e) => handleInputChange(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
+                  onPaste={index === 0 ? handlePaste : undefined}
                 />
               ))}
             </div>

@@ -25,30 +25,26 @@ const ResetOtpVerification = () => {
     setIsSubmitting(true);
     const finalOtp = Object.values(data).join("");
 
-    // FIXED: Changed from "pendingSignupData" to "pendingForgotPasswordData" to match the key used in ForgetPasswordEmail
     const forgotPasswordData = JSON.parse(
       localStorage.getItem("pendingForgotPasswordData")
     );
 
     console.log("OTP Verification Data:", forgotPasswordData);
 
-    // FIXED: Updated variable name and error message to reflect forgot password flow
     if (!forgotPasswordData || !forgotPasswordData.email) {
       toast.error(
         "Missing forgot password data. Please try the forgot password process again."
       );
-      setIsSubmitting(false); // FIXED: Added missing setIsSubmitting(false) for early return
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      // Verify OTP for password reset
       await apiClient.post("/auth/reset/otp-verify/", {
-        email: forgotPasswordData.email, // FIXED: Using correct variable name
+        email: forgotPasswordData.email,
         otp: finalOtp,
       });
 
-      // FIXED: Remove the correct localStorage key
       localStorage.removeItem("pendingForgotPasswordData");
       localStorage.setItem(
         "resetCredentials",
@@ -57,7 +53,6 @@ const ResetOtpVerification = () => {
       navigate("/reset_password");
     } catch (error) {
       console.error("OTP verification failed", error);
-      // FIXED: Updated error message to be more specific to password reset flow
       toast.error("Invalid OTP. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -77,7 +72,6 @@ const ResetOtpVerification = () => {
 
   const handleResendOtp = async () => {
     if (resendEnabled) {
-      // FIXED: Changed from "pendingSignupData" to "pendingForgotPasswordData"
       const forgotPasswordData = JSON.parse(
         localStorage.getItem("pendingForgotPasswordData")
       );
@@ -88,9 +82,8 @@ const ResetOtpVerification = () => {
       }
 
       try {
-        // Resend password reset OTP
         await apiClient.post("/auth/password-reset/request/", {
-          email: forgotPasswordData.email, // FIXED: Using correct variable name
+          email: forgotPasswordData.email,
         });
         setTimer(60);
         setResendEnabled(false);
@@ -118,11 +111,26 @@ const ResetOtpVerification = () => {
     }
   };
 
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").trim();
+    if (/^[0-9]{6}$/.test(pastedData)) {
+      pastedData.split("").forEach((char, index) => {
+        setValue(`otp${index}`, char, { shouldValidate: true });
+        if (inputRefs.current[index]) {
+          inputRefs.current[index].value = char;
+        }
+      });
+      inputRefs.current[5]?.focus();
+    } else {
+      toast.error("Please paste a valid 6-digit OTP");
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 min-h-screen bg-base-200">
       <div className="hidden md:col-span-3 md:flex items-center justify-center bg-[#1E2839] p-8">
         <h2 className="text-white text-4xl font-semibold leading-relaxed">
-          {/* FIXED: Updated text to reflect password reset flow instead of signup */}
           Verify Your Email to <br /> Reset Your <br /> Password!
         </h2>
       </div>
@@ -130,7 +138,6 @@ const ResetOtpVerification = () => {
       <div className="col-span-4 md:col-span-4 flex items-center justify-center p-8">
         <div className="max-w-xl w-full bg-white border border-gray-200 rounded-3xl shadow-md p-6 md:p-20 relative">
           <h2 className="text-2xl font-semibold text-center mb-2">
-            {/* FIXED: Updated heading to be more specific to password reset */}
             Verify OTP for Password Reset
           </h2>
           <p className="text-center text-sm mb-6">
@@ -156,6 +163,7 @@ const ResetOtpVerification = () => {
                   ref={(el) => (inputRefs.current[index] = el)}
                   onChange={(e) => handleInputChange(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
+                  onPaste={index === 0 ? handlePaste : undefined}
                 />
               ))}
             </div>
