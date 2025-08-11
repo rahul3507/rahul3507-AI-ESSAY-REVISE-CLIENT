@@ -14,14 +14,8 @@ import { Button } from "../../../../components/ui/button";
 import { Input } from "../../../../components/ui/input";
 import { Label } from "../../../../components/ui/label";
 import { Textarea } from "../../../../components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../../components/ui/select";
 import useLoggedUser from "../../../../components/hook/useLoggedUser";
+import apiClient from "../../../../lib/api-client";
 
 const TeacherAssignmentModal = ({
   isOpen,
@@ -37,11 +31,10 @@ const TeacherAssignmentModal = ({
 
   const [formData, setFormData] = useState({
     title: "",
-    name: teacherName,
-    type: "",
-    dueDate: "",
     description: "",
+    dueDate: "",
   });
+  const [error, setError] = useState(null);
 
   // Get current date in YYYY-MM-DD format
   const getCurrentDate = () => {
@@ -87,63 +80,67 @@ const TeacherAssignmentModal = ({
     if (isEditing && assignment) {
       setFormData({
         title: assignment.title || "",
-        name: teacherName,
-        type: assignment.type || "",
-        dueDate: formatDateForInput(assignment.dueDate) || "",
         description: assignment.description || "",
+        dueDate: formatDateForInput(assignment.dueDate) || "",
       });
     } else {
       // Reset form for new assignment
       setFormData({
         title: "",
-        name: teacherName,
-        type: "",
-        dueDate: "",
         description: "",
+        dueDate: "",
       });
     }
-  }, [isEditing, assignment, isOpen, teacherName]);
+    setError(null); // Reset error on modal open/close
+  }, [isEditing, assignment, isOpen]);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setError(null); // Clear error on input change
   };
 
-  const handleSubmit = () => {
-    if (
-      !formData.title.trim() ||
-      !formData.name.trim() ||
-      !formData.type ||
-      !formData.dueDate
-    ) {
-      alert("Please fill in all required fields");
+  const handleSubmit = async () => {
+    if (!formData.title.trim() || !formData.dueDate) {
+      setError("Please fill in all required fields (Title and Due Date).");
       return;
     }
 
-    const currentDate = getCurrentDate();
-    const issueDate = formatDateForDisplay(currentDate);
-    const dueDate = formatDateForDisplay(formData.dueDate);
+    try {
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        due_date: formData.dueDate, // Send as YYYY-MM-DD
+      };
 
-    const newAssignment = {
-      ...formData,
-      id: assignment?.id || Date.now(),
-      issueDate: issueDate,
-      dueDate: dueDate,
-      submission: assignment?.submission || 0,
-      reviewed: assignment?.reviewed || 0,
-    };
+      const response = isEditing
+        ? await apiClient.put(`/core/assignments/${assignment.id}/`, payload)
+        : await apiClient.post("/core/assignments/", payload);
 
-    onSave(newAssignment);
-    onClose();
+      const newAssignment = {
+        ...response.data,
+        dueDate: formatDateForDisplay(response.data.due_date),
+        issueDate: formatDateForDisplay(getCurrentDate()),
+        submission: assignment?.submission || 0,
+        reviewed: assignment?.reviewed || 0,
+      };
+
+      onSave(newAssignment);
+      onClose();
+    } catch (err) {
+      setError(
+        err.response?.data?.detail ||
+          "Failed to save assignment. Please try again."
+      );
+    }
   };
 
   const resetForm = () => {
     setFormData({
       title: "",
-      name: teacherName,
-      type: "",
-      dueDate: "",
       description: "",
+      dueDate: "",
     });
+    setError(null);
   };
 
   const handleClose = () => {
@@ -163,9 +160,11 @@ const TeacherAssignmentModal = ({
           <DialogDescription className="text-gray-600">
             {isEditing
               ? "Make changes to your assignment here."
-              : "Fill in the details to create a new assignment. Issue date will be set to today."}
+              : "Fill in the details to create a new assignment. The essay type will be auto-detected by AI."}
           </DialogDescription>
         </DialogHeader>
+
+        {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
 
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -189,40 +188,6 @@ const TeacherAssignmentModal = ({
               {loading ? "Loading..." : teacherName}
             </div>
           </div>
-
-          {/* <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="type" className="text-right font-semibold">
-              Type <span className="text-red-500">*</span>
-            </Label>
-            <Select
-              value={formData.type}
-              onValueChange={(value) => handleInputChange("type", value)}
-            >
-              <SelectTrigger className="col-span-3  w-full cursor-pointer">
-                <SelectValue placeholder="Select assignment type" />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="Argumentative " className="cursor-pointer">
-                  Argumentative
-                </SelectItem>
-                <SelectItem value="Analytical" className="cursor-pointer">
-                  Analytical
-                </SelectItem>
-                <SelectItem value="Research" className="cursor-pointer">
-                  Research
-                </SelectItem>
-                <SelectItem value="Expository" className="cursor-pointer">
-                  Expository
-                </SelectItem>
-                <SelectItem value="Narrative" className="cursor-pointer">
-                  Narrative
-                </SelectItem>
-                <SelectItem value="Creative" className="cursor-pointer">
-                  Creative
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div> */}
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="dueDate" className="text-right font-semibold">
@@ -255,7 +220,7 @@ const TeacherAssignmentModal = ({
             />
           </div>
 
-          {/* {!isEditing && (
+          {!isEditing && (
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="text-right font-semibold text-gray-500">
                 Issue Date
@@ -264,7 +229,7 @@ const TeacherAssignmentModal = ({
                 Will be set to today: {formatDateForDisplay(getCurrentDate())}
               </div>
             </div>
-          )} */}
+          )}
         </div>
 
         <DialogFooter>
@@ -296,10 +261,8 @@ TeacherAssignmentModal.propTypes = {
   assignment: PropTypes.shape({
     id: PropTypes.number,
     title: PropTypes.string,
-    name: PropTypes.string,
-    type: PropTypes.string,
-    dueDate: PropTypes.string,
     description: PropTypes.string,
+    dueDate: PropTypes.string,
     submission: PropTypes.number,
     reviewed: PropTypes.number,
   }),
