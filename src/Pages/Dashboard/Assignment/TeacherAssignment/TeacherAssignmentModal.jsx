@@ -33,6 +33,7 @@ const TeacherAssignmentModal = ({
     title: "",
     description: "",
     dueDate: "",
+    issueDate: "", // Add issueDate to formData
   });
   const [error, setError] = useState(null);
 
@@ -82,13 +83,15 @@ const TeacherAssignmentModal = ({
         title: assignment.title || "",
         description: assignment.description || "",
         dueDate: formatDateForInput(assignment.dueDate) || "",
+        issueDate: formatDateForInput(assignment.issueDate) || "", // Load issueDate from assignment
       });
     } else {
-      // Reset form for new assignment
+      // Set issueDate to current date for new assignment
       setFormData({
         title: "",
         description: "",
         dueDate: "",
+        issueDate: getCurrentDate(), // Set issueDate once when creating
       });
     }
     setError(null); // Reset error on modal open/close
@@ -110,6 +113,7 @@ const TeacherAssignmentModal = ({
         title: formData.title,
         description: formData.description,
         due_date: formData.dueDate, // Send as YYYY-MM-DD
+        issue_date: formData.issueDate, // Include issue_date in payload
       };
 
       const response = isEditing
@@ -119,7 +123,7 @@ const TeacherAssignmentModal = ({
       const newAssignment = {
         ...response.data,
         dueDate: formatDateForDisplay(response.data.due_date),
-        issueDate: formatDateForDisplay(getCurrentDate()),
+        issueDate: formatDateForDisplay(response.data.issue_date), // Use issue_date from response
         submission: assignment?.submission || 0,
         reviewed: assignment?.reviewed || 0,
       };
@@ -139,6 +143,7 @@ const TeacherAssignmentModal = ({
       title: "",
       description: "",
       dueDate: "",
+      issueDate: getCurrentDate(), // Reset to current date for new assignment
     });
     setError(null);
   };
@@ -220,16 +225,14 @@ const TeacherAssignmentModal = ({
             />
           </div>
 
-          {!isEditing && (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right font-semibold text-gray-500">
-                Issue Date
-              </Label>
-              <div className="col-span-3 text-sm text-gray-600 py-2">
-                Will be set to today: {formatDateForDisplay(getCurrentDate())}
-              </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right font-semibold text-gray-500">
+              Issue Date
+            </Label>
+            <div className="col-span-3 text-sm text-gray-600 py-2">
+              {formatDateForDisplay(formData.issueDate)}
             </div>
-          )}
+          </div>
         </div>
 
         <DialogFooter>
@@ -263,6 +266,7 @@ TeacherAssignmentModal.propTypes = {
     title: PropTypes.string,
     description: PropTypes.string,
     dueDate: PropTypes.string,
+    issueDate: PropTypes.string, // Added issueDate to propTypes
     submission: PropTypes.number,
     reviewed: PropTypes.number,
   }),
