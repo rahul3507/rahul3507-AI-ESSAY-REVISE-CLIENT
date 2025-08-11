@@ -3,6 +3,7 @@
 import { Card, CardContent } from "../../../../components/ui/card";
 
 import TeachersEssayTable from "./TeachersEssayTable";
+import apiClient from "../../../../lib/api-client";
 
 const data2 = [
   {
