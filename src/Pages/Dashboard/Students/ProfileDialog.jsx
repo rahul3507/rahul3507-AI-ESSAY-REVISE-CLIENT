@@ -14,18 +14,15 @@ const ProfileDialog = ({ teacher }) => {
     });
   };
 
-  // Get full profile image URL - Fixed CORS issue
+  // Get full profile image URL - Fixed to match ProfilePage logic
   const getProfileImageUrl = (profileImg) => {
-    if (!profileImg) return "/default-avatar.png"; // Use local default image instead of external service
+    if (!profileImg) return "/default-avatar.png"; // Use local default image
 
     // If it's already a full URL, return as is
     if (profileImg.startsWith("http")) return profileImg;
 
-    // If it's a relative path, construct the full URL
-    // Using environment variable with fallback to match your backend IP
-    const baseUrl =
-      import.meta.env.VITE_API_BASE_URL || "http://10.10.12.15:8000";
-    return `${baseUrl}${profileImg}`;
+    // If it's a relative path, construct the full URL using the same base URL as ProfilePage
+    return `http://10.10.12.15:8000${profileImg}`;
   };
 
   return (

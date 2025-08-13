@@ -1,6 +1,6 @@
 /** @format */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -22,192 +22,98 @@ import TeacherRequestDialog from "./TeacherRequestDialog";
 import { Eye } from "lucide-react";
 
 import ProfileDialog from "./ProfileDialog";
+import apiClient from "../../../lib/api-client";
 
 const Teachers = () => {
-  const [teachersData, setTeachersData] = useState([
-    {
-      name: "John Smith",
-      email: "john.smith@student.edu",
-      assignments: 12,
-      reviewed: 124,
-      action: "accepted",
-      phoneNumber: "555-0101-1234",
-      role: "teacher",
-      address: "123 Maple St, Springfield, IL 62701",
-      profileImg: "https://example.com/profiles/john_smith.jpg",
-    },
-    {
-      name: "Jane Doe",
-      email: "jane.doe@teacher.edu",
-      assignments: 230,
-      reviewed: 124,
-      action: "pending",
-      phoneNumber: "555-0102-5678",
-      role: "teacher",
-      address: "456 Oak Ave, Chicago, IL 60601",
-      profileImg: "https://example.com/profiles/jane_doe.jpg",
-    },
-    {
-      name: "Alice Johnson",
-      email: "alice.johnson@teacher.edu",
-      assignments: 20,
-      reviewed: 124,
-      action: "accepted",
-      phoneNumber: "555-0103-9012",
-      role: "teacher",
-      address: "789 Pine Rd, Aurora, IL 60504",
-      profileImg: "https://example.com/profiles/alice_johnson.jpg",
-    },
-    {
-      name: "Bob Wilson",
-      email: "bob.wilson@teacher.edu",
-      assignments: 45,
-      reviewed: 134,
-      action: "pending",
-      phoneNumber: "555-0104-3456",
-      role: "teacher",
-      address: "321 Elm St, Naperville, IL 60540",
-      profileImg: "https://example.com/profiles/bob_wilson.jpg",
-    },
-    {
-      name: "Emma Brown",
-      email: "emma.brown@teacher.edu",
-      assignments: 12,
-      reviewed: 164,
-      action: "accepted",
-      phoneNumber: "555-0105-7890",
-      role: "teacher",
-      address: "654 Cedar Ln, Evanston, IL 60201",
-      profileImg: "https://example.com/profiles/emma_brown.jpg",
-    },
-    {
-      name: "Michael Lee",
-      email: "michael.lee@teacher.edu",
-      assignments: 56,
-      reviewed: 184,
-      action: "pending",
-      phoneNumber: "555-0106-2345",
-      role: "teacher",
-      address: "987 Birch Dr, Peoria, IL 61604",
-      profileImg: "https://example.com/profiles/michael_lee.jpg",
-    },
-    {
-      name: "Sarah Davis",
-      email: "sarah.davis@teacher.edu",
-      assignments: 80,
-      reviewed: 1254,
-      action: "accepted",
-      phoneNumber: "555-0107-6789",
-      role: "teacher",
-      address: "147 Spruce Ct, Rockford, IL 61101",
-      profileImg: "https://example.com/profiles/sarah_davis.jpg",
-    },
-    {
-      name: "David Clark",
-      email: "david.clark@teacher.edu",
-      assignments: 15,
-      reviewed: 1243,
-      action: "pending",
-      phoneNumber: "555-0108-1234",
-      role: "teacher",
-      address: "258 Willow Way, Joliet, IL 60435",
-      profileImg: "https://example.com/profiles/david_clark.jpg",
-    },
-    {
-      name: "Laura Adams",
-      email: "laura.adams@teacher.edu",
-      assignments: 30,
-      reviewed: 124,
-      action: "accepted",
-      phoneNumber: "555-0109-5678",
-      role: "teacher",
-      address: "369 Sycamore St, Champaign, IL 61820",
-      profileImg: "https://example.com/profiles/laura_adams.jpg",
-    },
-    {
-      name: "James Taylor",
-      email: "james.taylor@teacher.edu",
-      assignments: 25,
-      reviewed: 124,
-      action: "pending",
-      phoneNumber: "555-0110-9012",
-      role: "teacher",
-      address: "741 Chestnut Blvd, Bloomington, IL 61701",
-      profileImg: "https://example.com/profiles/james_taylor.jpg",
-    },
-    {
-      name: "Emily White",
-      email: "emily.white@teacher.edu",
-      assignments: 40,
-      reviewed: 1424,
-      action: "accepted",
-      phoneNumber: "555-0111-3456",
-      role: "teacher",
-      address: "852 Magnolia Ave, Decatur, IL 62526",
-      profileImg: "https://example.com/profiles/emily_white.jpg",
-    },
-    {
-      name: "Thomas Green",
-      email: "thomas.green@teacher.edu",
-      assignments: 60,
-      reviewed: 1224,
-      action: "pending",
-      phoneNumber: "555-0112-7890",
-      role: "teacher",
-      address: "963 Laurel Dr, Elgin, IL 60120",
-      profileImg: "https://example.com/profiles/thomas_green.jpg",
-    },
-    {
-      name: "Olivia Harris",
-      email: "olivia.harris@teacher.edu",
-      assignments: 70,
-      reviewed: 424,
-      action: "accepted",
-      phoneNumber: "555-0113-2345",
-      role: "teacher",
-      address: "159 Poplar St, Waukegan, IL 60085",
-      profileImg: "https://example.com/profiles/olivia_harris.jpg",
-    },
-    {
-      name: "William Lewis",
-      email: "william.lewis@teacher.edu",
-      assignments: 35,
-      reviewed: 1324,
-      action: "pending",
-      phoneNumber: "555-0114-6789",
-      role: "teacher",
-      address: "357 Aspen Ct, Cicero, IL 60804",
-      profileImg: "https://example.com/profiles/william_lewis.jpg",
-    },
-    {
-      name: "Sophia Walker",
-      email: "sophia.walker@teacher.edu",
-      assignments: 90,
-      reviewed: 1124,
-      action: "accepted",
-      phoneNumber: "555-0115-1234",
-      role: "teacher",
-      address: "468 Hazel Rd, Berwyn, IL 60402",
-      profileImg: "https://example.com/profiles/sophia_walker.jpg",
-    },
-  ]);
-
+  const [teachersData, setTeachersData] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterOption, setFilterOption] = useState("normal");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Calculate the number of accepted teachers
-  const acceptedCount = teachersData.filter(
-    (item) => item.action === "pending"
-  ).length;
+  // Fetch accepted teachers (my-teachers)
+  const fetchMyTeachers = async () => {
+    try {
+      const response = await apiClient.get("/students/my-teachers/");
+      const teachers = response.data.map((relation) => ({
+        id: relation.id,
+        name:
+          relation.teacher_profile.first_name +
+          " " +
+          relation.teacher_profile.last_name,
+        email: relation.teacher.email,
+        phoneNumber: relation.teacher_profile.phone_number,
+        address: relation.teacher_profile.address,
+        profileImg: relation.teacher_profile.profile_picture,
+        role: relation.teacher.role,
+        assignments: 0, // You might want to fetch this from another endpoint
+        reviewed: 0, // You might want to fetch this from another endpoint
+        joinedDate: relation.teacher_profile.joined_date,
+        teacherProfile: relation.teacher_profile,
+        isVerified: relation.teacher.is_verified,
+      }));
+      setTeachersData(teachers);
+    } catch (err) {
+      console.error("Error fetching teachers:", err);
+      setError("Failed to fetch teachers");
+    }
+  };
+
+  // Fetch pending teacher requests
+  const fetchPendingRequests = async () => {
+    try {
+      const response = await apiClient.get("/students/teacher-relations/");
+      const pending = response.data
+        .filter((relation) => relation.status === "pending")
+        .map((relation) => ({
+          id: relation.id,
+          relationId: relation.id,
+          name:
+            relation.teacher_profile.first_name +
+            " " +
+            relation.teacher_profile.last_name,
+          email: relation.teacher.email,
+          phoneNumber: relation.teacher_profile.phone_number,
+          address: relation.teacher_profile.address,
+          profileImg: relation.teacher_profile.profile_picture,
+          role: relation.teacher.role,
+          assignments: 0,
+          reviewed: 0,
+          joinedDate: relation.teacher_profile.joined_date,
+          teacherProfile: relation.teacher_profile,
+          isVerified: relation.teacher.is_verified,
+          createdAt: relation.created_at,
+        }));
+      setPendingRequests(pending);
+    } catch (err) {
+      console.error("Error fetching pending requests:", err);
+      setError("Failed to fetch pending requests");
+    }
+  };
+
+  // Initial data fetch
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([fetchMyTeachers(), fetchPendingRequests()]);
+      } catch (error) {
+        setError("Failed to load data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Filter and sort data based on search term and filter option
   const filteredData = teachersData
-    .filter(
-      (item) =>
-        item.action === "accepted" &&
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
       if (filterOption === "high") {
@@ -219,36 +125,81 @@ const Teachers = () => {
     });
 
   // Handle accepting a single teacher
-  const handleAccept = (email) => {
-    setTeachersData((prevData) =>
-      prevData.map((item) =>
-        item.email === email ? { ...item, action: "accepted" } : item
-      )
-    );
+  const handleAccept = async (relationId) => {
+    try {
+      await apiClient.put(`/students/teacher-relations/${relationId}/`, {
+        status: "accepted",
+      });
+
+      // Refresh both lists
+      await Promise.all([fetchMyTeachers(), fetchPendingRequests()]);
+    } catch (err) {
+      console.error("Error accepting teacher:", err);
+      setError("Failed to accept teacher request");
+    }
   };
 
   // Handle accepting all teachers
-  const handleAcceptAll = () => {
-    setTeachersData((prevData) =>
-      prevData.map((item) =>
-        item.action === "pending" ? { ...item, action: "accepted" } : item
-      )
-    );
-    setIsDialogOpen(false);
+  const handleAcceptAll = async () => {
+    try {
+      await apiClient.post("/students/teacher-requests/accept-all/");
+
+      // Refresh both lists
+      await Promise.all([fetchMyTeachers(), fetchPendingRequests()]);
+      setIsDialogOpen(false);
+    } catch (err) {
+      console.error("Error accepting all teachers:", err);
+      setError("Failed to accept all teacher requests");
+    }
   };
+
+  // Handle rejecting a teacher request
+  const handleReject = async (relationId) => {
+    try {
+      await apiClient.put(`/students/teacher-relations/${relationId}/`, {
+        status: "rejected",
+      });
+
+      // Refresh pending requests list
+      await fetchPendingRequests();
+    } catch (err) {
+      console.error("Error rejecting teacher:", err);
+      setError("Failed to reject teacher request");
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="px-4">
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">Loading teachers...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="px-4">
+        <div className="flex justify-center items-center h-64">
+          <p className="text-red-500">{error}</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="px-4">
       <div className="flex flex-col md:flex-row justify-between items-center mb-4">
         <h1 className="text-black text-xl md:text-3xl font-bold">
-          Assignments
+          My Teachers
         </h1>
         <Button
           className="bg-gray-200 text-black px-2 py-1 rounded-md gap-1 cursor-pointer hover:bg-gray-100"
           onClick={() => setIsDialogOpen(true)}
         >
           <span className="p-1 px-2 text-xs rounded-full bg-blue-500 text-white items-center m-auto justify-center">
-            {acceptedCount}
+            {pendingRequests.length}
           </span>
           Teachers Request
         </Button>
@@ -310,52 +261,61 @@ const Teachers = () => {
         </div>
 
         <div className="bg-gray-50 rounded-xl p-4 overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-white rounded-5xl border-0">
-                <TableHead className="p-2">Teacher Name</TableHead>
-                <TableHead className="text-center">Assignments</TableHead>
-                <TableHead className="text-center">Reviewed</TableHead>
-                <TableHead className="text-center">Profile</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredData.map((item, index) => (
-                <TableRow key={index} className="border-0">
-                  <TableCell className="py-3">
-                    {item.name}
-                    <div className="text-gray-500 text-sm">{item.email}</div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item.assignments}
-                  </TableCell>
-                  <TableCell className="text-center">{item.reviewed}</TableCell>
-                  <TableCell className="text-center">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button className="bg-gray-200 text-black hover:bg-gray-200 cursor-pointer">
-                          <Eye />
-                          View
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-white rounded-lg">
-                        <ProfileDialog teacher={item} />
-                      </DialogContent>
-                    </Dialog>
-                  </TableCell>
+          {filteredData.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              {searchTerm
+                ? "No teachers match your search."
+                : "No teachers assigned yet."}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-white rounded-5xl border-0">
+                  <TableHead className="p-2">Teacher Name</TableHead>
+                  <TableHead className="text-center">Phone</TableHead>
+
+                  <TableHead className="text-center">Profile</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredData.map((item, index) => (
+                  <TableRow key={item.id || index} className="border-0">
+                    <TableCell className="py-3">
+                      {item.name}
+                      <div className="text-gray-500 text-sm">{item.email}</div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {item.phoneNumber || "N/A"}
+                    </TableCell>
+
+                    <TableCell className="text-center">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button className="bg-gray-200 text-black hover:bg-gray-200 cursor-pointer">
+                            <Eye />
+                            View
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-white rounded-lg">
+                          <ProfileDialog teacher={item} />
+                        </DialogContent>
+                      </Dialog>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </div>
 
       <TeacherRequestDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        teachers={teachersData.filter((item) => item.action === "pending")}
+        teachers={pendingRequests}
         onAccept={handleAccept}
         onAcceptAll={handleAcceptAll}
+        onReject={handleReject}
       />
     </section>
   );

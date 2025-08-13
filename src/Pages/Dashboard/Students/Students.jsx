@@ -19,7 +19,7 @@ import { Button } from "../../../components/ui/button";
 import { VscSettings } from "react-icons/vsc";
 import StudentRequestDialog from "./StudentRequestDialog";
 import { Eye } from "lucide-react";
-import ProfileDialog from "../Teachers/ProfileDialog";
+import ProfileDialog from "./ProfileDialog";
 import apiClient from "../../../lib/api-client";
 
 const Students = () => {
@@ -32,11 +32,25 @@ const Students = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch assigned students
+  // Fetch assigned students and transform the data
   const fetchAssignedStudents = async () => {
     try {
       const response = await apiClient.get("/teachers/my-students/");
-      setAssignedStudents(response.data);
+      // Transform the API response to match the expected structure for ProfileDialog
+      const transformedData = response.data.map((item) => ({
+        id: item.student.id,
+        profileImg: item.student_profile.profile_picture,
+        name: `${item.student.first_name} ${item.student.last_name}`,
+        email: item.student.email,
+        phoneNumber: item.student_profile.phone_number,
+        address: item.student_profile.address,
+        role: item.student.role,
+        isVerified: item.student.is_verified,
+        joinedDate: item.student_profile.joined_date,
+        total_essays: item.total_essays,
+        average_score: item.average_score,
+      }));
+      setAssignedStudents(transformedData);
     } catch (err) {
       console.error("Error fetching assigned students:", err);
       setError("Failed to fetch assigned students");
@@ -67,24 +81,17 @@ const Students = () => {
   // Filter and sort data based on search term and filter option
   const filteredData = assignedStudents
     .filter((student) =>
-      `${student.first_name} ${student.last_name}`
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+      student.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
-      // Since we don't have score in the API response, we'll sort by name or date
       if (filterOption === "name_asc") {
-        return `${a.first_name} ${a.last_name}`.localeCompare(
-          `${b.first_name} ${b.last_name}`
-        );
+        return a.name.localeCompare(b.name);
       } else if (filterOption === "name_desc") {
-        return `${b.first_name} ${b.last_name}`.localeCompare(
-          `${a.first_name} ${a.last_name}`
-        );
+        return b.name.localeCompare(a.name);
       } else if (filterOption === "date_new") {
-        return new Date(b.date_joined) - new Date(a.date_joined);
+        return new Date(b.joinedDate) - new Date(a.joinedDate);
       } else if (filterOption === "date_old") {
-        return new Date(a.date_joined) - new Date(b.date_joined);
+        return new Date(a.joinedDate) - new Date(b.joinedDate);
       }
       return 0; // normal (no sorting)
     });
@@ -95,8 +102,6 @@ const Students = () => {
       await apiClient.post("/teachers/students/bulk-request/", {
         student_emails: selectedEmails,
       });
-
-      // Refresh the data after successful assignment
       await Promise.all([fetchAssignedStudents(), fetchAvailableStudents()]);
       setIsDialogOpen(false);
     } catch (err) {
@@ -233,6 +238,7 @@ const Students = () => {
                 <TableRow className="bg-white rounded-5xl border-0">
                   <TableHead className="p-2">Student Name</TableHead>
                   <TableHead className="text-center">Total Essays</TableHead>
+                  <TableHead className="text-center">Score</TableHead>
                   <TableHead className="text-center">Join Date</TableHead>
                   <TableHead className="text-center">Profile</TableHead>
                 </TableRow>
@@ -241,18 +247,23 @@ const Students = () => {
                 {filteredData.map((student) => (
                   <TableRow key={student.id} className="border-0">
                     <TableCell className="py-3">
-                      {student.first_name} {student.last_name}
+                      {student.name}
                       <div className="text-gray-500 text-sm">
                         {student.email}
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
                       <span className="bg-blue-100 text-blue-800 rounded-full px-3 py-1">
-                        {student.total_essays || 0}
+                        {student.total_essays}
                       </span>
                     </TableCell>
                     <TableCell className="text-center">
-                      {formatDate(student.date_joined)}
+                      <span className="bg-blue-100 text-blue-800 rounded-full px-3 py-1">
+                        {student.average_score}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {formatDate(student.joinedDate)}
                     </TableCell>
                     <TableCell className="text-center">
                       <Dialog>

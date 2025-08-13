@@ -21,8 +21,7 @@ import {
 import { Input } from "../../../components/ui/input";
 import { useState } from "react";
 import { Eye } from "lucide-react";
-import ProfileDialog from "../Teachers/ProfileDialog";
-import apiClient from "../../../lib/api-client";
+import ProfileDialog from "./ProfileDialog";
 
 const StudentRequestDialog = ({
   isOpen,
