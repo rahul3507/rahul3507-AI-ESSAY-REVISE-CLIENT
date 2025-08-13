@@ -22,22 +22,26 @@ import { Input } from "../../../components/ui/input";
 import { useState } from "react";
 import { Eye } from "lucide-react";
 import ProfileDialog from "../Teachers/ProfileDialog";
+import apiClient from "../../../lib/api-client";
 
 const StudentRequestDialog = ({
   isOpen,
   onClose,
   students,
-
-  onAcceptAll,
+  onAssignStudents,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStudents, setSelectedStudents] = useState(new Set());
+  const [loading, setLoading] = useState(false);
 
   // Filter students based on search term (case-insensitive)
   const filteredStudents = students.filter((student) =>
-    [student.name, student.email].some((field) =>
-      field.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    [
+      `${student.first_name} ${student.last_name}`,
+      student.email,
+      student.profile?.first_name,
+      student.profile?.last_name,
+    ].some((field) => field?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   // Handle checkbox toggle for a student
@@ -53,44 +57,96 @@ const StudentRequestDialog = ({
     });
   };
 
-  // Handle accepting all selected students
-  const handleAcceptSelected = () => {
-    onAcceptAll([...selectedStudents]);
-    setSelectedStudents(new Set()); // Clear selections after accepting
-  };
-
-  // Determine score cell styling based on score value
-  const getScoreStyles = (score) => {
-    if (score < 40) {
-      return "bg-red-400 text-red-900";
-    } else if (score >= 40 && score <= 69) {
-      return "bg-[#FF880033] text-[#D47305]";
+  // Handle selecting/deselecting all students
+  const handleSelectAll = () => {
+    if (selectedStudents.size === filteredStudents.length) {
+      setSelectedStudents(new Set());
     } else {
-      return "bg-[#34C72433] text-[#238B17]";
+      setSelectedStudents(
+        new Set(filteredStudents.map((student) => student.email))
+      );
     }
   };
 
+  // Handle assigning selected students
+  const handleAssignSelected = async () => {
+    if (selectedStudents.size === 0) return;
+
+    setLoading(true);
+    try {
+      await onAssignStudents([...selectedStudents]);
+      setSelectedStudents(new Set()); // Clear selections after successful assignment
+      setSearchTerm(""); // Clear search term
+    } catch (error) {
+      console.error("Error in assignment:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reset state when dialog closes
+  const handleClose = () => {
+    setSelectedStudents(new Set());
+    setSearchTerm("");
+    onClose();
+  };
+
+  // Format date helper
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  // Get student display name
+  const getStudentName = (student) => {
+    if (student.first_name && student.last_name) {
+      return `${student.first_name} ${student.last_name}`;
+    }
+    if (student.profile?.first_name && student.profile?.last_name) {
+      return `${student.profile.first_name} ${student.profile.last_name}`;
+    }
+    return student.email.split("@")[0]; // Fallback to email username
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose} className="bg-white">
-      <DialogContent className="bg-white max-w-[90vw] sm:max-w-[600px]">
+    <Dialog open={isOpen} onOpenChange={handleClose} className="bg-white">
+      <DialogContent className="bg-white max-w-[90vw] sm:max-w-[800px] max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle>Student Requests</DialogTitle>
-          <Input
-            type="text"
-            placeholder="Search Student by Name or Email"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-1/2 mt-3"
-          />
+          <DialogTitle>Available Students</DialogTitle>
+          <div className="flex gap-2 mt-3">
+            <Input
+              type="text"
+              placeholder="Search Student by Name or Email"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1"
+            />
+            <Button
+              onClick={handleSelectAll}
+              variant="outline"
+              className="whitespace-nowrap"
+            >
+              {selectedStudents.size === filteredStudents.length
+                ? "Deselect All"
+                : "Select All"}
+            </Button>
+          </div>
+          {selectedStudents.size > 0 && (
+            <div className="text-sm text-blue-600 mt-2">
+              {selectedStudents.size} student(s) selected
+            </div>
+          )}
         </DialogHeader>
-        <DialogDescription>
-          <div className="overflow-x-auto">
+        <DialogDescription className="overflow-hidden">
+          <div className="overflow-y-auto max-h-[50vh]">
             {filteredStudents.length === 0 ? (
-              <p className="text-gray-500">
-                {searchTerm
-                  ? "No students match your search."
-                  : "No pending student requests."}
-              </p>
+              <div className="text-center py-8">
+                <p className="text-gray-500">
+                  {searchTerm
+                    ? "No students match your search."
+                    : "No available students to assign."}
+                </p>
+              </div>
             ) : (
               <div className="space-y-4">
                 <Table>
@@ -100,69 +156,65 @@ const StudentRequestDialog = ({
                         <input
                           type="checkbox"
                           checked={
-                            selectedStudents.size === filteredStudents.length
+                            selectedStudents.size === filteredStudents.length &&
+                            filteredStudents.length > 0
                           }
-                          onChange={() => {
-                            if (
-                              selectedStudents.size === filteredStudents.length
-                            ) {
-                              setSelectedStudents(new Set());
-                            } else {
-                              setSelectedStudents(
-                                new Set(
-                                  filteredStudents.map(
-                                    (student) => student.email
-                                  )
-                                )
-                              );
-                            }
-                          }}
+                          onChange={handleSelectAll}
+                          className="cursor-pointer"
                         />
                       </TableHead>
                       <TableHead className="p-2">Student Name</TableHead>
-                      <TableHead className="text-center">Score</TableHead>
-                      <TableHead className="text-center">Essay</TableHead>
+                      <TableHead className="text-center">
+                        Total Essays
+                      </TableHead>
+                      <TableHead className="text-center">Join Date</TableHead>
                       <TableHead className="text-center">Profile</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredStudents.map((item, index) => (
-                      <TableRow key={index} className="border-0">
+                    {filteredStudents.map((student, index) => (
+                      <TableRow key={student.id || index} className="border-0">
                         <TableCell className="py-3 w-12">
                           <input
                             type="checkbox"
-                            checked={selectedStudents.has(item.email)}
-                            onChange={() => handleCheckboxChange(item.email)}
+                            checked={selectedStudents.has(student.email)}
+                            onChange={() => handleCheckboxChange(student.email)}
+                            className="cursor-pointer"
                           />
                         </TableCell>
                         <TableCell className="py-3">
-                          {item.name}
-                          <div className="text-gray-500 text-sm">
-                            {item.email}
+                          <div className="font-medium">
+                            {getStudentName(student)}
                           </div>
+                          <div className="text-gray-500 text-sm">
+                            {student.email}
+                          </div>
+                          {student.profile?.phone_number && (
+                            <div className="text-gray-400 text-xs">
+                              {student.profile.phone_number}
+                            </div>
+                          )}
                         </TableCell>
                         <TableCell className="text-center">
-                          <span
-                            className={`text-center rounded-full px-3 py-1 ${getScoreStyles(
-                              item.score
-                            )}`}
-                          >
-                            {item.score}
+                          <span className="bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm">
+                            {student.total_essays || 0}
                           </span>
                         </TableCell>
-                        <TableCell className="text-center">
-                          {item.essay}
+                        <TableCell className="text-center text-sm">
+                          {formatDate(
+                            student.date_joined || student.profile?.joined_date
+                          )}
                         </TableCell>
                         <TableCell className="text-center">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button className="bg-gray-200 text-black hover:bg-gray-200 cursor-pointer">
-                                <Eye />
+                              <Button className="bg-gray-200 text-black hover:bg-gray-300 cursor-pointer text-sm">
+                                <Eye size={16} />
                                 View
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="bg-white rounded-lg">
-                              <ProfileDialog teacher={item} />
+                              <ProfileDialog teacher={student} />
                             </DialogContent>
                           </Dialog>
                         </TableCell>
@@ -173,20 +225,31 @@ const StudentRequestDialog = ({
               </div>
             )}
           </div>
-          <div className="mt-6 flex justify-between">
+          <div className="mt-6 flex justify-between items-center border-t pt-4">
             <Button
               variant="outline"
               className="border-gray-300 cursor-pointer"
-              onClick={onClose}
+              onClick={handleClose}
+              disabled={loading}
             >
               Cancel
             </Button>
 
             <Button
               className="bg-black text-white hover:bg-gray-900 cursor-pointer"
-              onClick={handleAcceptSelected}
+              onClick={handleAssignSelected}
+              disabled={selectedStudents.size === 0 || loading}
             >
-              Asign Student
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Assigning...
+                </>
+              ) : (
+                `Assign ${selectedStudents.size} Student${
+                  selectedStudents.size !== 1 ? "s" : ""
+                }`
+              )}
             </Button>
           </div>
         </DialogDescription>
@@ -200,15 +263,16 @@ StudentRequestDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   students: PropTypes.arrayOf(
     PropTypes.shape({
-      name: PropTypes.string.isRequired,
+      id: PropTypes.number,
       email: PropTypes.string.isRequired,
-      score: PropTypes.number,
-      essay: PropTypes.number,
-      assignDate: PropTypes.string,
+      first_name: PropTypes.string,
+      last_name: PropTypes.string,
+      total_essays: PropTypes.number,
+      date_joined: PropTypes.string,
+      profile: PropTypes.object,
     })
   ).isRequired,
-  onAccept: PropTypes.func.isRequired,
-  onAcceptAll: PropTypes.func.isRequired,
+  onAssignStudents: PropTypes.func.isRequired,
 };
 
 export default StudentRequestDialog;

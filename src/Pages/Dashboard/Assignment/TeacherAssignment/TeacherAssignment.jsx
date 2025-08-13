@@ -38,7 +38,7 @@ const TeacherAssignment = () => {
     const fetchAssignments = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.get("/core/assignments/");
+        const response = await apiClient.get("/teachers/assignments/");
         setAssignments(response.data);
         setError(null);
       } catch (err) {
@@ -54,17 +54,30 @@ const TeacherAssignment = () => {
 
   // Format date for display
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch {
+      return dateString;
+    }
   };
 
   // Get essay type display name
   const getEssayTypeDisplay = (essayType) => {
-    return essayType || "General";
+    const essayTypes = {
+      argumentative: "Argumentative Essay",
+      narrative: "Narrative Essay",
+      literary_analysis: "Literary Analysis",
+      expository: "Expository Essay",
+      descriptive: "Descriptive Essay",
+      compare_contrast: "Compare/Contrast Essay",
+    };
+    return essayTypes[essayType] || "General";
   };
 
   const handleCreateAssignment = () => {
@@ -81,39 +94,106 @@ const TeacherAssignment = () => {
 
   const handleSaveAssignment = async (assignmentData) => {
     try {
-      if (isEditing) {
+      // Validate required fields
+      if (!assignmentData.title?.trim()) {
+        throw new Error("Title is required");
+      }
+
+      if (!assignmentData.due_date) {
+        throw new Error("Due date is required");
+      }
+
+      // Validate due_date format
+      const dueDate = new Date(assignmentData.due_date);
+      if (isNaN(dueDate.getTime())) {
+        throw new Error("Invalid due date format");
+      }
+
+      const payload = {
+        title: assignmentData.title.trim(),
+        description: assignmentData.description?.trim() || "",
+        due_date: assignmentData.due_date, // Should be in YYYY-MM-DD format
+        essay_type: assignmentData.essay_type || "General",
+        created_at: assignmentData.created_date,
+      };
+
+      let response;
+      if (isEditing && editingAssignment) {
         // Update existing assignment
-        const response = await apiClient.put(
-          `/core/assignments/${assignmentData.id}/`,
-          assignmentData
+        response = await apiClient.put(
+          `/teachers/assignments/${editingAssignment.id}/`,
+          payload
         );
         setAssignments((prev) =>
           prev.map((assignment) =>
-            assignment.id === assignmentData.id ? response.data : assignment
+            assignment.id === editingAssignment.id ? response.data : assignment
           )
         );
       } else {
         // Create new assignment
-        const response = await apiClient.post(
-          "/core/assignments/",
-          assignmentData
-        );
+        response = await apiClient.post("/teachers/assignments/", payload);
         setAssignments((prev) => [...prev, response.data]);
       }
+      setError(null);
+      setIsModalOpen(false);
+      setEditingAssignment(null);
+      setIsEditing(false);
     } catch (err) {
       console.error("Error saving assignment:", err);
-      setError("Failed to save assignment");
+
+      // Handle API error response
+      let errorMessage = "Failed to save assignment";
+
+      if (err.response?.data) {
+        const errorData = err.response.data;
+
+        // Handle field-specific errors
+        if (errorData.due_date) {
+          const dueDateErrors = Array.isArray(errorData.due_date)
+            ? errorData.due_date.join(", ")
+            : errorData.due_date;
+          errorMessage = `Due date error: ${dueDateErrors}`;
+        } else if (errorData.title) {
+          const titleErrors = Array.isArray(errorData.title)
+            ? errorData.title.join(", ")
+            : errorData.title;
+          errorMessage = `Title error: ${titleErrors}`;
+        } else if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.non_field_errors) {
+          const nonFieldErrors = Array.isArray(errorData.non_field_errors)
+            ? errorData.non_field_errors.join(", ")
+            : errorData.non_field_errors;
+          errorMessage = nonFieldErrors;
+        } else {
+          // Handle other validation errors
+          const errorMessages = Object.entries(errorData)
+            .map(([field, errors]) => {
+              const errorList = Array.isArray(errors)
+                ? errors.join(", ")
+                : errors;
+              return `${field}: ${errorList}`;
+            })
+            .join("; ");
+          errorMessage = errorMessages || "Unknown error occurred";
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
     }
   };
 
   const handleDeleteAssignment = async (assignmentId) => {
     try {
-      await apiClient.delete(`/core/assignments/${assignmentId}/`);
+      await apiClient.delete(`/teachers/assignments/${assignmentId}/`);
       setAssignments((prev) =>
         prev.filter((assignment) => assignment.id !== assignmentId)
       );
       setIsDialogOpen(false);
       setAssignmentToDelete(null);
+      setError(null);
     } catch (err) {
       console.error("Error deleting assignment:", err);
       setError("Failed to delete assignment");
@@ -129,6 +209,7 @@ const TeacherAssignment = () => {
     setIsModalOpen(false);
     setEditingAssignment(null);
     setIsEditing(false);
+    setError(null); // Clear error when closing modal
   };
 
   if (loading) {
@@ -146,21 +227,6 @@ const TeacherAssignment = () => {
     );
   }
 
-  if (error) {
-    return (
-      <section className="">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-          <h1 className="text-black text-xl md:text-3xl font-bold">
-            Assignment
-          </h1>
-        </div>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-red-600">{error}</div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="">
       <div className="flex flex-col md:flex-row justify-between items-center mb-4">
@@ -173,6 +239,13 @@ const TeacherAssignment = () => {
           Create Assignment
         </Button>
       </div>
+
+      {/* Display error message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
 
       {assignments.length === 0 ? (
         <div className="flex justify-center items-center h-64">
@@ -194,7 +267,7 @@ const TeacherAssignment = () => {
                     {getEssayTypeDisplay(assignment.essay_type)}
                   </CardDescription>
                   <CardDescription className="text-right text-blue-300 text-base">
-                    {assignment.teacher_name}
+                    {assignment.teacher?.full_name || "N/A"}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -206,7 +279,7 @@ const TeacherAssignment = () => {
                     <p>{formatDate(assignment.due_date)}</p>
                   </div>
                   <div>
-                    <span className="font-semibold">Issue date</span>
+                    <span className="font-semibold">Created At</span>
                     <p>{formatDate(assignment.created_at)}</p>
                   </div>
                 </div>
@@ -218,14 +291,12 @@ const TeacherAssignment = () => {
                     className="cursor-pointer"
                   >
                     {assignment.submissions_count} Submission
+                    {assignment.submissions_count !== 1 ? "s" : ""}
                   </Link>
                 </div>
                 <span>|</span>
                 <div className="text-base text-gray-600">
-                  <button>
-                    0 {""}
-                    reviewed
-                  </button>
+                  <button>0 Reviewed</button>
                 </div>
                 <div className="flex space-x-2">
                   <Button
@@ -285,6 +356,7 @@ const TeacherAssignment = () => {
         assignment={editingAssignment}
         onSave={handleSaveAssignment}
         isEditing={isEditing}
+        error={error}
       />
     </section>
   );

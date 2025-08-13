@@ -1,6 +1,6 @@
 /** @format */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -20,243 +20,120 @@ import { VscSettings } from "react-icons/vsc";
 import StudentRequestDialog from "./StudentRequestDialog";
 import { Eye } from "lucide-react";
 import ProfileDialog from "../Teachers/ProfileDialog";
+import apiClient from "../../../lib/api-client";
 
 const Students = () => {
-  const [studentsData, setStudentsData] = useState([
-    {
-      name: "John Smith",
-      email: "john.smith@student.edu",
-      score: 12,
-      essay: 124,
-      action: "accepted",
-      phoneNumber: "555-0101-1234",
-      role: "student",
-      address: "123 Maple St, Springfield, IL 62701",
-      profileImg: "https://example.com/profiles/john_smith.jpg",
-      assignDate: "2025-07-15",
-    },
-    {
-      name: "Jane Doe",
-      email: "jane.doe@student.edu",
-      score: 30,
-      essay: 124,
-      action: "pending",
-      phoneNumber: "555-0102-5678",
-      role: "student",
-      address: "456 Oak Ave, Chicago, IL 60601",
-      profileImg: "https://example.com/profiles/jane_doe.jpg",
-      assignDate: "",
-    },
-    {
-      name: "Alice Johnson",
-      email: "alice.johnson@student.edu",
-      score: 20,
-      essay: 124,
-      action: "accepted",
-      phoneNumber: "555-0103-9012",
-      role: "student",
-      address: "789 Pine Rd, Aurora, IL 60504",
-      profileImg: "https://example.com/profiles/alice_johnson.jpg",
-      assignDate: "2025-07-15",
-    },
-    {
-      name: "Bob Wilson",
-      email: "bob.wilson@student.edu",
-      score: 45,
-      essay: 134,
-      action: "pending",
-      phoneNumber: "555-0104-3456",
-      role: "student",
-      address: "321 Elm St, Naperville, IL 60540",
-      profileImg: "https://example.com/profiles/bob_wilson.jpg",
-      assignDate: "",
-    },
-    {
-      name: "Emma Brown",
-      email: "emma.brown@student.edu",
-      score: 12,
-      essay: 164,
-      action: "accepted",
-      phoneNumber: "555-0105-7890",
-      role: "student",
-      address: "654 Cedar Ln, Evanston, IL 60201",
-      profileImg: "https://example.com/profiles/emma_brown.jpg",
-      assignDate: "2025-07-15",
-    },
-    {
-      name: "Michael Lee",
-      email: "michael.lee@student.edu",
-      score: 56,
-      essay: 184,
-      action: "pending",
-      phoneNumber: "555-0106-2345",
-      role: "student",
-      address: "987 Birch Dr, Peoria, IL 61604",
-      profileImg: "https://example.com/profiles/michael_lee.jpg",
-      assignDate: "",
-    },
-    {
-      name: "Sarah Davis",
-      email: "sarah.davis@student.edu",
-      score: 80,
-      essay: 1254,
-      action: "accepted",
-      phoneNumber: "555-0107-6789",
-      role: "student",
-      address: "147 Spruce Ct, Rockford, IL 61101",
-      profileImg: "https://example.com/profiles/sarah_davis.jpg",
-      assignDate: "2025-07-15",
-    },
-    {
-      name: "David Clark",
-      email: "david.clark@student.edu",
-      score: 15,
-      essay: 1243,
-      action: "pending",
-      phoneNumber: "555-0108-1234",
-      role: "student",
-      address: "258 Willow Way, Joliet, IL 60435",
-      profileImg: "https://example.com/profiles/david_clark.jpg",
-      assignDate: "",
-    },
-    {
-      name: "Laura Adams",
-      email: "laura.adams@student.edu",
-      score: 30,
-      essay: 124,
-      action: "accepted",
-      phoneNumber: "555-0109-5678",
-      role: "student",
-      address: "369 Sycamore St, Champaign, IL 61820",
-      profileImg: "https://example.com/profiles/laura_adams.jpg",
-      assignDate: "2025-07-15",
-    },
-    {
-      name: "James Taylor",
-      email: "james.taylor@student.edu",
-      score: 25,
-      essay: 124,
-      action: "pending",
-      phoneNumber: "555-0110-9012",
-      role: "student",
-      address: "741 Chestnut Blvd, Bloomington, IL 61701",
-      profileImg: "https://example.com/profiles/james_taylor.jpg",
-      assignDate: "",
-    },
-    {
-      name: "Emily White",
-      email: "emily.white@student.edu",
-      score: 40,
-      essay: 1424,
-      action: "accepted",
-      phoneNumber: "555-0111-3456",
-      role: "student",
-      address: "852 Magnolia Ave, Decatur, IL 62526",
-      profileImg: "https://example.com/profiles/emily_white.jpg",
-      assignDate: "2025-07-15",
-    },
-    {
-      name: "Thomas Green",
-      email: "thomas.green@student.edu",
-      score: 60,
-      essay: 1224,
-      action: "pending",
-      phoneNumber: "555-0112-7890",
-      role: "student",
-      address: "963 Laurel Dr, Elgin, IL 60120",
-      profileImg: "https://example.com/profiles/thomas_green.jpg",
-      assignDate: "",
-    },
-    {
-      name: "Olivia Harris",
-      email: "olivia.harris@student.edu",
-      score: 70,
-      essay: 424,
-      action: "accepted",
-      phoneNumber: "555-0113-2345",
-      role: "student",
-      address: "159 Poplar St, Waukegan, IL 60085",
-      profileImg: "https://example.com/profiles/olivia_harris.jpg",
-      assignDate: "2025-07-15",
-    },
-    {
-      name: "William Lewis",
-      email: "william.lewis@student.edu",
-      score: 35,
-      essay: 1324,
-      action: "pending",
-      phoneNumber: "555-0114-6789",
-      role: "student",
-      address: "357 Aspen Ct, Cicero, IL 60804",
-      profileImg: "https://example.com/profiles/william_lewis.jpg",
-      assignDate: "",
-    },
-    {
-      name: "Sophia Walker",
-      email: "sophia.walker@student.edu",
-      score: 90,
-      essay: 1124,
-      action: "accepted",
-      phoneNumber: "555-0115-1234",
-      role: "student",
-      address: "468 Hazel Rd, Berwyn, IL 60402",
-      profileImg: "https://example.com/profiles/sophia_walker.jpg",
-      assignDate: "2025-07-15",
-    },
-  ]);
-
+  const [assignedStudents, setAssignedStudents] = useState([]);
+  const [availableStudents, setAvailableStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterOption, setFilterOption] = useState("normal");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Calculate the number of accepted students
-  const acceptedCount = studentsData.filter(
-    (item) => item.action === "pending"
-  ).length;
+  // Fetch assigned students
+  const fetchAssignedStudents = async () => {
+    try {
+      const response = await apiClient.get("/teachers/my-students/");
+      setAssignedStudents(response.data);
+    } catch (err) {
+      console.error("Error fetching assigned students:", err);
+      setError("Failed to fetch assigned students");
+    }
+  };
+
+  // Fetch available students
+  const fetchAvailableStudents = async () => {
+    try {
+      const response = await apiClient.get("/teachers/students/available/");
+      setAvailableStudents(response.data);
+    } catch (err) {
+      console.error("Error fetching available students:", err);
+      setError("Failed to fetch available students");
+    }
+  };
+
+  // Initial data fetch
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      await Promise.all([fetchAssignedStudents(), fetchAvailableStudents()]);
+      setLoading(false);
+    };
+    loadData();
+  }, []);
 
   // Filter and sort data based on search term and filter option
-  const filteredData = studentsData
-    .filter(
-      (item) =>
-        item.action === "accepted" &&
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = assignedStudents
+    .filter((student) =>
+      `${student.first_name} ${student.last_name}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
-      if (filterOption === "high") {
-        return b.score - a.score;
-      } else if (filterOption === "low") {
-        return a.score - b.score;
+      // Since we don't have score in the API response, we'll sort by name or date
+      if (filterOption === "name_asc") {
+        return `${a.first_name} ${a.last_name}`.localeCompare(
+          `${b.first_name} ${b.last_name}`
+        );
+      } else if (filterOption === "name_desc") {
+        return `${b.first_name} ${b.last_name}`.localeCompare(
+          `${a.first_name} ${a.last_name}`
+        );
+      } else if (filterOption === "date_new") {
+        return new Date(b.date_joined) - new Date(a.date_joined);
+      } else if (filterOption === "date_old") {
+        return new Date(a.date_joined) - new Date(b.date_joined);
       }
       return 0; // normal (no sorting)
     });
 
-  // Handle accepting all students
-  const handleAcceptAll = (selectedEmails) => {
-    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-    setStudentsData((prevData) =>
-      prevData.map((item) =>
-        selectedEmails.includes(item.email) && item.action === "pending"
-          ? { ...item, action: "accepted", assignDate: today }
-          : item
-      )
-    );
-    setIsDialogOpen(false);
-  };
+  // Handle student assignment requests
+  const handleAssignStudents = async (selectedEmails) => {
+    try {
+      await apiClient.post("/teachers/students/bulk-request/", {
+        student_emails: selectedEmails,
+      });
 
-  // Determine score cell styling based on score value
-  const getScoreStyles = (score) => {
-    if (score < 40) {
-      return "bg-red-400 text-red-900";
-    } else if (score >= 40 && score <= 69) {
-      return "bg-[#FF880033] text-[#D47305]";
-    } else {
-      return "bg-[#34C72433] text-[#238B17]";
+      // Refresh the data after successful assignment
+      await Promise.all([fetchAssignedStudents(), fetchAvailableStudents()]);
+      setIsDialogOpen(false);
+    } catch (err) {
+      console.error("Error assigning students:", err);
+      setError("Failed to assign students");
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  if (loading) {
+    return (
+      <section className="px-4">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg">Loading...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="px-4">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+          <button
+            onClick={() => setError(null)}
+            className="float-right text-red-700 hover:text-red-900"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row justify-between items-center mb-4">
         <h1 className="text-black text-xl md:text-3xl font-bold">Students</h1>
         <Button
@@ -264,15 +141,15 @@ const Students = () => {
           onClick={() => setIsDialogOpen(true)}
         >
           <span className="p-1 px-2 text-xs rounded-full bg-blue-500 text-white items-center m-auto justify-center">
-            {acceptedCount}
+            {availableStudents.length}
           </span>
-          Student Requests
+          Available Students
         </Button>
       </div>
 
       <div className="bg-transparent mt-4 border border-gray-200 rounded-xl p-6">
         <h1 className="text-black text-lg md:text-xl font-medium mb-4">
-          Accepted Students List
+          My Students ({assignedStudents.length})
         </h1>
 
         <div className="flex justify-between mb-4 relative">
@@ -305,20 +182,38 @@ const Students = () => {
                 <button
                   className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm cursor-pointer"
                   onClick={() => {
-                    setFilterOption("high");
+                    setFilterOption("name_asc");
                     setShowFilterDropdown(false);
                   }}
                 >
-                  High Score
+                  Name A-Z
                 </button>
                 <button
                   className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm cursor-pointer"
                   onClick={() => {
-                    setFilterOption("low");
+                    setFilterOption("name_desc");
                     setShowFilterDropdown(false);
                   }}
                 >
-                  Low Score
+                  Name Z-A
+                </button>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm cursor-pointer"
+                  onClick={() => {
+                    setFilterOption("date_new");
+                    setShowFilterDropdown(false);
+                  }}
+                >
+                  Newest First
+                </button>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm cursor-pointer"
+                  onClick={() => {
+                    setFilterOption("date_old");
+                    setShowFilterDropdown(false);
+                  }}
+                >
+                  Oldest First
                 </button>
               </div>
             )}
@@ -326,61 +221,65 @@ const Students = () => {
         </div>
 
         <div className="bg-gray-50 rounded-xl p-4 overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-white rounded-5xl border-0">
-                <TableHead className="p-2">Student Name</TableHead>
-                <TableHead className="text-center">Score</TableHead>
-                <TableHead className="text-center">Essay</TableHead>
-                <TableHead className="text-center">Assign Date</TableHead>
-                <TableHead className="text-center">Profile</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredData.map((item, index) => (
-                <TableRow key={index} className="border-0">
-                  <TableCell className="py-3">
-                    {item.name}
-                    <div className="text-gray-500 text-sm">{item.email}</div>
-                  </TableCell>
-                  <TableCell className={`text-center `}>
-                    <span
-                      className={`text-center rounded-full px-3 py-1 ${getScoreStyles(
-                        item.score
-                      )}`}
-                    >
-                      {item.score}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center">{item.essay}</TableCell>
-                  <TableCell className="text-center">
-                    {item.assignDate}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button className="bg-gray-200 text-black hover:bg-gray-200 cursor-pointer">
-                          <Eye />
-                          View
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-white rounded-lg">
-                        <ProfileDialog teacher={item} />
-                      </DialogContent>
-                    </Dialog>
-                  </TableCell>
+          {filteredData.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              {searchTerm
+                ? "No students match your search."
+                : "No assigned students yet."}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-white rounded-5xl border-0">
+                  <TableHead className="p-2">Student Name</TableHead>
+                  <TableHead className="text-center">Total Essays</TableHead>
+                  <TableHead className="text-center">Join Date</TableHead>
+                  <TableHead className="text-center">Profile</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredData.map((student) => (
+                  <TableRow key={student.id} className="border-0">
+                    <TableCell className="py-3">
+                      {student.first_name} {student.last_name}
+                      <div className="text-gray-500 text-sm">
+                        {student.email}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span className="bg-blue-100 text-blue-800 rounded-full px-3 py-1">
+                        {student.total_essays || 0}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {formatDate(student.date_joined)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button className="bg-gray-200 text-black hover:bg-gray-200 cursor-pointer">
+                            <Eye />
+                            View
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-white rounded-lg">
+                          <ProfileDialog teacher={student} />
+                        </DialogContent>
+                      </Dialog>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </div>
 
       <StudentRequestDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        students={studentsData.filter((item) => item.action === "pending")}
-        onAcceptAll={handleAcceptAll}
+        students={availableStudents}
+        onAssignStudents={handleAssignStudents}
       />
     </section>
   );
