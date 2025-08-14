@@ -22,28 +22,79 @@ import { Upload } from "lucide-react";
 import { DialogClose } from "../../../components/ui/dialog";
 
 import PropTypes from "prop-types";
+import apiClient from "../../../lib/api-client";
 
-export default function AssignmentForm({ initialTitle, initialType }) {
+export default function AssignmentForm({
+  assignmentId,
+  initialTitle,
+  initialType,
+  onSubmitSuccess,
+}) {
   const [assignmentTitle, setAssignmentTitle] = useState(initialTitle || "");
   const [essayType, setEssayType] = useState(initialType || "");
   const [essayText, setEssayText] = useState("");
-  const [coachingLevel, setCoachingLevel] = useState(
-    "Medium - Balanced feedback"
-  );
-  const [suggestionLevel, setSuggestionLevel] = useState(
-    "Medium - Moderate suggestions"
-  );
+  const [coachingLevel, setCoachingLevel] = useState("medium");
+  const [suggestionLevel, setSuggestionLevel] = useState("medium");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
-  const handleSubmit = () => {
-    console.log("Submitting assignment:", {
-      assignmentTitle,
-      essayType,
-      essayText,
-      coachingLevel,
-      suggestionLevel,
-      selectedFile,
-    });
+  const handleSubmit = async () => {
+    if (!essayText.trim() && !selectedFile) {
+      setSubmitError(
+        "Please provide essay content either by typing or uploading a file."
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const formData = new FormData();
+
+      // Add content based on what's provided
+      if (essayText.trim()) {
+        formData.append("content", essayText);
+      } else {
+        // If no text content, send empty string for content
+        formData.append("content", "");
+      }
+
+      // Add file if provided
+      if (selectedFile) {
+        formData.append("file_upload", selectedFile);
+      }
+
+      formData.append("suggestion_level", suggestionLevel);
+      formData.append("coaching_level", coachingLevel);
+
+      const response = await apiClient.post(
+        `/students/assignments/${assignmentId}/submit/`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Assignment submitted successfully:", response.data);
+
+      // Call success callback
+      if (onSubmitSuccess) {
+        onSubmitSuccess();
+      }
+    } catch (error) {
+      console.error("Error submitting assignment:", error);
+      setSubmitError(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed to submit assignment. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileChange = (event) => {
@@ -53,10 +104,29 @@ export default function AssignmentForm({ initialTitle, initialType }) {
       ["docx", "pdf", "txt"].includes(file.name.split(".").pop().toLowerCase())
     ) {
       setSelectedFile(file);
+      setSubmitError(null); // Clear any previous errors
     } else {
       alert("Please upload a file in .docx, .pdf, or .txt format.");
       event.target.value = null;
     }
+  };
+
+  const mapCoachingLevel = (level) => {
+    const mapping = {
+      "Low - Minimal feedback": "low",
+      "Medium - Balanced feedback": "medium",
+      "High - Detailed feedback": "intensive",
+    };
+    return mapping[level] || level;
+  };
+
+  const mapSuggestionLevel = (level) => {
+    const mapping = {
+      "Low - Few suggestions": "low",
+      "Medium - Moderate suggestions": "medium",
+      "High - Many suggestions": "high",
+    };
+    return mapping[level] || level;
   };
 
   return (
@@ -74,6 +144,7 @@ export default function AssignmentForm({ initialTitle, initialType }) {
           value={assignmentTitle}
           onChange={(e) => setAssignmentTitle(e.target.value)}
           className="border-1 focus-visible:ring-[1px]"
+          disabled
         />
       </div>
 
@@ -90,11 +161,15 @@ export default function AssignmentForm({ initialTitle, initialType }) {
           value={essayType}
           onChange={(e) => setEssayType(e.target.value)}
           className="border-1 focus-visible:ring-[1px]"
+          disabled
         />
       </div>
 
       <div className="space-y-4">
         <Tabs defaultValue="text-input" className="w-full">
+          <h2 className="text-base font-medium text-gray-700 mt-2">
+            Upload Assignment (Either text or a file, but not both.)
+          </h2>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="text-input">Text input</TabsTrigger>
             <TabsTrigger value="file-upload" className="text-gray-400">
@@ -115,6 +190,7 @@ export default function AssignmentForm({ initialTitle, initialType }) {
                 value={essayText}
                 onChange={(e) => setEssayText(e.target.value)}
                 className="min-h-[130px] max-w-full resize-none border-1 focus-visible:ring-[1px]"
+                disabled={isSubmitting}
               />
             </div>
           </TabsContent>
@@ -126,19 +202,20 @@ export default function AssignmentForm({ initialTitle, initialType }) {
               >
                 File Upload
               </Label>
-              <div className="border border-dashed border-blue-300 rounded-lg p-4 py-10  text-center">
+              <div className="border border-dashed border-blue-300 rounded-lg p-4 py-10 text-center">
                 <input
                   id="file-upload"
                   type="file"
                   accept=".docx,.pdf,.txt"
                   onChange={handleFileChange}
                   className="hidden"
+                  disabled={isSubmitting}
                 />
                 <label
                   htmlFor="file-upload"
                   className="cursor-pointer flex flex-col items-center"
                 >
-                  <div className="flex  items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <Upload />
                     <div className="flex flex-col text-left">
                       <span className="text-black">Upload first draft</span>
@@ -166,7 +243,19 @@ export default function AssignmentForm({ initialTitle, initialType }) {
         >
           Coaching Level
         </Label>
-        <Select value={coachingLevel} onValueChange={setCoachingLevel}>
+        <Select
+          value={
+            coachingLevel === "medium"
+              ? "Medium - Balanced feedback"
+              : coachingLevel === "low"
+              ? "Low - Minimal feedback"
+              : coachingLevel === "intensive"
+              ? "High - Detailed feedback"
+              : "Medium - Balanced feedback"
+          }
+          onValueChange={(value) => setCoachingLevel(mapCoachingLevel(value))}
+          disabled={isSubmitting}
+        >
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
@@ -191,7 +280,21 @@ export default function AssignmentForm({ initialTitle, initialType }) {
         >
           Suggestion Level
         </Label>
-        <Select value={suggestionLevel} onValueChange={setSuggestionLevel}>
+        <Select
+          value={
+            suggestionLevel === "medium"
+              ? "Medium - Moderate suggestions"
+              : suggestionLevel === "low"
+              ? "Low - Few suggestions"
+              : suggestionLevel === "high"
+              ? "High - Many suggestions"
+              : "Medium - Moderate suggestions"
+          }
+          onValueChange={(value) =>
+            setSuggestionLevel(mapSuggestionLevel(value))
+          }
+          disabled={isSubmitting}
+        >
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
@@ -209,11 +312,18 @@ export default function AssignmentForm({ initialTitle, initialType }) {
         </Select>
       </div>
 
+      {submitError && (
+        <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded">
+          {submitError}
+        </div>
+      )}
+
       <div className="flex justify-end gap-3 pt-6">
         <DialogClose asChild>
           <Button
             variant="outline"
             className="px-8 bg-transparent hover:bg-gray-100 cursor-pointer"
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
@@ -221,8 +331,9 @@ export default function AssignmentForm({ initialTitle, initialType }) {
         <Button
           onClick={handleSubmit}
           className="px-4 text-white bg-slate-800 hover:bg-slate-700 cursor-pointer"
+          disabled={isSubmitting}
         >
-          Submit Assignment
+          {isSubmitting ? "Submitting..." : "Submit Assignment"}
         </Button>
       </div>
     </div>
@@ -230,6 +341,8 @@ export default function AssignmentForm({ initialTitle, initialType }) {
 }
 
 AssignmentForm.propTypes = {
+  assignmentId: PropTypes.number.isRequired,
   initialTitle: PropTypes.string,
   initialType: PropTypes.string,
+  onSubmitSuccess: PropTypes.func,
 };
