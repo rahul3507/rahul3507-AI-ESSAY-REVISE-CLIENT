@@ -3,7 +3,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useState } from "react";
 import { Plus, FileText } from "lucide-react";
-import { Button } from "../../../components/ui/button";
 
 export default function ComparisonResult() {
   const location = useLocation();
@@ -69,9 +68,9 @@ export default function ComparisonResult() {
           </div>
         </div>
         <div className="flex gap-4">
-          <Button className=" cursor-pointer px-4 py-2 border bg-black text-white text-sm rounded hover:bg-gray-950 transition">
+          {/* <Button className=" cursor-pointer px-4 py-2 border bg-black text-white text-sm rounded hover:bg-gray-950 transition">
             Download Comparison
-          </Button>
+          </Button> */}
           <Link
             to="/upload_comparison"
             className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-700 text-sm rounded hover:bg-gray-50 transition"

@@ -1,3 +1,5 @@
+/** @format */
+
 import { useState } from "react";
 import { Upload, FileText, File } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -51,7 +53,10 @@ const UploadComparison = () => {
 
     try {
       setLoading(true);
-      const res = await apiClient.post("/ai/compare_documents/", formData);
+      const res = await apiClient.post(
+        "/students/essays/compare/upload/",
+        formData
+      );
       const result = res.data;
       // console.log(res);
       navigate("/result", {
@@ -60,7 +65,7 @@ const UploadComparison = () => {
           draft1: {
             name: essay1.name,
             type: essay1.type,
-            text: result?.draft1_text, 
+            text: result?.draft1_text,
           },
           draft2: {
             name: essay2.name,
@@ -269,7 +274,7 @@ const UploadComparison = () => {
             <button
               disabled={!essay1 || !essay2 || loading}
               onClick={handleGenerate}
-              className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-md rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="cursor-pointer px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-md rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Generating..." : "Generate Comparison Analysis"}
             </button>

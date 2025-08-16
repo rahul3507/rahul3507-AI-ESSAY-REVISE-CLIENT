@@ -16,10 +16,10 @@ import {
   ExternalLink,
   Crown,
 } from "lucide-react";
-import useLoggedUser from "../../../components/hook/useLoggedUser";
+// import useLoggedUser from "../../../components/hook/useLoggedUser";
 
 const ComparisonFile = () => {
-  const { user } = useLoggedUser();
+  // const { user } = useLoggedUser();
   const navigate = useNavigate();
 
   const handleCompareClick = () => {
