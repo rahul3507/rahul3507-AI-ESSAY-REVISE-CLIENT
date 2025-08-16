@@ -117,7 +117,7 @@ const SubmissionDetailsDialog = ({ submissionId }) => {
         </div>
 
         {/* Teacher Feedback */}
-        <div>
+        <div className="border border-gray-200 rounded-2xl px-3">
           <h3 className="text-lg font-semibold mb-2">Teacher Evaluation</h3>
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div>
@@ -153,11 +153,11 @@ const SubmissionDetailsDialog = ({ submissionId }) => {
           </div>
           <p className="font-medium">Teacher Feedback</p>
           <p className="text-gray-600">{submission.teacher_feedback}</p>
-          <p className="font-medium mt-2">Teacher Comments</p>
+          <p className="font-medium mt-2">Teacher Overall Feedback</p>
           <p className="text-gray-600">{submission.teacher_general_comment}</p>
           {submission.teacher_grammar_comment && (
             <>
-              <p className="font-medium mt-2">Grammar Comment</p>
+              <p className="font-medium mt-2">Grammar Feedback</p>
               <p className="text-gray-600">
                 {submission.teacher_grammar_comment}
               </p>
@@ -165,7 +165,7 @@ const SubmissionDetailsDialog = ({ submissionId }) => {
           )}
           {submission.teacher_clarity_comment && (
             <>
-              <p className="font-medium mt-2">Clarity Comment</p>
+              <p className="font-medium mt-2">Clarity Feedback</p>
               <p className="text-gray-600">
                 {submission.teacher_clarity_comment}
               </p>
@@ -173,7 +173,7 @@ const SubmissionDetailsDialog = ({ submissionId }) => {
           )}
           {submission.teacher_arguments_comment && (
             <>
-              <p className="font-medium mt-2">Arguments Comment</p>
+              <p className="font-medium mt-2">Arguments Feedback</p>
               <p className="text-gray-600">
                 {submission.teacher_arguments_comment}
               </p>
@@ -181,7 +181,7 @@ const SubmissionDetailsDialog = ({ submissionId }) => {
           )}
           {submission.teacher_vocabulary_comment && (
             <>
-              <p className="font-medium mt-2">Vocabulary Comment</p>
+              <p className="font-medium mt-2">Vocabulary Feedback</p>
               <p className="text-gray-600">
                 {submission.teacher_vocabulary_comment}
               </p>
