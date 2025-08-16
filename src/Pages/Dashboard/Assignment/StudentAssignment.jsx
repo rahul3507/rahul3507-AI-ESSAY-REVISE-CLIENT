@@ -14,10 +14,184 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
+  DialogHeader,
+  DialogTitle,
 } from "../../../components/ui/dialog";
-
+import { Badge } from "../../../components/ui/badge";
 import AssignmentForm from "./AssignmentForm";
 import apiClient from "../../../lib/api-client";
+
+const SubmissionDetailsDialog = ({ submissionId }) => {
+  const [submission, setSubmission] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSubmissionDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get(
+          `/students/submissions/${submissionId}/`
+        );
+        setSubmission(response.data);
+      } catch (err) {
+        setError("Failed to fetch submission details");
+        console.error("Error fetching submission details:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubmissionDetails();
+  }, [submissionId]);
+
+  if (loading) {
+    return (
+      <DialogContent className="bg-white rounded-lg max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Submission Details</DialogTitle>
+        </DialogHeader>
+        <div className="py-6 text-center text-gray-600">
+          Loading submission details...
+        </div>
+      </DialogContent>
+    );
+  }
+
+  if (error || !submission) {
+    return (
+      <DialogContent className="bg-white rounded-lg max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Submission Details</DialogTitle>
+        </DialogHeader>
+        <div className="py-6 text-center text-red-600">
+          {error || "No submission details available"}
+        </div>
+      </DialogContent>
+    );
+  }
+
+  return (
+    <DialogContent className="bg-white rounded-lg overflow-y-auto ">
+      <DialogHeader>
+        <DialogTitle>{submission.assignment.title}</DialogTitle>
+      </DialogHeader>
+      <div className="space-y-6">
+        {/* Submission Content */}
+
+        {/* AI Feedback */}
+        <div className="border border-gray-200 rounded-2xl px-3">
+          <h3 className="text-lg font-semibold mb-2">AI Evaluation</h3>
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mb-4">
+            <div>
+              <p className="font-medium">Total AI Score</p>
+              <Badge className="bg-blue-500 text-white">
+                {submission.total_ai_score}/100
+              </Badge>
+            </div>
+            <div>
+              <p className="font-medium">Grammar Score</p>
+              <Badge className="bg-blue-500 text-white">
+                {submission.ai_grammar_score}/25
+              </Badge>
+            </div>
+            <div>
+              <p className="font-medium">Clarity Score</p>
+              <Badge className="bg-blue-500 text-white">
+                {submission.ai_clarity_score}/25
+              </Badge>
+            </div>
+            <div>
+              <p className="font-medium">Arguments Score</p>
+              <Badge className="bg-blue-500 text-white">
+                {submission.ai_arguments_score}/25
+              </Badge>
+            </div>
+            <div>
+              <p className="font-medium">Vocabulary Score</p>
+              <Badge className="bg-blue-500 text-white">
+                {submission.ai_vocabulary_score}/25
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Teacher Feedback */}
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Teacher Evaluation</h3>
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div>
+              <p className="font-medium">Total Teacher Score</p>
+              <Badge className="bg-green-500 text-white">
+                {submission.total_teacher_score}/100
+              </Badge>
+            </div>
+            <div>
+              <p className="font-medium">Grammar Score</p>
+              <Badge className="bg-green-500 text-white">
+                {submission.teacher_grammar_score}/25
+              </Badge>
+            </div>
+            <div>
+              <p className="font-medium">Clarity Score</p>
+              <Badge className="bg-green-500 text-white">
+                {submission.teacher_clarity_score}/25
+              </Badge>
+            </div>
+            <div>
+              <p className="font-medium">Arguments Score</p>
+              <Badge className="bg-green-500 text-white">
+                {submission.teacher_arguments_score}/25
+              </Badge>
+            </div>
+            <div>
+              <p className="font-medium">Vocabulary Score</p>
+              <Badge className="bg-green-500 text-white">
+                {submission.teacher_vocabulary_score}/25
+              </Badge>
+            </div>
+          </div>
+          <p className="font-medium">Teacher Feedback</p>
+          <p className="text-gray-600">{submission.teacher_feedback}</p>
+          <p className="font-medium mt-2">Teacher Comments</p>
+          <p className="text-gray-600">{submission.teacher_general_comment}</p>
+          {submission.teacher_grammar_comment && (
+            <>
+              <p className="font-medium mt-2">Grammar Comment</p>
+              <p className="text-gray-600">
+                {submission.teacher_grammar_comment}
+              </p>
+            </>
+          )}
+          {submission.teacher_clarity_comment && (
+            <>
+              <p className="font-medium mt-2">Clarity Comment</p>
+              <p className="text-gray-600">
+                {submission.teacher_clarity_comment}
+              </p>
+            </>
+          )}
+          {submission.teacher_arguments_comment && (
+            <>
+              <p className="font-medium mt-2">Arguments Comment</p>
+              <p className="text-gray-600">
+                {submission.teacher_arguments_comment}
+              </p>
+            </>
+          )}
+          {submission.teacher_vocabulary_comment && (
+            <>
+              <p className="font-medium mt-2">Vocabulary Comment</p>
+              <p className="text-gray-600">
+                {submission.teacher_vocabulary_comment}
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </DialogContent>
+  );
+};
 
 const StudentAssignment = () => {
   const [assignments, setAssignments] = useState([]);
@@ -222,9 +396,16 @@ const StudentAssignment = () => {
                       </DialogContent>
                     </Dialog>
                   ) : (
-                    <Button className="cursor-pointer rounded-lg bg-transparent hover:bg-gray-100 text-gray-700 border border-gray-300 font-medium py-4">
-                      View Submission
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="cursor-pointer rounded-lg bg-transparent hover:bg-gray-100 text-gray-700 border border-gray-300 font-medium py-4">
+                          View Submission
+                        </Button>
+                      </DialogTrigger>
+                      <SubmissionDetailsDialog
+                        submissionId={assignment.my_submission_id}
+                      />
+                    </Dialog>
                   )}
                 </div>
               </CardContent>

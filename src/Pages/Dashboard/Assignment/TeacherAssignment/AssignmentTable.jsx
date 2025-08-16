@@ -36,9 +36,8 @@ const AssignmentTable = () => {
 
   useEffect(() => {
     const fetchAssignmentDetails = async () => {
-      // Debug log
-      console.log("Assignment ID from params:", assignmentId); // Debug log
-      console.log("Current URL:", window.location.pathname); // Debug log
+      console.log("Assignment ID from params:", assignmentId);
+      console.log("Current URL:", window.location.pathname);
 
       if (!assignmentId) {
         setError(
@@ -54,8 +53,9 @@ const AssignmentTable = () => {
 
         // Add timeout to prevent infinite loading
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
 
+        // Updated API endpoint to match your backend
         const response = await apiClient.get(
           `/teachers/assignments/${assignmentId}/`,
           {
@@ -65,37 +65,34 @@ const AssignmentTable = () => {
 
         clearTimeout(timeoutId);
 
-        console.log("API Response:", response.data); // Debug log
+        console.log("API Response:", response.data);
 
-        // Handle the response data structure based on your API structure
         if (response.data) {
           setAssignmentData(response.data);
 
-          // Extract submissions from the response - map to expected format
+          // Map submissions from the API response structure
           const submissionsData =
             response.data.submissions?.map((submission) => ({
               id: submission.submission_id,
               student: submission.student,
               status: submission.status,
               submitted_at: submission.submitted_at,
-              submission_text: submission.content_preview,
+              submission_text: submission.submission_text,
+              content: submission.submission_text, // Full content
+              file_name: submission.file_name,
+              // AI scores
               total_ai_score: submission.total_ai_score,
               ai_total_score: submission.total_ai_score, // fallback
+              // Teacher scores
               total_teacher_score: submission.total_teacher_score,
-              // Map AI scores
+              // Evaluation object for compatibility
               evaluation: {
+                // AI scores
                 grammar_score: submission.ai_grammar_score,
                 arguments_score: submission.ai_arguments_score,
                 clarity_score: submission.ai_clarity_score,
                 vocabulary_score: submission.ai_vocabulary_score,
                 total_ai_score: submission.total_ai_score,
-                // Teacher scores
-                teacher_grammar_score: submission.teacher_grammar_score,
-                teacher_arguments_score: submission.teacher_arguments_score,
-                teacher_clarity_score: submission.teacher_clarity_score,
-                teacher_vocabulary_score: submission.teacher_vocabulary_score,
-                teacher_feedback: submission.teacher_feedback,
-                teacher_general_comment: submission.teacher_general_comment,
                 // AI feedback
                 grammar_comment: submission.ai_grammar_comment,
                 arguments_comment: submission.ai_arguments_comment,
@@ -103,6 +100,18 @@ const AssignmentTable = () => {
                 vocabulary_comment: submission.ai_vocabulary_comment,
                 overall_feedback: submission.ai_overall_feedback,
                 suggestions: submission.ai_suggestions,
+                // Teacher scores
+                teacher_grammar_score: submission.teacher_grammar_score,
+                teacher_arguments_score: submission.teacher_arguments_score,
+                teacher_clarity_score: submission.teacher_clarity_score,
+                teacher_vocabulary_score: submission.teacher_vocabulary_score,
+                teacher_feedback: submission.teacher_feedback,
+                teacher_general_comment: submission.teacher_general_comment,
+                teacher_grammar_comment: submission.teacher_grammar_comment,
+                teacher_clarity_comment: submission.teacher_clarity_comment,
+                teacher_arguments_comment: submission.teacher_arguments_comment,
+                teacher_vocabulary_comment:
+                  submission.teacher_vocabulary_comment,
               },
             })) || [];
 
@@ -119,7 +128,6 @@ const AssignmentTable = () => {
         if (err.name === "AbortError") {
           setError("Request timed out. Please try again.");
         } else if (err.response) {
-          // API responded with an error status
           const status = err.response.status;
           if (status === 404) {
             setError("Assignment not found");
@@ -133,7 +141,6 @@ const AssignmentTable = () => {
             );
           }
         } else if (err.request) {
-          // Network error
           setError(
             "Network error. Please check your connection and try again."
           );
@@ -154,7 +161,7 @@ const AssignmentTable = () => {
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
-        return dateString; // Return original string if invalid date
+        return dateString;
       }
       return date.toLocaleDateString("en-US", {
         month: "short",
@@ -188,7 +195,6 @@ const AssignmentTable = () => {
 
   // Determine score cell styling based on score value
   const getScoreStyles = (score) => {
-    // Handle null, undefined, or 0 scores
     if (!score && score !== 0) {
       return "bg-gray-200 text-gray-600";
     }
@@ -223,7 +229,7 @@ const AssignmentTable = () => {
         state: {
           submission: {
             ...submission,
-            assignment: assignmentData, // Pass assignment data as well
+            assignment: assignmentData,
           },
           assignmentData,
         },
@@ -233,7 +239,7 @@ const AssignmentTable = () => {
 
   // Handle back navigation
   const handleBackClick = () => {
-    navigate(-1); // Go back to previous page
+    navigate(-1);
   };
 
   if (loading) {
@@ -427,7 +433,8 @@ const AssignmentTable = () => {
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           submission.status === "pending"
                             ? "bg-yellow-100 text-yellow-800"
-                            : submission.status === "graded"
+                            : submission.status === "graded" ||
+                              submission.status === "reviewed"
                             ? "bg-green-100 text-green-800"
                             : submission.status === "submitted"
                             ? "bg-blue-100 text-blue-800"

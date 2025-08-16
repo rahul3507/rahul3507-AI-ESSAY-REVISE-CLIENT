@@ -39,7 +39,17 @@ const TeacherAssignment = () => {
       try {
         setLoading(true);
         const response = await apiClient.get("/teachers/assignments/");
-        setAssignments(response.data);
+
+        console.log("Fetched assignments:", response.data);
+
+        // Ensure each assignment has a submissions_count field
+        const assignmentsWithCounts = response.data.map((assignment) => ({
+          ...assignment,
+          submissions_count: assignment.submissions_count || 0,
+          reviewed_count: assignment.reviewed_count || 0, // If available from API
+        }));
+
+        setAssignments(assignmentsWithCounts);
         setError(null);
       } catch (err) {
         setError("Failed to fetch assignments");
@@ -80,6 +90,18 @@ const TeacherAssignment = () => {
     return essayTypes[essayType] || "General";
   };
 
+  // Calculate reviewed submissions count
+  const getReviewedCount = (assignment) => {
+    // If the API provides reviewed_count, use it
+    if (assignment.reviewed_count !== undefined) {
+      return assignment.reviewed_count;
+    }
+
+    // Otherwise, you might need to calculate it based on submissions
+    // This would require additional API calls or the data to be included in the assignment response
+    return 0; // Placeholder - you'll need to implement this based on your API structure
+  };
+
   const handleCreateAssignment = () => {
     setEditingAssignment(null);
     setIsEditing(false);
@@ -113,9 +135,10 @@ const TeacherAssignment = () => {
         title: assignmentData.title.trim(),
         description: assignmentData.description?.trim() || "",
         due_date: assignmentData.due_date, // Should be in YYYY-MM-DD format
-        essay_type: assignmentData.essay_type || "General",
-        created_at: assignmentData.created_date,
+        essay_type: assignmentData.essay_type || "argumentative",
       };
+
+      console.log("Assignment payload:", payload);
 
       let response;
       if (isEditing && editingAssignment) {
@@ -126,18 +149,32 @@ const TeacherAssignment = () => {
         );
         setAssignments((prev) =>
           prev.map((assignment) =>
-            assignment.id === editingAssignment.id ? response.data : assignment
+            assignment.id === editingAssignment.id
+              ? {
+                  ...response.data,
+                  submissions_count: assignment.submissions_count || 0,
+                  reviewed_count: assignment.reviewed_count || 0,
+                }
+              : assignment
           )
         );
       } else {
         // Create new assignment
         response = await apiClient.post("/teachers/assignments/", payload);
-        setAssignments((prev) => [...prev, response.data]);
+        const newAssignment = {
+          ...response.data,
+          submissions_count: 0,
+          reviewed_count: 0,
+        };
+        setAssignments((prev) => [...prev, newAssignment]);
       }
+
       setError(null);
       setIsModalOpen(false);
       setEditingAssignment(null);
       setIsEditing(false);
+
+      console.log("Assignment saved successfully:", response.data);
     } catch (err) {
       console.error("Error saving assignment:", err);
 
@@ -194,9 +231,21 @@ const TeacherAssignment = () => {
       setIsDialogOpen(false);
       setAssignmentToDelete(null);
       setError(null);
+
+      console.log("Assignment deleted successfully");
     } catch (err) {
       console.error("Error deleting assignment:", err);
-      setError("Failed to delete assignment");
+      let errorMessage = "Failed to delete assignment";
+
+      if (err.response?.data?.detail) {
+        errorMessage = err.response.data.detail;
+      } else if (err.response?.status === 403) {
+        errorMessage = "You don't have permission to delete this assignment";
+      } else if (err.response?.status === 404) {
+        errorMessage = "Assignment not found";
+      }
+
+      setError(errorMessage);
     }
   };
 
@@ -221,7 +270,10 @@ const TeacherAssignment = () => {
           </h1>
         </div>
         <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-gray-600">Loading assignments...</div>
+          <div className="text-lg text-gray-600 flex flex-col items-center space-y-2">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div>Loading assignments...</div>
+          </div>
         </div>
       </section>
     );
@@ -243,13 +295,19 @@ const TeacherAssignment = () => {
       {/* Display error message */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+          <div className="font-medium">Error</div>
+          <div>{error}</div>
         </div>
       )}
 
       {assignments.length === 0 ? (
         <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-gray-600">No assignments found</div>
+          <div className="text-lg text-gray-600 text-center">
+            <div>No assignments found</div>
+            <div className="text-sm mt-2 text-gray-500">
+              Create your first assignment to get started
+            </div>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
@@ -272,11 +330,21 @@ const TeacherAssignment = () => {
                 </div>
               </CardHeader>
               <CardContent className="px-4 py-0">
-                <p className="text-gray-700 mb-2">{assignment.description}</p>
+                <p className="text-gray-700 mb-2 line-clamp-3">
+                  {assignment.description || "No description provided"}
+                </p>
                 <div className="flex justify-between text-sm text-gray-500 mt-6">
                   <div>
                     <span className="font-semibold">Due Date</span>
-                    <p>{formatDate(assignment.due_date)}</p>
+                    <p
+                      className={`${
+                        new Date(assignment.due_date) < new Date()
+                          ? "text-red-600"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      {formatDate(assignment.due_date)}
+                    </p>
                   </div>
                   <div>
                     <span className="font-semibold">Created At</span>
@@ -288,26 +356,28 @@ const TeacherAssignment = () => {
                 <div className="text-base text-gray-600">
                   <Link
                     to={`/assignment/submitted-assignments/${assignment.id}`}
-                    className="cursor-pointer hover:text-blue-600"
+                    className="cursor-pointer hover:text-blue-600 transition-colors"
                   >
-                    {assignment.submissions_count} Submission
-                    {assignment.submissions_count !== 1 ? "s" : ""}
+                    {assignment.submissions_count || 0} Submission
+                    {(assignment.submissions_count || 0) !== 1 ? "s" : ""}
                   </Link>
                 </div>
-                <span>|</span>
+                <span className="text-gray-400">|</span>
                 <div className="text-base text-gray-600">
-                  <button>0 Reviewed</button>
+                  {getReviewedCount(assignment)} Reviewed
                 </div>
                 <div className="flex space-x-2">
                   <Button
                     onClick={() => handleEditAssignment(assignment)}
-                    className="text-blue-600 hover:text-blue-800 bg-white hover:bg-gray-50"
+                    className="text-blue-600 hover:text-blue-800 bg-white hover:bg-gray-50 border-none p-2"
+                    size="sm"
                   >
                     <PenLine className="text-black size-5" />
                   </Button>
                   <Button
                     onClick={() => handleOpenDeleteDialog(assignment)}
-                    className="bg-white hover:bg-gray-50 border-none"
+                    className="bg-white hover:bg-gray-50 border-none p-2"
+                    size="sm"
                   >
                     <Trash2 className="text-red-600 hover:text-red-800 size-5" />
                   </Button>
@@ -323,15 +393,16 @@ const TeacherAssignment = () => {
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-white">
           <DialogHeader>
             <DialogTitle className="text-red-400">Confirm Delete</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-gray-600">
               Are you sure you want to delete the assignment{" "}
               <span className="font-semibold text-red-400">
-                {assignmentToDelete?.title}
+                &quot;{assignmentToDelete?.title}&quot;
               </span>
-              ? This action cannot be undone.
+              ? This action cannot be undone and will also delete all associated
+              submissions.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="flex gap-2">
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(false)}

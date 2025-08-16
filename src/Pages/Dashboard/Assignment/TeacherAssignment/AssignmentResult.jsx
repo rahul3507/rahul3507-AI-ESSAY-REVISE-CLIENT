@@ -27,6 +27,7 @@ import {
 } from "../../../../components/ui/tabs";
 
 import apiClient from "../../../../lib/api-client";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 export default function AssignmentResult() {
   const location = useLocation();
@@ -38,6 +39,7 @@ export default function AssignmentResult() {
   const [loading, setLoading] = useState(!initialSubmission);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [editMode, setEditMode] = useState(true);
 
   // Teacher evaluation form states
   const [selectedGrammar, setSelectedGrammar] = useState("");
@@ -73,49 +75,79 @@ export default function AssignmentResult() {
       if (!submission && submissionId) {
         try {
           setLoading(true);
+
+          // Use the correct API endpoint - fetch submissions by assignment ID first
+          // We need to get assignment data that contains this submission
+          // Since we have submission ID, we can try to fetch it directly or get it from assignment
+
+          // For now, let's try to fetch from assignments endpoint that includes submissions
+          // We'll need to modify this based on your actual API structure
           const response = await apiClient.get(
             `/teachers/submissions/${submissionId}/`
           );
 
+          console.log("Fetched submission details:", response.data);
+
           // Transform the response to match expected structure
           const submissionData = response.data;
           const transformedSubmission = {
-            id: submissionData.submission_id || submissionData.id,
+            id: submissionData.id,
             student: submissionData.student,
             status: submissionData.status,
             submitted_at: submissionData.submitted_at,
-            submission_text:
-              submissionData.content_preview || submissionData.content,
+            submission_text: submissionData.submission_text,
+            content: submissionData.submission_text,
             assignment: submissionData.assignment,
             evaluation: {
-              grammar_score: submissionData.ai_grammar_score,
-              arguments_score: submissionData.ai_arguments_score,
-              clarity_score: submissionData.ai_clarity_score,
-              vocabulary_score: submissionData.ai_vocabulary_score,
-              total_ai_score: submissionData.total_ai_score,
-              overall_feedback: submissionData.ai_overall_feedback,
-              suggestions: submissionData.ai_suggestions,
+              // AI scores and feedback
+              grammar_score: submissionData.evaluation?.grammar_score || 0,
+              arguments_score: submissionData.evaluation?.arguments_score || 0,
+              clarity_score: submissionData.evaluation?.clarity_score || 0,
+              vocabulary_score:
+                submissionData.evaluation?.vocabulary_score || 0,
+              total_ai_score: submissionData.evaluation?.total_ai_score || 0,
+              overall_feedback:
+                submissionData.evaluation?.overall_feedback || "",
+              suggestions: submissionData.evaluation?.suggestions || "",
               // Teacher evaluation data
-              teacher_grammar_score: submissionData.teacher_grammar_score,
-              teacher_grammar_comment: submissionData.teacher_grammar_comment,
-              teacher_arguments_score: submissionData.teacher_arguments_score,
+              teacher_grammar_score:
+                submissionData.evaluation?.teacher_grammar_score,
+              teacher_arguments_score:
+                submissionData.evaluation?.teacher_arguments_score,
+              teacher_clarity_score:
+                submissionData.evaluation?.teacher_clarity_score,
+              teacher_vocabulary_score:
+                submissionData.evaluation?.teacher_vocabulary_score,
+              teacher_feedback: submissionData.evaluation?.teacher_feedback,
+              teacher_general_comment:
+                submissionData.evaluation?.teacher_general_comment,
+              teacher_grammar_comment:
+                submissionData.evaluation?.teacher_grammar_comment,
+              teacher_clarity_comment:
+                submissionData.evaluation?.teacher_clarity_comment,
               teacher_arguments_comment:
-                submissionData.teacher_arguments_comment,
-              teacher_clarity_score: submissionData.teacher_clarity_score,
-              teacher_clarity_comment: submissionData.teacher_clarity_comment,
-              teacher_vocabulary_score: submissionData.teacher_vocabulary_score,
+                submissionData.evaluation?.teacher_arguments_comment,
               teacher_vocabulary_comment:
-                submissionData.teacher_vocabulary_comment,
-              teacher_feedback: submissionData.teacher_feedback,
-              teacher_general_comment: submissionData.teacher_general_comment,
+                submissionData.evaluation?.teacher_vocabulary_comment,
             },
           };
 
           setSubmission(transformedSubmission);
           setError(null);
         } catch (err) {
-          setError("Failed to fetch submission details");
           console.error("Error fetching submission details:", err);
+
+          // If direct submission fetch fails, try to get it from assignment submissions
+          try {
+            // This is a fallback - you might need to adjust based on your routing
+            // If you have assignment ID in the URL or can derive it
+            console.log("Trying fallback method to fetch submission...");
+            setError(
+              "Submission details could not be loaded. Please try accessing from the assignment page."
+            );
+          } catch (fallbackErr) {
+            setError("Failed to fetch submission details", fallbackErr);
+          }
         } finally {
           setLoading(false);
         }
@@ -125,7 +157,7 @@ export default function AssignmentResult() {
     fetchSubmissionDetails();
   }, [submission, submissionId]);
 
-  // Prefill teacher evaluation if already exists
+  // Prefill teacher evaluation if already exists and set editMode
   useEffect(() => {
     if (submission?.evaluation) {
       const evalData = submission.evaluation;
@@ -141,6 +173,16 @@ export default function AssignmentResult() {
       setVocabularyReason(evalData.teacher_vocabulary_comment || "");
       setSelectedFeedback(evalData.teacher_feedback || "");
       setFeedback(evalData.teacher_general_comment || "");
+
+      // Set editMode to false if evaluation exists
+      if (
+        evalData.teacher_grammar_score !== undefined &&
+        evalData.teacher_grammar_score !== null
+      ) {
+        setEditMode(false);
+      } else {
+        setEditMode(true);
+      }
     }
   }, [submission]);
 
@@ -197,7 +239,7 @@ export default function AssignmentResult() {
         teacher_clarity_comment: clarityReason.trim() || "",
         teacher_vocabulary_score: vocabScore,
         teacher_vocabulary_comment: vocabularyReason.trim() || "",
-        teacher_feedback: selectedFeedback,
+        teacher_feedback: selectedFeedback.toLowerCase(), // Convert to lowercase to match API expectation
         teacher_general_comment: feedback.trim() || "",
       };
 
@@ -210,38 +252,33 @@ export default function AssignmentResult() {
 
       console.log("Evaluation submitted successfully:", response.data);
 
-      // Transform the response back to our expected structure
-      const updatedSubmissionData = response.data;
-      const transformedSubmission = {
+      // Update local submission data with response
+      const updatedSubmission = {
         ...submission,
         evaluation: {
           ...submission.evaluation,
-          teacher_grammar_score: updatedSubmissionData.teacher_grammar_score,
-          teacher_grammar_comment:
-            updatedSubmissionData.teacher_grammar_comment,
-          teacher_arguments_score:
-            updatedSubmissionData.teacher_arguments_score,
-          teacher_arguments_comment:
-            updatedSubmissionData.teacher_arguments_comment,
-          teacher_clarity_score: updatedSubmissionData.teacher_clarity_score,
-          teacher_clarity_comment:
-            updatedSubmissionData.teacher_clarity_comment,
-          teacher_vocabulary_score:
-            updatedSubmissionData.teacher_vocabulary_score,
-          teacher_vocabulary_comment:
-            updatedSubmissionData.teacher_vocabulary_comment,
-          teacher_feedback: updatedSubmissionData.teacher_feedback,
-          teacher_general_comment:
-            updatedSubmissionData.teacher_general_comment,
+          teacher_grammar_score: response.data.teacher_grammar_score,
+          teacher_grammar_comment: response.data.teacher_grammar_comment,
+          teacher_arguments_score: response.data.teacher_arguments_score,
+          teacher_arguments_comment: response.data.teacher_arguments_comment,
+          teacher_clarity_score: response.data.teacher_clarity_score,
+          teacher_clarity_comment: response.data.teacher_clarity_comment,
+          teacher_vocabulary_score: response.data.teacher_vocabulary_score,
+          teacher_vocabulary_comment: response.data.teacher_vocabulary_comment,
+          teacher_feedback: response.data.teacher_feedback,
+          teacher_general_comment: response.data.teacher_general_comment,
         },
       };
 
-      // Update local submission data with response
-      setSubmission(transformedSubmission);
+      setSubmission(updatedSubmission);
+      setEditMode(false);
 
-      // Navigate back or show success message
-      alert("Evaluation submitted successfully!");
-      navigate(-1); // Go back to previous page
+      toast.success("Evaluation submitted successfully!");
+
+      // Navigate back after a short delay to show the success message
+      setTimeout(() => {
+        navigate(-1);
+      }, 1500);
     } catch (err) {
       console.error("Error submitting evaluation:", err);
       let errorMessage = "Failed to submit evaluation";
@@ -329,7 +366,16 @@ export default function AssignmentResult() {
   if (!submission) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="text-lg text-red-600">Submission not found</div>
+        <div className="text-lg text-red-600 text-center">
+          <div>Submission not found</div>
+          {error && <div className="text-sm text-gray-600 mt-2">{error}</div>}
+          <Button
+            onClick={() => navigate(-1)}
+            className="mt-4 bg-blue-600 text-white hover:bg-blue-700"
+          >
+            Go Back
+          </Button>
+        </div>
       </div>
     );
   }
@@ -338,6 +384,10 @@ export default function AssignmentResult() {
     typeof submission.assignment === "string"
       ? submission.assignment
       : submission.assignment?.title || "N/A";
+
+  const selectedOption = feedbackOptions.find(
+    (opt) => opt.label === selectedFeedback
+  ) || { color: "bg-gray-100", textColor: "text-gray-600" };
 
   return (
     <div className="flex h-screen bg-[#f9f9f9]">
@@ -412,129 +462,171 @@ export default function AssignmentResult() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                  Grammar (0-25)
-                </label>
-                <Select
-                  value={selectedGrammar}
-                  onValueChange={setSelectedGrammar}
-                >
-                  <SelectTrigger className="w-full cursor-pointer border border-gray-200">
-                    <SelectValue placeholder="Select score" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer border-gray-200">
-                    {Array.from({ length: 26 }, (_, i) => (
-                      <SelectItem
-                        key={i}
-                        value={i.toString()}
-                        className="cursor-pointer"
-                      >
-                        {i}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  placeholder="Comment for grammar score (optional)..."
-                  value={grammarReason}
-                  onChange={(e) => setGrammarReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm border-gray-200"
-                />
-              </div>
+              {editMode ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Grammar (0-25)
+                    </label>
+                    <Select
+                      value={selectedGrammar}
+                      onValueChange={setSelectedGrammar}
+                    >
+                      <SelectTrigger className="w-full cursor-pointer border border-gray-200">
+                        <SelectValue placeholder="Select score" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white cursor-pointer border-gray-200">
+                        {Array.from({ length: 26 }, (_, i) => (
+                          <SelectItem
+                            key={i}
+                            value={i.toString()}
+                            className="cursor-pointer"
+                          >
+                            {i}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Textarea
+                      placeholder="Comment for grammar score (optional)..."
+                      value={grammarReason}
+                      onChange={(e) => setGrammarReason(e.target.value)}
+                      className="mt-2 min-h-[60px] text-sm border-gray-200"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                  Argument Strength (0-30)
-                </label>
-                <Select
-                  value={selectedArgument}
-                  onValueChange={setSelectedArgument}
-                >
-                  <SelectTrigger className="w-full cursor-pointer border-gray-200">
-                    <SelectValue placeholder="Select score" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer border-gray-200">
-                    {Array.from({ length: 31 }, (_, i) => (
-                      <SelectItem
-                        key={i}
-                        value={i.toString()}
-                        className="cursor-pointer"
-                      >
-                        {i}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  placeholder="Comment for argument strength score (optional)..."
-                  value={argumentReason}
-                  onChange={(e) => setArgumentReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm border-gray-200"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Argument Strength (0-30)
+                    </label>
+                    <Select
+                      value={selectedArgument}
+                      onValueChange={setSelectedArgument}
+                    >
+                      <SelectTrigger className="w-full cursor-pointer border-gray-200">
+                        <SelectValue placeholder="Select score" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white cursor-pointer border-gray-200">
+                        {Array.from({ length: 31 }, (_, i) => (
+                          <SelectItem
+                            key={i}
+                            value={i.toString()}
+                            className="cursor-pointer"
+                          >
+                            {i}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Textarea
+                      placeholder="Comment for argument strength score (optional)..."
+                      value={argumentReason}
+                      onChange={(e) => setArgumentReason(e.target.value)}
+                      className="mt-2 min-h-[60px] text-sm border-gray-200"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                  Clarity (0-25)
-                </label>
-                <Select
-                  value={selectedClarity}
-                  onValueChange={setSelectedClarity}
-                >
-                  <SelectTrigger className="w-full cursor-pointer border-gray-200">
-                    <SelectValue placeholder="Select score" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer border-gray-200">
-                    {Array.from({ length: 26 }, (_, i) => (
-                      <SelectItem
-                        key={i}
-                        value={i.toString()}
-                        className="cursor-pointer"
-                      >
-                        {i}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  placeholder="Comment for clarity score (optional)..."
-                  value={clarityReason}
-                  onChange={(e) => setClarityReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm border-gray-200"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Clarity (0-25)
+                    </label>
+                    <Select
+                      value={selectedClarity}
+                      onValueChange={setSelectedClarity}
+                    >
+                      <SelectTrigger className="w-full cursor-pointer border-gray-200">
+                        <SelectValue placeholder="Select score" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white cursor-pointer border-gray-200">
+                        {Array.from({ length: 26 }, (_, i) => (
+                          <SelectItem
+                            key={i}
+                            value={i.toString()}
+                            className="cursor-pointer"
+                          >
+                            {i}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Textarea
+                      placeholder="Comment for clarity score (optional)..."
+                      value={clarityReason}
+                      onChange={(e) => setClarityReason(e.target.value)}
+                      className="mt-2 min-h-[60px] text-sm border-gray-200"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                  Vocabulary (0-20)
-                </label>
-                <Select
-                  value={selectedVocabulary}
-                  onValueChange={setSelectedVocabulary}
-                >
-                  <SelectTrigger className="w-full cursor-pointer border-gray-200">
-                    <SelectValue placeholder="Select score" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer border-gray-200">
-                    {Array.from({ length: 21 }, (_, i) => (
-                      <SelectItem
-                        key={i}
-                        value={i.toString()}
-                        className="cursor-pointer"
-                      >
-                        {i}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  placeholder="Comment for vocabulary score (optional)..."
-                  value={vocabularyReason}
-                  onChange={(e) => setVocabularyReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm border-gray-200"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Vocabulary (0-20)
+                    </label>
+                    <Select
+                      value={selectedVocabulary}
+                      onValueChange={setSelectedVocabulary}
+                    >
+                      <SelectTrigger className="w-full cursor-pointer border-gray-200">
+                        <SelectValue placeholder="Select score" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white cursor-pointer border-gray-200">
+                        {Array.from({ length: 21 }, (_, i) => (
+                          <SelectItem
+                            key={i}
+                            value={i.toString()}
+                            className="cursor-pointer"
+                          >
+                            {i}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Textarea
+                      placeholder="Comment for vocabulary score (optional)..."
+                      value={vocabularyReason}
+                      onChange={(e) => setVocabularyReason(e.target.value)}
+                      className="mt-2 min-h-[60px] text-sm border-gray-200"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <div className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Grammar (0-25): {selectedGrammar || "N/A"}
+                    </div>
+                    <p className="text-sm text-gray-700">
+                      {grammarReason || "No comment provided"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Argument Strength (0-30): {selectedArgument || "N/A"}
+                    </div>
+                    <p className="text-sm text-gray-700">
+                      {argumentReason || "No comment provided"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Clarity (0-25): {selectedClarity || "N/A"}
+                    </div>
+                    <p className="text-sm text-gray-700">
+                      {clarityReason || "No comment provided"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Vocabulary (0-20): {selectedVocabulary || "N/A"}
+                    </div>
+                    <p className="text-sm text-gray-700">
+                      {vocabularyReason || "No comment provided"}
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -545,32 +637,47 @@ export default function AssignmentResult() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {feedbackOptions.map((option) => (
-                <div
-                  key={option.label}
-                  className={`flex items-center px-4 py-2 rounded-lg cursor-pointer ${
-                    selectedFeedback === option.label
-                      ? `${option.color} ${option.textColor}`
-                      : "bg-gray-100 text-gray-600"
-                  } text-sm font-medium transition-colors`}
-                  onClick={() => handleFeedbackChange(option.label)}
-                >
-                  <input
-                    type="radio"
-                    name="feedback"
-                    checked={selectedFeedback === option.label}
-                    onChange={() => handleFeedbackChange(option.label)}
-                    className="mr-2 w-4 h-4 cursor-pointer"
+              {editMode ? (
+                <>
+                  {feedbackOptions.map((option) => (
+                    <div
+                      key={option.label}
+                      className={`flex items-center px-4 py-2 rounded-lg cursor-pointer ${
+                        selectedFeedback === option.label
+                          ? `${option.color} ${option.textColor}`
+                          : "bg-gray-100 text-gray-600"
+                      } text-sm font-medium transition-colors`}
+                      onClick={() => handleFeedbackChange(option.label)}
+                    >
+                      <input
+                        type="radio"
+                        name="feedback"
+                        checked={selectedFeedback === option.label}
+                        onChange={() => handleFeedbackChange(option.label)}
+                        className="mr-2 w-4 h-4 cursor-pointer"
+                      />
+                      {option.label}
+                    </div>
+                  ))}
+                  <Textarea
+                    placeholder="Provide additional general comment for the student (optional)..."
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    className="mt-4 min-h-[80px] text-sm border-gray-200"
                   />
-                  {option.label}
-                </div>
-              ))}
-              <Textarea
-                placeholder="Provide additional general comment for the student (optional)..."
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className="mt-4 min-h-[80px] text-sm border-gray-200"
-              />
+                </>
+              ) : (
+                <>
+                  <div
+                    className={`flex items-center px-4 py-2 rounded-lg ${selectedOption.color} ${selectedOption.textColor} text-sm font-medium`}
+                  >
+                    {selectedFeedback || "N/A"}
+                  </div>
+                  <p className="mt-4 text-sm text-gray-700">
+                    {feedback || "No additional comment provided"}
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -600,9 +707,7 @@ export default function AssignmentResult() {
                     Student Essay Submission
                   </h1>
                   <div className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                    {submission.submission_text ||
-                      submission.content ||
-                      "No essay content available"}
+                    {submission.content || "No essay content available"}
                   </div>
                 </CardContent>
               </Card>
@@ -640,16 +745,38 @@ export default function AssignmentResult() {
             >
               Cancel
             </Button>
-            <Button
-              className="px-8 bg-[#1155ff] hover:bg-[#0d47d9] text-white"
-              onClick={handleSubmitEvaluation}
-              disabled={submitting}
-            >
-              {submitting ? "Submitting..." : "Submit Evaluation"}
-            </Button>
+            {editMode ? (
+              <Button
+                className="px-8 bg-[#1155ff] hover:bg-[#0d47d9] text-white"
+                onClick={handleSubmitEvaluation}
+                disabled={submitting}
+              >
+                {submitting ? "Submitting..." : "Submit Evaluation"}
+              </Button>
+            ) : (
+              <Button
+                className="px-8 bg-[#1155ff] hover:bg-[#0d47d9] text-white"
+                onClick={() => setEditMode(true)}
+              >
+                Edit Evaluation
+              </Button>
+            )}
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 }
