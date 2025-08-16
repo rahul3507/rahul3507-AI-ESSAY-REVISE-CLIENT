@@ -70,11 +70,11 @@ const router = createBrowserRouter([
         element: <Assignment />,
       },
       {
-        path: "/assignment/submitted-assignments",
+        path: "/assignment/submitted-assignments/:id",
         element: <AssignmentTable />,
       },
       {
-        path: "/assignment/submitted-assignments/assignment-result",
+        path: "/assignment/submitted-assignments/assignment-result/:id",
         element: <AssignmentResult />,
       },
       {

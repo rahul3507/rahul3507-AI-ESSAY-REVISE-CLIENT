@@ -287,8 +287,8 @@ const TeacherAssignment = () => {
               <CardFooter className="p-2 bg-gray-50 flex justify-between items-center mx-4 mb-4 rounded-2xl">
                 <div className="text-base text-gray-600">
                   <Link
-                    to="/assignment/submitted-assignments"
-                    className="cursor-pointer"
+                    to={`/assignment/submitted-assignments/${assignment.id}`}
+                    className="cursor-pointer hover:text-blue-600"
                   >
                     {assignment.submissions_count} Submission
                     {assignment.submissions_count !== 1 ? "s" : ""}
