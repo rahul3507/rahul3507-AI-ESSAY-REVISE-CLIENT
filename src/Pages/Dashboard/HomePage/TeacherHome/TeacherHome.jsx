@@ -1,34 +1,76 @@
 /** @format */
 
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "../../../../components/ui/card";
-
 import TeachersEssayTable from "./TeachersEssayTable";
 import apiClient from "../../../../lib/api-client";
 
-const data2 = [
-  {
-    title: "Total Student",
-    value: 12,
-    totalMark: null,
-  },
-  {
-    title: "Total Essays Submit",
-    value: 9,
-    totalMark: null,
-  },
-  {
-    title: "Pending Review",
-    value: 9,
-    totalMark: null,
-  },
-  {
-    title: "Average Score",
-    value: 5,
-    totalMark: 12,
-  },
-];
-
 const TeacherHome = () => {
+  const [dashboardData, setDashboardData] = useState({
+    total_students: 0,
+    total_essays_submitted: 0,
+    pending_reviews: 0,
+    average_score: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get("/teachers/dashboard/");
+        setDashboardData(response.data);
+      } catch (err) {
+        setError("Failed to fetch dashboard data");
+        console.error("Dashboard API error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const dashboardCards = [
+    {
+      title: "Total Student",
+      value: dashboardData.total_students,
+      totalMark: null,
+    },
+    {
+      title: "Total Essays Submit",
+      value: dashboardData.total_essays_submitted,
+      totalMark: null,
+    },
+    {
+      title: "Pending Review",
+      value: dashboardData.pending_reviews,
+      totalMark: null,
+    },
+    {
+      title: "Average Score",
+      value: dashboardData.average_score,
+      totalMark: 100,
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading dashboard...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="">
       {/* Header */}
@@ -44,22 +86,18 @@ const TeacherHome = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        {data2.map((item, index) => (
+        {dashboardCards.map((item, index) => (
           <Card key={index} className="border-gray-200">
             <CardContent className="px-6">
               <div className="text-lg text-black mb-1 border-b border-gray-200 ">
                 {item.title}
               </div>
               <div className="text-3xl font-bold text-black mb-1">
-                {item.totalMark !== null ? (
-                  <>
-                    {item.value}
-                    <span className="text-lg text-[#a1a1a1]">
-                      /{item.totalMark}
-                    </span>
-                  </>
-                ) : (
-                  item.value
+                {item.value}
+                {item.totalMark && (
+                  <span className="text-sm font-normal text-gray-500">
+                    /{item.totalMark}
+                  </span>
                 )}
               </div>
             </CardContent>
