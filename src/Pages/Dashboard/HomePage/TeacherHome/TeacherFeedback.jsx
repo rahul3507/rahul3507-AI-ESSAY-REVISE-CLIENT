@@ -2,8 +2,8 @@
 
 "use client";
 
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { Button } from "../../../../components/ui/button";
 import {
   Card,
@@ -25,11 +25,22 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../../../components/ui/tabs";
+import apiClient from "../../../../lib/api-client";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 export default function TeacherFeedback() {
   const location = useLocation();
-  const { item } = location.state || {};
+  const { id: essayId } = useParams();
+  const navigate = useNavigate();
+  const { item: initialItem } = location.state || {};
 
+  const [essay, setEssay] = useState(initialItem);
+  const [loading, setLoading] = useState(!initialItem);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [editMode, setEditMode] = useState(true);
+
+  // Teacher evaluation form states
   const [selectedGrammar, setSelectedGrammar] = useState("");
   const [grammarReason, setGrammarReason] = useState("");
   const [selectedArgument, setSelectedArgument] = useState("");
@@ -39,6 +50,7 @@ export default function TeacherFeedback() {
   const [selectedVocabulary, setSelectedVocabulary] = useState("");
   const [vocabularyReason, setVocabularyReason] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [selectedFeedback, setSelectedFeedback] = useState("");
 
   const feedbackOptions = [
     { label: "Inadequate", color: "bg-[#F5D8D8]", textColor: "text-[#F54A45]" },
@@ -56,32 +68,277 @@ export default function TeacherFeedback() {
     { label: "Excellent", color: "bg-[#E5EDFF]", textColor: "text-[#1155FF]" },
   ];
 
-  const [selectedFeedback, setSelectedFeedback] = useState("");
+  // Fetch essay details if not provided via location state
+  useEffect(() => {
+    const fetchEssayDetails = async () => {
+      if (!essay && essayId) {
+        try {
+          setLoading(true);
+          const response = await apiClient.get(`/teachers/essays/${essayId}/`);
+          console.log("Fetched essay details:", response.data);
+          setEssay(response.data);
+          setError(null);
+        } catch (err) {
+          console.error("Error fetching essay details:", err);
+          setError("Failed to fetch essay details. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchEssayDetails();
+  }, [essay, essayId]);
+
+  // Prefill teacher evaluation if already exists and set editMode
+  useEffect(() => {
+    if (essay) {
+      setSelectedGrammar(essay.teacher_grammar_score?.toString() || "");
+      setGrammarReason(essay.teacher_grammar_comment || "");
+      setSelectedArgument(essay.teacher_arguments_score?.toString() || "");
+      setArgumentReason(essay.teacher_arguments_comment || "");
+      setSelectedClarity(essay.teacher_clarity_score?.toString() || "");
+      setClarityReason(essay.teacher_clarity_comment || "");
+      setSelectedVocabulary(essay.teacher_vocabulary_score?.toString() || "");
+      setVocabularyReason(essay.teacher_vocabulary_comment || "");
+      setSelectedFeedback(essay.teacher_feedback || "");
+      setFeedback(essay.teacher_general_comment || "");
+
+      // Set editMode to false if evaluation exists
+      if (
+        essay.teacher_grammar_score !== undefined &&
+        essay.teacher_grammar_score !== null
+      ) {
+        setEditMode(false);
+      } else {
+        setEditMode(true);
+      }
+    }
+  }, [essay]);
 
   const handleFeedbackChange = (value) => {
     setSelectedFeedback(value);
   };
+
+  const handleSubmitEvaluation = async () => {
+    try {
+      setSubmitting(true);
+      setError(null);
+
+      // Validate required fields
+      if (
+        !selectedGrammar ||
+        !selectedArgument ||
+        !selectedClarity ||
+        !selectedVocabulary ||
+        !selectedFeedback
+      ) {
+        setError(
+          "Please provide scores for all criteria and select an overall rating"
+        );
+        return;
+      }
+
+      // Ensure scores are within valid ranges
+      const grammarScore = parseInt(selectedGrammar);
+      const argumentScore = parseInt(selectedArgument);
+      const clarityScore = parseInt(selectedClarity);
+      const vocabScore = parseInt(selectedVocabulary);
+
+      if (
+        grammarScore < 0 ||
+        grammarScore > 25 ||
+        argumentScore < 0 ||
+        argumentScore > 25 ||
+        clarityScore < 0 ||
+        clarityScore > 25 ||
+        vocabScore < 0 ||
+        vocabScore > 25
+      ) {
+        setError("All scores must be between 0-25");
+        return;
+      }
+
+      // API payload matching the expected format
+      const evaluationData = {
+        teacher_grammar_score: grammarScore,
+        teacher_grammar_comment: grammarReason.trim() || "",
+        teacher_arguments_score: argumentScore,
+        teacher_arguments_comment: argumentReason.trim() || "",
+        teacher_clarity_score: clarityScore,
+        teacher_clarity_comment: clarityReason.trim() || "",
+        teacher_vocabulary_score: vocabScore,
+        teacher_vocabulary_comment: vocabularyReason.trim() || "",
+        teacher_feedback: selectedFeedback,
+        teacher_general_comment: feedback.trim() || "",
+      };
+
+      console.log("Submitting evaluation data:", evaluationData);
+
+      const response = await apiClient.post(
+        `/teachers/essays/${essay.id}/evaluate/`,
+        evaluationData
+      );
+
+      console.log("Evaluation submitted successfully:", response.data);
+
+      // Update local essay data with response
+      const updatedEssay = {
+        ...essay,
+        teacher_grammar_score: response.data.teacher_grammar_score,
+        teacher_grammar_comment: response.data.teacher_grammar_comment,
+        teacher_arguments_score: response.data.teacher_arguments_score,
+        teacher_arguments_comment: response.data.teacher_arguments_comment,
+        teacher_clarity_score: response.data.teacher_clarity_score,
+        teacher_clarity_comment: response.data.teacher_clarity_comment,
+        teacher_vocabulary_score: response.data.teacher_vocabulary_score,
+        teacher_vocabulary_comment: response.data.teacher_vocabulary_comment,
+        teacher_feedback: response.data.teacher_feedback,
+        teacher_general_comment: response.data.teacher_general_comment,
+        total_teacher_score: response.data.total_teacher_score,
+      };
+
+      setEssay(updatedEssay);
+      setEditMode(false);
+
+      toast.success("Evaluation submitted successfully!");
+
+      // Navigate back after a short delay to show the success message
+      setTimeout(() => {
+        navigate(-1);
+      }, 1500);
+    } catch (err) {
+      console.error("Error submitting evaluation:", err);
+      let errorMessage = "Failed to submit evaluation";
+
+      if (err.response?.data) {
+        const errorData = err.response.data;
+        console.log("Error response data:", errorData);
+
+        if (typeof errorData === "string") {
+          errorMessage = errorData;
+        } else if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (errorData.error) {
+          errorMessage = errorData.error;
+        } else {
+          // Handle field-specific errors
+          const errors = Object.entries(errorData)
+            .map(([field, msgs]) => {
+              if (Array.isArray(msgs)) {
+                return `${field}: ${msgs.join(", ")}`;
+              } else if (typeof msgs === "string") {
+                return `${field}: ${msgs}`;
+              } else {
+                return `${field}: ${JSON.stringify(msgs)}`;
+              }
+            })
+            .join("; ");
+          errorMessage = errors || errorMessage;
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch {
+      return "Invalid Date";
+    }
+  };
+
+  // Format AI suggestions for display
+  const formatAISuggestions = (suggestions) => {
+    if (!suggestions) return "No suggestions available";
+
+    // Split by newline and filter out empty lines
+    const lines = suggestions.split("\n").filter((line) => line.trim());
+
+    return (
+      <div className="space-y-2">
+        {lines.map((line, index) => (
+          <p key={index} className="text-gray-700">
+            {line.trim()}
+          </p>
+        ))}
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-lg text-gray-600 flex flex-col items-center space-y-2">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div>Loading essay details...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!essay) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-lg text-red-600 text-center">
+          <div>Essay not found</div>
+          {error && <div className="text-sm text-gray-600 mt-2">{error}</div>}
+          <Button
+            onClick={() => navigate(-1)}
+            className="mt-4 bg-blue-600 text-white hover:bg-blue-700"
+          >
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const selectedOption = feedbackOptions.find(
+    (opt) => opt.label === selectedFeedback
+  ) || { color: "bg-gray-100", textColor: "text-gray-600" };
 
   return (
     <div className="flex h-screen bg-[#f9f9f9]">
       {/* Main Content */}
       <div className="flex-1 flex">
         {/* AI Scores Panel */}
-        <div className="w-96 p-6 bg-white border-r border-[#e3e4e6]">
+        <div className="w-96 p-6 bg-white border-r border-[#e3e4e6] overflow-y-auto">
           <h2 className="text-xl font-semibold text-[#1e2839] mb-6">
-            Review {item?.name || "Student"}'s Essay
+            Review {essay.student?.full_name || "Student"}&apos;s Essay
           </h2>
+
+          {/* Display error if any */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded mb-4 text-sm">
+              {error}
+            </div>
+          )}
 
           <Card className="mb-6 border border-gray-200">
             <CardHeader>
-              <CardTitle className="text-lg text-[#1e2839] ">
+              <CardTitle className="text-lg text-[#1e2839]">
                 AI Scores
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 border border-gray-200 mx-1 rounded-2xl py-3">
               <div className="text-center">
                 <div className="text-lg font-bold text-[#1e2839] border-b border-gray-200">
-                  Total Score: {item?.score || "N/A"}/100
+                  Total Score: {essay.total_ai_score || "0"}/100
                 </div>
               </div>
 
@@ -89,33 +346,33 @@ export default function TeacherFeedback() {
                 <div>
                   <div className="text-[#647187]">Grammar</div>
                   <div className="font-semibold text-[#1e2839]">
-                    (25%): 20/25
+                    (25%): {essay.ai_grammar_score || "0"}/25
                   </div>
                 </div>
                 <div>
                   <div className="text-[#647187]">Argument Strength</div>
                   <div className="font-semibold text-[#1e2839]">
-                    (30%): 24/30
+                    (25%): {essay.ai_arguments_score || "0"}/25
                   </div>
                 </div>
                 <div>
                   <div className="text-[#647187]">Clarity</div>
                   <div className="font-semibold text-[#1e2839]">
-                    (25%): 20/25
+                    (25%): {essay.ai_clarity_score || "0"}/25
                   </div>
                 </div>
                 <div>
                   <div className="text-[#647187]">Vocabulary</div>
                   <div className="font-semibold text-[#1e2839]">
-                    (20%): 18/20
+                    (25%): {essay.ai_vocabulary_score || "0"}/25
                   </div>
                 </div>
               </div>
               <div className="text-sm text-[#647187]">
-                File: {item?.fileName || "N/A"} ({item?.fileType || "N/A"})
+                Essay: {essay.title || "N/A"} ({essay.essay_type || "N/A"})
               </div>
               <div className="text-sm text-[#647187]">
-                Uploaded: {item?.uploadDate || "N/A"}
+                Uploaded: {formatDate(essay.submitted_at)}
               </div>
             </CardContent>
           </Card>
@@ -123,170 +380,233 @@ export default function TeacherFeedback() {
           <Card className="mb-6 border border-gray-200">
             <CardHeader>
               <CardTitle className="text-lg text-[#1e2839]">
-                Teacher Rubric (1-25 Scale)
+                Teacher Rubric (0-25 Scale)
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                  Grammar
-                </label>
-                <Select
-                  value={selectedGrammar}
-                  onValueChange={setSelectedGrammar}
-                >
-                  <SelectTrigger className="w-full cursor-pointer border border-gray-200">
-                    <SelectValue placeholder="Select score" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer border-gray-200">
-                    {Array.from({ length: 25 }, (_, i) => (
-                      <SelectItem
-                        key={i + 1}
-                        value={(i + 1).toString()}
-                        className="cursor-pointer"
-                      >
-                        {i + 1}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  placeholder="Reason for grammar score..."
-                  value={grammarReason}
-                  onChange={(e) => setGrammarReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm border-gray-200"
-                />
-              </div>
+              {editMode ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Grammar (0-25)
+                    </label>
+                    <Select
+                      value={selectedGrammar}
+                      onValueChange={setSelectedGrammar}
+                    >
+                      <SelectTrigger className="w-full cursor-pointer border border-gray-200">
+                        <SelectValue placeholder="Select score" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white cursor-pointer border-gray-200">
+                        {Array.from({ length: 26 }, (_, i) => (
+                          <SelectItem
+                            key={i}
+                            value={i.toString()}
+                            className="cursor-pointer"
+                          >
+                            {i}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Textarea
+                      placeholder="Reason for grammar score..."
+                      value={grammarReason}
+                      onChange={(e) => setGrammarReason(e.target.value)}
+                      className="mt-2 min-h-[60px] text-sm border-gray-200"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                  Argument Strength
-                </label>
-                <Select
-                  value={selectedArgument}
-                  onValueChange={setSelectedArgument}
-                >
-                  <SelectTrigger className="w-full cursor-pointer border-gray-200">
-                    <SelectValue placeholder="Select score" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer border-gray-200">
-                    {Array.from({ length: 25 }, (_, i) => (
-                      <SelectItem
-                        key={i + 1}
-                        value={(i + 1).toString()}
-                        className="cursor-pointer"
-                      >
-                        {i + 1}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  placeholder="Reason for argument strength score..."
-                  value={argumentReason}
-                  onChange={(e) => setArgumentReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm border-gray-200"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Argument Strength (0-25)
+                    </label>
+                    <Select
+                      value={selectedArgument}
+                      onValueChange={setSelectedArgument}
+                    >
+                      <SelectTrigger className="w-full cursor-pointer border border-gray-200">
+                        <SelectValue placeholder="Select score" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white cursor-pointer border-gray-200">
+                        {Array.from({ length: 26 }, (_, i) => (
+                          <SelectItem
+                            key={i}
+                            value={i.toString()}
+                            className="cursor-pointer"
+                          >
+                            {i}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Textarea
+                      placeholder="Reason for argument strength score..."
+                      value={argumentReason}
+                      onChange={(e) => setArgumentReason(e.target.value)}
+                      className="mt-2 min-h-[60px] text-sm border-gray-200"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                  Clarity
-                </label>
-                <Select
-                  value={selectedClarity}
-                  onValueChange={setSelectedClarity}
-                >
-                  <SelectTrigger className="w-full cursor-pointer border-gray-200">
-                    <SelectValue placeholder="Select score" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer border-gray-200">
-                    {Array.from({ length: 25 }, (_, i) => (
-                      <SelectItem
-                        key={i + 1}
-                        value={(i + 1).toString()}
-                        className="cursor-pointer"
-                      >
-                        {i + 1}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  placeholder="Reason for clarity score..."
-                  value={clarityReason}
-                  onChange={(e) => setClarityReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm border-gray-200"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Clarity (0-25)
+                    </label>
+                    <Select
+                      value={selectedClarity}
+                      onValueChange={setSelectedClarity}
+                    >
+                      <SelectTrigger className="w-full cursor-pointer border border-gray-200">
+                        <SelectValue placeholder="Select score" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white cursor-pointer border-gray-200">
+                        {Array.from({ length: 26 }, (_, i) => (
+                          <SelectItem
+                            key={i}
+                            value={i.toString()}
+                            className="cursor-pointer"
+                          >
+                            {i}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Textarea
+                      placeholder="Reason for clarity score..."
+                      value={clarityReason}
+                      onChange={(e) => setClarityReason(e.target.value)}
+                      className="mt-2 min-h-[60px] text-sm border-gray-200"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                  Vocabulary
-                </label>
-                <Select
-                  value={selectedVocabulary}
-                  onValueChange={setSelectedVocabulary}
-                >
-                  <SelectTrigger className="w-full cursor-pointer border-gray-200">
-                    <SelectValue placeholder="Select score" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white cursor-pointer border-gray-200">
-                    {Array.from({ length: 25 }, (_, i) => (
-                      <SelectItem
-                        key={i + 1}
-                        value={(i + 1).toString()}
-                        className="cursor-pointer"
-                      >
-                        {i + 1}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  placeholder="Reason for vocabulary score..."
-                  value={vocabularyReason}
-                  onChange={(e) => setVocabularyReason(e.target.value)}
-                  className="mt-2 min-h-[60px] text-sm border-gray-200"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Vocabulary (0-25)
+                    </label>
+                    <Select
+                      value={selectedVocabulary}
+                      onValueChange={setSelectedVocabulary}
+                    >
+                      <SelectTrigger className="w-full cursor-pointer border border-gray-200">
+                        <SelectValue placeholder="Select score" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white cursor-pointer border-gray-200">
+                        {Array.from({ length: 26 }, (_, i) => (
+                          <SelectItem
+                            key={i}
+                            value={i.toString()}
+                            className="cursor-pointer"
+                          >
+                            {i}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Textarea
+                      placeholder="Comment for vocabulary score (optional)..."
+                      value={vocabularyReason}
+                      onChange={(e) => setVocabularyReason(e.target.value)}
+                      className="mt-2 min-h-[60px] text-sm border-gray-200"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <div className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Grammar (0-25): {selectedGrammar || "N/A"}
+                    </div>
+                    <p className="text-sm text-gray-700">
+                      {grammarReason || "No comment provided"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Argument Strength (0-25): {selectedArgument || "N/A"}
+                    </div>
+                    <p className="text-sm text-gray-700">
+                      {argumentReason || "No comment provided"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Clarity (0-25): {selectedClarity || "N/A"}
+                    </div>
+                    <p className="text-sm text-gray-700">
+                      {clarityReason || "No comment provided"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="block text-sm font-medium text-[#1e2839] mb-2">
+                      Vocabulary (0-25): {selectedVocabulary || "N/A"}
+                    </div>
+                    <p className="text-sm text-gray-700">
+                      {vocabularyReason || "No comment provided"}
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
           <Card className="border-gray-200">
             <CardHeader>
               <CardTitle className="text-lg text-[#1e2839]">
-                Teacher Feedback
+                Overall Rating
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {feedbackOptions.map((option) => (
-                <div
-                  key={option.label}
-                  className={`flex items-center px-4 py-2 rounded-lg ${option.color} ${option.textColor} text-sm font-medium`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedFeedback === option.label}
-                    onChange={() => handleFeedbackChange(option.label)}
-                    className="mr-2 w-5 h-5  rounded-2xl cursor-pointer"
+              {editMode ? (
+                <>
+                  {feedbackOptions.map((option) => (
+                    <div
+                      key={option.label}
+                      className={`flex items-center px-4 py-2 rounded-lg cursor-pointer ${
+                        selectedFeedback === option.label
+                          ? `${option.color} ${option.textColor}`
+                          : "bg-gray-100 text-gray-600"
+                      } text-sm font-medium transition-colors`}
+                      onClick={() => handleFeedbackChange(option.label)}
+                    >
+                      <input
+                        type="radio"
+                        name="feedback"
+                        checked={selectedFeedback === option.label}
+                        onChange={() => handleFeedbackChange(option.label)}
+                        className="mr-2 w-4 h-4 cursor-pointer"
+                      />
+                      {option.label}
+                    </div>
+                  ))}
+                  <Textarea
+                    placeholder="Provide additional general comment for the student (optional)..."
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    className="mt-4 min-h-[80px] text-sm border-gray-200"
                   />
-                  {option.label}
-                </div>
-              ))}
-              <Textarea
-                placeholder="Provide general feedback for the student..."
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className="mt-4 min-h-[80px] text-sm border-gray-200"
-              />
+                </>
+              ) : (
+                <>
+                  <div
+                    className={`flex items-center px-4 py-2 rounded-lg ${selectedOption.color} ${selectedOption.textColor} text-sm font-medium`}
+                  >
+                    {selectedFeedback || "N/A"}
+                  </div>
+                  <p className="mt-4 text-sm text-gray-700">
+                    {feedback || "No additional comment provided"}
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
 
         {/* Essay Content Panel */}
-        <div className="flex-1 p-6 bg-[#f9f9f9] rounder-2xl">
-          <Tabs defaultValue="original" className="h-full  rounded-2xl">
+        <div className="flex-1 p-6 bg-[#f9f9f9] rounded-2xl">
+          <Tabs defaultValue="original" className="h-full rounded-2xl">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger
                 value="original"
@@ -298,25 +618,46 @@ export default function TeacherFeedback() {
                 value="suggestions"
                 className="bg-[#e3e4e6] data-[state=active]:bg-white"
               >
-                AI Suggestions
+                AI Suggestions & Feedback
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="original" className="h-full">
               <Card className="h-full border-gray-200">
-                <CardContent className="p-8 h-full overflow-auto bg-white mt-0 ">
+                <CardContent className="p-8 h-full overflow-auto bg-white mt-0">
                   <h1 className="text-2xl font-bold text-[#1e2839] mb-6">
-                    The Fourth Floor
+                    Student Essay Submission
                   </h1>
+                  <div className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                    {essay.content ||
+                      essay.essay_text ||
+                      "No essay content available"}
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
             <TabsContent value="suggestions" className="h-full">
-              <Card className="h-full border-gray-200 ">
+              <Card className="h-full border-gray-200">
                 <CardContent className="p-8 h-full overflow-auto bg-white mt-0">
-                  <div className="text-center text-[#acacac] mt-20">
-                    AI suggestions would appear here...
+                  <h2 className="text-xl font-bold text-[#1e2839] mb-4">
+                    AI Feedback
+                  </h2>
+                  <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                    <p className="text-gray-700">
+                      {essay.ai_feedback ||
+                        essay.ai_overall_feedback ||
+                        "No AI feedback available"}
+                    </p>
+                  </div>
+
+                  <h2 className="text-xl font-bold text-[#1e2839] mb-4">
+                    AI Suggestions
+                  </h2>
+                  <div className="p-4 bg-green-50 rounded-lg">
+                    {formatAISuggestions(
+                      essay.ai_suggestions || essay.suggestions
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -324,15 +665,45 @@ export default function TeacherFeedback() {
           </Tabs>
 
           <div className="flex justify-end gap-4 mt-6">
-            <Button variant="outline" className="px-8">
+            <Button
+              variant="outline"
+              className="px-8"
+              onClick={() => navigate(-1)}
+            >
               Cancel
             </Button>
-            <Button className="px-8 bg-[#1155ff] hover:bg-[#0d47d9] text-white">
-              Submit
-            </Button>
+            {editMode ? (
+              <Button
+                className="px-8 bg-[#1155ff] hover:bg-[#0d47d9] text-white"
+                onClick={handleSubmitEvaluation}
+                disabled={submitting}
+              >
+                {submitting ? "Submitting..." : "Submit Evaluation"}
+              </Button>
+            ) : (
+              <Button
+                className="px-8 bg-[#1155ff] hover:bg-[#0d47d9] text-white"
+                onClick={() => setEditMode(true)}
+              >
+                Edit Evaluation
+              </Button>
+            )}
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 }

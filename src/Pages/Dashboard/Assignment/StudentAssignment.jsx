@@ -260,12 +260,12 @@ const StudentAssignment = () => {
   };
 
   // Capitalize first letter of essay type
-  const capitalizeEssayType = (type) => {
-    return type
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
+  // const capitalizeEssayType = (type) => {
+  //   return type
+  //     .split("_")
+  //     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+  //     .join(" ");
+  // };
 
   if (loading) {
     return (
@@ -322,7 +322,7 @@ const StudentAssignment = () => {
                         )}`}
                       >
                         <FileText className="w-4 h-4" />
-                        {capitalizeEssayType(assignment.essay_type)}
+                        {assignment.essay_type}
                       </CardDescription>
 
                       <CardDescription
@@ -385,9 +385,7 @@ const StudentAssignment = () => {
                         <AssignmentForm
                           assignmentId={assignment.id}
                           initialTitle={assignment.title}
-                          initialType={capitalizeEssayType(
-                            assignment.essay_type
-                          )}
+                          initialType={assignment.essay_type}
                           onSubmitSuccess={() => {
                             // Refresh assignments after successful submission
                             window.location.reload();

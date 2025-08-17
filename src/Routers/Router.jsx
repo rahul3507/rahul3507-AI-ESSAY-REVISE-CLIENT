@@ -82,7 +82,7 @@ const router = createBrowserRouter([
         element: <Essays />,
       },
       {
-        path: "/essays/feedback",
+        path: "/essays/feedback/:id/",
         element: <TeachersFeedback />,
       },
       {

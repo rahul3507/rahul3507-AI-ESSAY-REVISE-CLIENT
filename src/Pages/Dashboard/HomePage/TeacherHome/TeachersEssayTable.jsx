@@ -1,7 +1,7 @@
 /** @format */
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -14,188 +14,49 @@ import {
 import { Input } from "../../../../components/ui/input";
 import { Button } from "../../../../components/ui/button";
 import { ArrowRight, FileText } from "lucide-react";
+import apiClient from "../../../../lib/api-client";
 
 const TeachersEssayTable = () => {
-  const navigate = useNavigate(); // Initialize navigate hook
-  const [studentsData, setStudentsData] = useState([
-    {
-      name: "John Smith",
-      email: "john.smith@student.edu",
-      score: 12,
-      essay: 124,
-      action: "accepted",
-      phoneNumber: "555-0101-1234",
-      role: "student",
-      address: "123 Maple St, Springfield, IL 62701",
-      profileImg: "https://example.com/profiles/john_smith.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "Done Feedback",
-    },
-    {
-      name: "Jane Doe",
-      email: "jane.doe@student.edu",
-      score: 30,
-      essay: 124,
-      action: "accepted",
-      phoneNumber: "555-0102-5678",
-      role: "student",
-      address: "456 Oak Ave, Chicago, IL 60601",
-      profileImg: "https://example.com/profiles/jane_doe.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "Processing",
-    },
-    {
-      name: "Alice Johnson",
-      email: "alice.johnson@student.edu",
-      score: 20,
-      essay: 124,
-      action: "accepted",
-      phoneNumber: "555-0103-9012",
-      role: "student",
-      address: "789 Pine Rd, Aurora, IL 60504",
-      profileImg: "https://example.com/profiles/alice_johnson.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "No check",
-    },
-    {
-      name: "Bob Wilson",
-      email: "bob.wilson@student.edu",
-      score: 45,
-      essay: 134,
-      action: "accepted",
-      phoneNumber: "555-0104-3456",
-      role: "student",
-      address: "321 Elm St, Naperville, IL 60540",
-      profileImg: "https://example.com/profiles/bob_wilson.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "Done Feedback",
-    },
-    {
-      name: "Emma Brown",
-      email: "emma.brown@student.edu",
-      score: 12,
-      essay: 164,
-      action: "accepted",
-      phoneNumber: "555-0105-7890",
-      role: "student",
-      address: "654 Cedar Ln, Evanston, IL 60201",
-      profileImg: "https://example.com/profiles/emma_brown.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "No check",
-    },
-    {
-      name: "Michael Lee",
-      email: "michael.lee@student.edu",
-      score: 56,
-      essay: 184,
-      action: "accepted",
-      phoneNumber: "555-0106-2345",
-      role: "student",
-      address: "987 Birch Dr, Peoria, IL 61604",
-      profileImg: "https://example.com/profiles/michael_lee.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "Processing",
-    },
-    {
-      name: "Sarah Davis",
-      email: "sarah.davis@student.edu",
-      score: 80,
-      essay: 1254,
-      action: "accepted",
-      phoneNumber: "555-0107-6789",
-      role: "student",
-      address: "147 Spruce Ct, Rockford, IL 61101",
-      profileImg: "https://example.com/profiles/sarah_davis.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "No check",
-    },
-    {
-      name: "David Clark",
-      email: "david.clark@student.edu",
-      score: 15,
-      essay: 1243,
-      action: "accepted",
-      phoneNumber: "555-0108-1234",
-      role: "student",
-      address: "258 Willow Way, Joliet, IL 60435",
-      profileImg: "https://example.com/profiles/david_clark.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "Done Feedback",
-    },
-    {
-      name: "Laura Adams",
-      email: "laura.adams@student.edu",
-      score: 30,
-      essay: 124,
-      action: "accepted",
-      phoneNumber: "555-0109-5678",
-      role: "student",
-      address: "369 Sycamore St, Champaign, IL 61820",
-      profileImg: "https://example.com/profiles/laura_adams.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "Processing",
-    },
-    {
-      name: "James Taylor",
-      email: "james.taylor@student.edu",
-      score: 25,
-      essay: 124,
-      action: "accepted",
-      phoneNumber: "555-0110-9012",
-      role: "student",
-      address: "741 Chestnut Blvd, Bloomington, IL 61701",
-      profileImg: "https://example.com/profiles/james_taylor.jpg",
-      assignDate: "2025-07-15",
-      fileName: "TEST ATTITUDINALE UFFICIALE.doc",
-      fileType: "Doc file",
-      uploadDate: "23/07/2025",
-      teacherFeedback: "No check",
-    },
-  ]);
+  const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterOption, setFilterOption] = useState("normal");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [essays, setEssays] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch essays from API
+  useEffect(() => {
+    const fetchEssays = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get("/teachers/essays/");
+        console.log("Fetched essays:", response.data);
+        setEssays(response.data || []);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching essays:", err);
+        setError("Failed to load essays. Please try again.");
+        setEssays([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEssays();
+  }, []);
 
   // Filter and sort data based on search term and filter option
-  const filteredData = studentsData
-    .filter(
-      (item) =>
-        item.action === "accepted" &&
-        item.fileName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = essays
+    .filter((item) =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
       if (filterOption === "high") {
-        return b.score - a.score;
+        return b.total_ai_score - a.total_ai_score;
       } else if (filterOption === "low") {
-        return a.score - b.score;
+        return a.total_ai_score - b.total_ai_score;
       }
       return 0; // normal (no sorting)
     });
@@ -212,14 +73,12 @@ const TeachersEssayTable = () => {
   };
 
   // Get teacher feedback styling
-  const getFeedbackStyles = (feedback) => {
-    switch (feedback) {
-      case "Done Feedback":
+  const getFeedbackStyles = (status) => {
+    switch (status) {
+      case "reviewed":
         return "text-green-600";
-      case "Processing":
+      case "pending":
         return "text-orange-600";
-      case "No check":
-        return "text-gray-600";
       default:
         return "text-gray-600";
     }
@@ -227,8 +86,72 @@ const TeachersEssayTable = () => {
 
   // Handle navigation to feedback page
   const handleFeedbackClick = (item) => {
-    navigate("/essays/feedback", { state: { item } }); // Pass item data as state
+    navigate(`/essays/feedback/${item.id}`, { state: { item } });
   };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch {
+      return "Invalid Date";
+    }
+  };
+
+  // Get status display text
+  const getStatusDisplay = (item) => {
+    // Check if teacher has evaluated (teacher_grammar_score exists and is not null)
+    const hasTeacherEvaluation =
+      item.teacher_grammar_score !== null &&
+      item.teacher_grammar_score !== undefined;
+
+    if (hasTeacherEvaluation) {
+      return "reviewed";
+    } else {
+      return "pending";
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="">
+        <div className="bg-transparent mt-4 border border-gray-200 rounded-xl p-6">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-lg text-gray-600 flex flex-col items-center space-y-2">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <div>Loading essays...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="">
+        <div className="bg-transparent mt-4 border border-gray-200 rounded-xl p-6">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-lg text-red-600 text-center">
+              <div>{error}</div>
+              <Button
+                onClick={() => window.location.reload()}
+                className="mt-4 bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Retry
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="">
@@ -240,7 +163,7 @@ const TeachersEssayTable = () => {
         <div className="flex justify-between mb-4 relative">
           <Input
             type="text"
-            placeholder="Search by File Name"
+            placeholder="Search by Essay Title"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-1/3"
@@ -304,55 +227,70 @@ const TeachersEssayTable = () => {
           <Table>
             <TableHeader>
               <TableRow className="bg-white rounded-5xl border-0">
-                <TableHead className="p-4">File Name</TableHead>
+                <TableHead className="p-4">Essay Title</TableHead>
                 <TableHead className="text-center">AI Score</TableHead>
-                <TableHead className="text-center">Upload Date</TableHead>
+                <TableHead className="text-center">Submit Date</TableHead>
                 <TableHead className="text-center">Teacher Feedback</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredData.map((item, index) => (
-                <TableRow key={index} className="border-0">
-                  <TableCell className="py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900">
-                          {item.fileName}
-                        </div>
-                        <div className="text-gray-500 text-sm">
-                          {item.fileType}
-                        </div>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <span
-                      className={`inline-block rounded-full px-3 py-1 text-sm font-medium ${getScoreStyles(
-                        item.score
-                      )}`}
-                    >
-                      {item.score}.0
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center text-gray-600">
-                    {item.uploadDate}
-                  </TableCell>
-                  <TableCell className="flex justify-center">
-                    <Button
-                      className={`font-medium bg-transparent text-center flex ${getFeedbackStyles(
-                        item.teacherFeedback
-                      )}`}
-                      onClick={() => handleFeedbackClick(item)} // Navigate on click
-                    >
-                      {item.teacherFeedback}
-                      <ArrowRight />
-                    </Button>
+              {filteredData.length === 0 ? (
+                <TableRow className="border-0">
+                  <TableCell
+                    colSpan={4}
+                    className="text-center py-8 text-gray-500"
+                  >
+                    No essays found
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                filteredData.map((item, index) => {
+                  const status = getStatusDisplay(item);
+                  return (
+                    <TableRow key={item.id || index} className="border-0">
+                      <TableCell className="py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <FileText className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {item.title || "Untitled Essay"}
+                            </div>
+                            <div className="text-gray-500 text-sm">
+                              {item.student?.full_name || "Unknown Student"} •{" "}
+                              {item.essay_type || "Essay"}
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span
+                          className={`inline-block rounded-full px-3 py-1 text-sm font-medium ${getScoreStyles(
+                            item.total_ai_score || 0
+                          )}`}
+                        >
+                          {item.total_ai_score || 0}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-center text-gray-600">
+                        {formatDate(item.submitted_at)}
+                      </TableCell>
+                      <TableCell className="flex justify-center">
+                        <Button
+                          className={`font-medium bg-transparent text-center flex items-center gap-1 hover:bg-gray-100 ${getFeedbackStyles(
+                            status
+                          )}`}
+                          onClick={() => handleFeedbackClick(item)}
+                        >
+                          {status}
+                          <ArrowRight className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
             </TableBody>
           </Table>
         </div>
