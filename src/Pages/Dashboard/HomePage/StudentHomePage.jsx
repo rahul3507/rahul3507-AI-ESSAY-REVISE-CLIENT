@@ -23,130 +23,152 @@ import {
   YAxis,
 } from "recharts";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import EssayList from "../UploadEssay/EssayList";
+import apiClient from "../../../lib/api-client";
 
 const StudentHomePage = () => {
-  const data = [
-    {
-      name: "Jan",
-      grammar: 70,
-      argument: 125,
-      clarity: 55,
-      vocabulary: 150,
-      amt: 2400,
-    },
-    {
-      name: "Feb",
-      grammar: 100,
-      argument: 30,
-      clarity: 100,
-      vocabulary: 130,
-      amt: 2210,
-    },
-    {
-      name: "Mar",
-      grammar: 120,
-      argument: 170,
-      clarity: 30,
-      vocabulary: 140,
-      amt: 2290,
-    },
-    {
-      name: "Apr",
-      grammar: 155,
-      argument: 140,
-      clarity: 130,
-      vocabulary: 123,
-      amt: 2000,
-    },
-    {
-      name: "May",
-      grammar: 144,
-      argument: 166,
-      clarity: 111,
-      vocabulary: 155,
-      amt: 2181,
-    },
-    {
-      name: "Jun",
-      grammar: 177,
-      argument: 144,
-      clarity: 133,
-      vocabulary: 133,
-      amt: 2500,
-    },
-    {
-      name: "Jul",
-      grammar: 122,
-      argument: 133,
-      clarity: 155,
-      vocabulary: 145,
-      amt: 2100,
-    },
-  ];
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const data2 = [
-    {
-      title: "Total Essays",
-      value: 12,
-      totalAdded: "+1",
-      totalMark: null,
-    },
-    {
-      title: "Total Assignments",
-      value: 9,
-      totalAdded: "+1",
-      totalMark: null,
-    },
-    {
-      title: "Teacher Feedback",
-      value: 9,
-      totalAdded: "+1",
-      totalMark: null,
-    },
-    {
-      title: "Average Score",
-      value: 5,
-      totalAdded: "+1",
-      totalMark: 12,
-    },
-  ];
-
-  const progressData = [
-    {
-      title: "Grammar",
-      icon: BookOpenText,
-      time: "45 minutes",
-      priority: "High priority",
-      percentage: "25",
-      bgColor: "#D1E9FF",
-    },
-    {
-      title: "Clarity",
-      icon: PenTool,
-      time: "30 minutes",
-      priority: "Medium priority",
-      percentage: "82",
-      bgColor: "#FDFFC2",
-    },
-    {
-      title: "Argument Strength",
-      icon: MessageSquareCode,
-      time: "20 minutes",
-      priority: "Medium priority",
-      percentage: "25",
-      bgColor: "#CBFEE2",
-    },
-    {
-      title: "Vocabulary",
-      icon: MessageSquareCode,
-      time: "20 minutes",
-      priority: "Medium priority",
-      percentage: "43",
-      bgColor: "#FFF4FE",
-    },
-  ];
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get("/students/dashboard/");
+        setDashboardData(response.data);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // Transform API data for chart
+  // Transform API data for chart
+  const getChartData = () => {
+    if (!dashboardData?.monthly_essay_activities) return [];
+
+    const months = Object.keys(dashboardData.monthly_essay_activities);
+    return months.map((month) => {
+      const monthData = dashboardData.monthly_essay_activities[month];
+      return {
+        name: month,
+        grammar: monthData?.grammar || 0,
+        arguments: monthData?.arguments || 0,
+        clarity: monthData?.clarity || 0,
+        vocabulary: monthData?.vocabulary || 0,
+      };
+    });
+  };
+  // Transform API data for summary cards
+  const getSummaryData = () => {
+    if (!dashboardData) return [];
+
+    return [
+      {
+        title: "Total Essays",
+        value: dashboardData.total_essays,
+
+        totalMark: null,
+      },
+      {
+        title: "Total Assignments",
+        value: dashboardData.total_assignments,
+
+        totalMark: null,
+      },
+      {
+        title: "Teacher Feedback",
+        value: dashboardData.teacher_feedback_count,
+
+        totalMark: null,
+      },
+      {
+        title: "Average Score",
+        value: Math.round(dashboardData.average_score),
+
+        totalMark: 100,
+      },
+    ];
+  };
+
+  // Transform API data for progress cards
+  const getProgressData = () => {
+    if (!dashboardData?.essay_progress) return [];
+
+    const {
+      grammar,
+      clarity,
+      arguments: argumentsScore,
+      vocabulary,
+    } = dashboardData.essay_progress;
+
+    return [
+      {
+        title: "Grammar",
+        icon: BookOpenText,
+        time: "45 minutes",
+        priority: "High priority",
+        percentage: Math.round(grammar),
+        bgColor: "#D1E9FF",
+      },
+      {
+        title: "Clarity",
+        icon: PenTool,
+        time: "30 minutes",
+        priority: "Medium priority",
+        percentage: Math.round(clarity),
+        bgColor: "#FDFFC2",
+      },
+      {
+        title: "Argument Strength",
+        icon: MessageSquareCode,
+        time: "20 minutes",
+        priority: "Medium priority",
+        percentage: Math.round(argumentsScore),
+        bgColor: "#CBFEE2",
+      },
+      {
+        title: "Vocabulary",
+        icon: MessageSquareCode,
+        time: "20 minutes",
+        priority: "Medium priority",
+        percentage: Math.round(vocabulary),
+        bgColor: "#FFF4FE",
+      },
+    ];
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg">Loading dashboard...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg text-red-500">
+          Error loading dashboard: {error}
+        </div>
+      </div>
+    );
+  }
+
+  const chartData = getChartData();
+  const summaryData = getSummaryData();
+  const progressData = getProgressData();
+
   return (
     <div className="">
       {/* Header */}
@@ -174,7 +196,7 @@ const StudentHomePage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        {data2.map((item, index) => (
+        {summaryData.map((item, index) => (
           <Card key={index} className="border-[#e3e4e6]">
             <CardContent className="px-6">
               <div className="text-lg text-black mb-1 border-b border-gray-200">
@@ -192,14 +214,6 @@ const StudentHomePage = () => {
                   item.value
                 )}
               </div>
-              <div className="text-sm text-gray-400">
-                <span className="text-black font-semibold">
-                  {item.totalAdded}{" "}
-                </span>
-                {item.title === "Total Essays"
-                  ? "from last month"
-                  : "this week"}
-              </div>
             </CardContent>
           </Card>
         ))}
@@ -208,21 +222,20 @@ const StudentHomePage = () => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <div className="col-span-1 xl:col-span-2 rounded-2xl bg-gray-100 p-4">
           <h2 className="text-black font-bold text-2xl pb-4">
-            Essay Activates
+            Essay Activities
           </h2>
           <Card className=" bg-white border-white">
             <CardHeader>
               <div className="grid grid-cols-1 md:grid-cols-5 w-full  mb-6">
                 <div className=" col-span-1 md:col-span-3 w-full ">
                   <div className="text-4xl font-bold text-black pb-2">
-                    1,665
+                    {dashboardData?.total_essays || 0}
                     <span className="text-sm text-gray-400 font-normal">
-                      /Essay
+                      /Essays
                     </span>
                   </div>
                   <p className="text-sm text-gray-400">
-                    You&apos;ve achieved a remarkable 79% increase compared to
-                    last year!
+                    Keep up the great work! Your writing skills are improving.
                   </p>
                 </div>
                 <div className="col-span-1 md:col-span-2 grid grid-cols-2 items-center gap-6 text-sm">
@@ -249,7 +262,7 @@ const StudentHomePage = () => {
                 <div className="min-w-96">
                   <ResponsiveContainer width="100%" height={300} className="">
                     <LineChart
-                      data={data}
+                      data={chartData}
                       margin={{
                         top: 5,
                         right: 30,
@@ -268,7 +281,7 @@ const StudentHomePage = () => {
                       />
                       <Line
                         type="monotone"
-                        dataKey="argument"
+                        dataKey="arguments"
                         stroke="#29bc99"
                       />
                       <Line
@@ -303,9 +316,9 @@ const StudentHomePage = () => {
               </div>
               <div className="">
                 <div className="text-4xl font-bold text-black pb-2">
-                  120
+                  {Math.round(dashboardData?.average_score || 0)}
                   <span className="text-sm text-gray-400 font-normal">
-                    /Essay
+                    /100
                   </span>
                 </div>
               </div>
@@ -338,7 +351,7 @@ const StudentHomePage = () => {
                       color:
                         item?.percentage < 40
                           ? "#F54A45" // red
-                          : item?.percentage >= 4 && item?.percentage < 70
+                          : item?.percentage >= 40 && item?.percentage < 70
                           ? "#FF8800" // orange
                           : "#34C724", // green
                     }}

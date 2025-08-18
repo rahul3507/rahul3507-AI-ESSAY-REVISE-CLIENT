@@ -75,10 +75,18 @@ const EssayList = () => {
     }
   };
 
+  const capitalizeWords = (str) => {
+    if (!str) return "";
+    return str
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   if (loading) {
     return (
       <div className="pt-6">
-        <h1 className="text-black text-2xl pb-2">Recent Assignments</h1>
+        <h1 className="text-black text-2xl pb-2">Recent Essays</h1>
         <div className="flex justify-center items-center py-8">
           <div className="text-gray-500">Loading essays...</div>
         </div>
@@ -123,9 +131,9 @@ const EssayList = () => {
                   <div className="flex items-center gap-2">
                     <FileText className="text-blue-600 w-8 h-8" />
                     <div className="text-lg">
-                      {getFileName(essay.title)}
+                      {getFileName(essay.file_upload, essay.title)}
                       <p className="text-base text-gray-400">
-                        {essay.essay_type} essay
+                        {capitalizeWords(essay.essay_type)} essay
                       </p>
                     </div>
                   </div>
@@ -136,7 +144,7 @@ const EssayList = () => {
                 <TableCell
                   className={`${getStatusColor(essay.status)} text-base`}
                 >
-                  {essay.status}
+                  {capitalizeWords(essay.status)}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button

@@ -149,13 +149,15 @@ export default function TeacherFeedback() {
         grammarScore < 0 ||
         grammarScore > 25 ||
         argumentScore < 0 ||
-        argumentScore > 25 ||
+        argumentScore > 30 ||
         clarityScore < 0 ||
         clarityScore > 25 ||
         vocabScore < 0 ||
-        vocabScore > 25
+        vocabScore > 20
       ) {
-        setError("All scores must be between 0-25");
+        setError(
+          "All scores must be within their respective ranges (Grammar: 0-25, Argument Strength: 0-30, Clarity: 0-25, Vocabulary: 0-20)"
+        );
         return;
       }
 
@@ -352,7 +354,7 @@ export default function TeacherFeedback() {
                 <div>
                   <div className="text-[#647187]">Argument Strength</div>
                   <div className="font-semibold text-[#1e2839]">
-                    (25%): {essay.ai_arguments_score || "0"}/25
+                    (30%): {essay.ai_arguments_score || "0"}/30
                   </div>
                 </div>
                 <div>
@@ -364,7 +366,7 @@ export default function TeacherFeedback() {
                 <div>
                   <div className="text-[#647187]">Vocabulary</div>
                   <div className="font-semibold text-[#1e2839]">
-                    (25%): {essay.ai_vocabulary_score || "0"}/25
+                    (20%): {essay.ai_vocabulary_score || "0"}/20
                   </div>
                 </div>
               </div>
@@ -380,7 +382,7 @@ export default function TeacherFeedback() {
           <Card className="mb-6 border border-gray-200">
             <CardHeader>
               <CardTitle className="text-lg text-[#1e2839]">
-                Teacher Rubric (0-25 Scale)
+                Teacher Rubric
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -419,7 +421,7 @@ export default function TeacherFeedback() {
 
                   <div>
                     <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                      Argument Strength (0-25)
+                      Argument Strength (0-30)
                     </label>
                     <Select
                       value={selectedArgument}
@@ -429,7 +431,7 @@ export default function TeacherFeedback() {
                         <SelectValue placeholder="Select score" />
                       </SelectTrigger>
                       <SelectContent className="bg-white cursor-pointer border-gray-200">
-                        {Array.from({ length: 26 }, (_, i) => (
+                        {Array.from({ length: 31 }, (_, i) => (
                           <SelectItem
                             key={i}
                             value={i.toString()}
@@ -481,7 +483,7 @@ export default function TeacherFeedback() {
 
                   <div>
                     <label className="block text-sm font-medium text-[#1e2839] mb-2">
-                      Vocabulary (0-25)
+                      Vocabulary (0-20)
                     </label>
                     <Select
                       value={selectedVocabulary}
@@ -491,7 +493,7 @@ export default function TeacherFeedback() {
                         <SelectValue placeholder="Select score" />
                       </SelectTrigger>
                       <SelectContent className="bg-white cursor-pointer border-gray-200">
-                        {Array.from({ length: 26 }, (_, i) => (
+                        {Array.from({ length: 21 }, (_, i) => (
                           <SelectItem
                             key={i}
                             value={i.toString()}
@@ -523,7 +525,7 @@ export default function TeacherFeedback() {
 
                   <div>
                     <div className="block text-sm font-medium text-[#1e2839] mb-2">
-                      Argument Strength (0-25): {selectedArgument || "N/A"}
+                      Argument Strength (0-30): {selectedArgument || "N/A"}
                     </div>
                     <p className="text-sm text-gray-700">
                       {argumentReason || "No comment provided"}
@@ -541,7 +543,7 @@ export default function TeacherFeedback() {
 
                   <div>
                     <div className="block text-sm font-medium text-[#1e2839] mb-2">
-                      Vocabulary (0-25): {selectedVocabulary || "N/A"}
+                      Vocabulary (0-20): {selectedVocabulary || "N/A"}
                     </div>
                     <p className="text-sm text-gray-700">
                       {vocabularyReason || "No comment provided"}
