@@ -1,6 +1,6 @@
 /** @format */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -10,51 +10,61 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import apiClient from "../../../lib/api-client";
 
 const EssayBarChart = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState("weekly");
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const chartData = {
-    weekly: [
-      { name: "0 - 49", student: 30 },
-      { name: "50 - 69", student: 50 },
-      { name: "70 - 79", student: 70 },
-      { name: "80 - 89", student: 30 },
-      { name: "90 - 100", student: 16 },
-    ],
-    monthly: [
-      { name: "0 - 49", student: 120 },
-      { name: "50 - 69", student: 200 },
-      { name: "70 - 79", student: 280 },
-      { name: "80 - 89", student: 120 },
-      { name: "90 - 100", student: 64 },
-    ],
-    yearly: [
-      { name: "0 - 49", student: 1440 },
-      { name: "50 - 69", student: 2400 },
-      { name: "70 - 79", student: 3360 },
-      { name: "80 - 89", student: 1440 },
-      { name: "90 - 100", student: 768 },
-    ],
-  };
-
-  const data = chartData[selectedPeriod];
   const colors = ["#EF4444", "#FF7700", "#FFB01C", "#34C724", "#1155FF"];
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get("/teachers/analytics/");
+
+        // Transform score_distribution data for the chart
+        const scoreData = response.data.score_distribution;
+        const chartData = Object.entries(scoreData).map(([range, data]) => ({
+          name: range,
+          student: data.count,
+        }));
+
+        setData(chartData);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching analytics:", err);
+        setError("Failed to load analytics data");
+        // Fallback to demo data
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-gray-500">Loading analytics...</div>
+      </div>
+    );
+  }
+
+  if (error && data.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full relative">
-      {/* Time Period Selector */}
-      <div className="absolute top-4 right-4 z-10">
-        <select
-          value={selectedPeriod}
-          onChange={(e) => setSelectedPeriod(e.target.value)}
-          className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        >
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="yearly">Yearly</option>
-        </select>
-      </div>
+      {/* Chart Title */}
 
       {/* Chart */}
       <ResponsiveContainer width="100%" height="100%">
@@ -70,10 +80,38 @@ const EssayBarChart = () => {
           }}
           barCategoryGap="70%"
         >
-          <XAxis dataKey="name" />
-          <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
-          <Tooltip cursor={false} />
-          <Bar yAxisId="left" dataKey="student" radius={[12, 12, 12, 12]}>
+          <XAxis
+            dataKey="name"
+            tick={{ fontSize: 12 }}
+            axisLine={{ stroke: "#E5E7EB" }}
+            tickLine={{ stroke: "#E5E7EB" }}
+          />
+          <YAxis
+            yAxisId="left"
+            orientation="left"
+            stroke="#6B7280"
+            tick={{ fontSize: 12 }}
+            axisLine={{ stroke: "#E5E7EB" }}
+            tickLine={{ stroke: "#E5E7EB" }}
+          />
+          <Tooltip
+            cursor={false}
+            contentStyle={{
+              backgroundColor: "#F9FAFB",
+              border: "1px solid #E5E7EB",
+              borderRadius: "8px",
+              fontSize: "12px",
+            }}
+            labelStyle={{ color: "#374151", fontWeight: "600" }}
+            formatter={(value, name) => [`${value} students`, "Count"]}
+            labelFormatter={(label) => `Score Range: ${label}`}
+          />
+          <Bar
+            yAxisId="left"
+            dataKey="student"
+            radius={[12, 12, 12, 12]}
+            maxBarSize={60}
+          >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={colors[index]} />
             ))}
