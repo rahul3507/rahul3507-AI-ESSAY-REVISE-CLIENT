@@ -37,7 +37,7 @@ const useLoggedUser = () => ({
   user: { is_active: true },
 });
 
-const UploadOneFile = () => {
+const EssayResult = () => {
   const { user } = useLoggedUser();
   const [selectedFile, setSelectedFile] = useState(null);
   const [essayText, setEssayText] = useState("");
@@ -595,4 +595,4 @@ const UploadOneFile = () => {
   );
 };
 
-export default UploadOneFile;
+export default EssayResult;
