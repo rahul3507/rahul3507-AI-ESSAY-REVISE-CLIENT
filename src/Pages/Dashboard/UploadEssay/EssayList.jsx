@@ -62,19 +62,6 @@ const EssayList = () => {
     return title || "Essay";
   };
 
-  const getStatusText = (status) => {
-    switch (status) {
-      case "reviewed":
-        return "Complete";
-      case "pending":
-        return "Pending";
-      case "draft":
-        return "Draft";
-      default:
-        return status;
-    }
-  };
-
   const getStatusColor = (status) => {
     switch (status) {
       case "reviewed":
@@ -136,7 +123,7 @@ const EssayList = () => {
                   <div className="flex items-center gap-2">
                     <FileText className="text-blue-600 w-8 h-8" />
                     <div className="text-lg">
-                      {getFileName(essay.file_upload, essay.title)}
+                      {getFileName(essay.title)}
                       <p className="text-base text-gray-400">
                         {essay.essay_type} essay
                       </p>
@@ -149,7 +136,7 @@ const EssayList = () => {
                 <TableCell
                   className={`${getStatusColor(essay.status)} text-base`}
                 >
-                  {getStatusText(essay.status)}
+                  {essay.status}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button
