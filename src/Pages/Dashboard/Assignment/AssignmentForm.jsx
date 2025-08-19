@@ -113,18 +113,18 @@ export default function AssignmentForm({
 
   const mapCoachingLevel = (level) => {
     const mapping = {
-      "Low - Minimal feedback": "low",
-      "Medium - Balanced feedback": "medium",
-      "High - Detailed feedback": "intensive",
+      "Light - Basic feedback": "Light - Basic feedback",
+      "Medium - Balanced feedback": "Medium - Balanced feedback",
+      "Intensive - Detailed feedback": "Intensive - Detailed feedback",
     };
     return mapping[level] || level;
   };
 
   const mapSuggestionLevel = (level) => {
     const mapping = {
-      "Low - Few suggestions": "low",
-      "Medium - Moderate suggestions": "medium",
-      "High - Many suggestions": "high",
+      "Low - Few suggestions": "Low - Minimal feedback",
+      "Medium - Moderate suggestions": "Medium - Balanced feedback",
+      "High - Aggressive suggestions": "High - Aggressive suggestions",
     };
     return mapping[level] || level;
   };
@@ -245,13 +245,13 @@ export default function AssignmentForm({
         </Label>
         <Select
           value={
-            coachingLevel === "medium"
+            coachingLevel === "Light - Basic feedback"
+              ? "Light - Basic feedback"
+              : coachingLevel === "Medium - Balanced feedback"
               ? "Medium - Balanced feedback"
-              : coachingLevel === "low"
-              ? "Low - Minimal feedback"
-              : coachingLevel === "intensive"
-              ? "High - Detailed feedback"
-              : "Medium - Balanced feedback"
+              : coachingLevel === "Intensive - Detailed feedback"
+              ? "Intensive - Detailed feedback"
+              : "Intensive - Detailed feedback"
           }
           onValueChange={(value) => setCoachingLevel(mapCoachingLevel(value))}
           disabled={isSubmitting}
@@ -260,13 +260,13 @@ export default function AssignmentForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            <SelectItem value="Low - Minimal feedback">
-              Low - Minimal feedback
+            <SelectItem value="Light - Basic feedback">
+              Low - Basic feedback
             </SelectItem>
             <SelectItem value="Medium - Balanced feedback">
               Medium - Balanced feedback
             </SelectItem>
-            <SelectItem value="High - Detailed feedback">
+            <SelectItem value="Intensive - Detailed feedback">
               High - Detailed feedback
             </SelectItem>
           </SelectContent>
@@ -282,13 +282,13 @@ export default function AssignmentForm({
         </Label>
         <Select
           value={
-            suggestionLevel === "medium"
-              ? "Medium - Moderate suggestions"
-              : suggestionLevel === "low"
-              ? "Low - Few suggestions"
-              : suggestionLevel === "high"
-              ? "High - Many suggestions"
-              : "Medium - Moderate suggestions"
+            suggestionLevel === "'Low - Conservative suggestions"
+              ? "'Low - Conservative suggestions"
+              : suggestionLevel === "Medium - Balanced suggestions"
+              ? "Medium - Balanced suggestions"
+              : suggestionLevel === "High - Aggressive suggestions"
+              ? "High - Aggressive suggestions"
+              : "Low - Conservative suggestions"
           }
           onValueChange={(value) =>
             setSuggestionLevel(mapSuggestionLevel(value))
@@ -299,13 +299,13 @@ export default function AssignmentForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            <SelectItem value="Low - Few suggestions">
+            <SelectItem value="Low - Conservative suggestions">
               Low - Few suggestions
             </SelectItem>
-            <SelectItem value="Medium - Moderate suggestions">
+            <SelectItem value="Medium - Balanced suggestions">
               Medium - Moderate suggestions
             </SelectItem>
-            <SelectItem value="High - Many suggestions">
+            <SelectItem value="High - Aggressive suggestions">
               High - Many suggestions
             </SelectItem>
           </SelectContent>

@@ -362,10 +362,7 @@ const TeacherAssignment = () => {
                     {(assignment.submissions_count || 0) !== 1 ? "s" : ""}
                   </Link>
                 </div>
-                <span className="text-gray-400">|</span>
-                <div className="text-base text-gray-600">
-                  {getReviewedCount(assignment)} Reviewed
-                </div>
+
                 <div className="flex space-x-2">
                   <Button
                     onClick={() => handleEditAssignment(assignment)}

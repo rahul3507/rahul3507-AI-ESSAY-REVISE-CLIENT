@@ -27,8 +27,8 @@ const QuickAction = () => {
   // Form state
   const [formData, setFormData] = useState({
     title: "",
-    suggestion_level: "medium",
-    coaching_level: "medium",
+    suggestion_level: "",
+    coaching_level: "",
     file_upload: null,
   });
 
@@ -112,8 +112,8 @@ const QuickAction = () => {
       // Reset form
       setFormData({
         title: "",
-        suggestion_level: "medium",
-        coaching_level: "medium",
+        suggestion_level: "",
+        coaching_level: "",
         file_upload: null,
       });
       setFileName("");

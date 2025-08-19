@@ -131,7 +131,7 @@ const EssayList = () => {
                   <div className="flex items-center gap-2">
                     <FileText className="text-blue-600 w-8 h-8" />
                     <div className="text-lg">
-                      {getFileName(essay.file_upload, essay.title)}
+                      {getFileName(essay.title)}
                       <p className="text-base text-gray-400">
                         {capitalizeWords(essay.essay_type)} essay
                       </p>

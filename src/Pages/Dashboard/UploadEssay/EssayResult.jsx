@@ -4,17 +4,36 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FileText, User, Award, BarChart3 } from "lucide-react";
 import apiClient from "../../../lib/api-client";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../../components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../../components/ui/dialog";
+import { Button } from "../../../components/ui/button";
 
 const EssayResult = () => {
   const { essayId } = useParams();
   console.log("id is::", essayId);
   const [essayData, setEssayData] = useState(null);
+  const [suggestionsData, setSuggestionsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentSuggestion, setCurrentSuggestion] = useState(null);
 
   useEffect(() => {
     if (essayId) {
       fetchEssayDetails();
+      fetchSuggestions();
     }
   }, [essayId]);
 
@@ -29,6 +48,46 @@ const EssayResult = () => {
       setError("Failed to load essay details");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchSuggestions = async () => {
+    try {
+      const response = await apiClient.get(
+        `/students/essays/${essayId}/suggestions/`
+      );
+      setSuggestionsData(response.data);
+    } catch (err) {
+      console.error("Error fetching suggestions:", err);
+    }
+  };
+
+  const openModal = (suggestion) => {
+    setCurrentSuggestion(suggestion);
+    setIsModalOpen(true);
+  };
+
+  const handleAccept = async (sugId) => {
+    try {
+      await apiClient.post(`/students/essays/${essayId}/suggestions/accept/`, {
+        suggestion_id: sugId,
+      });
+      fetchSuggestions();
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Error accepting suggestion:", err);
+    }
+  };
+
+  const handleReject = async (sugId) => {
+    try {
+      await apiClient.post(`/students/essays/${essayId}/suggestions/reject/`, {
+        suggestion_id: sugId,
+      });
+      fetchSuggestions();
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Error rejecting suggestion:", err);
     }
   };
 
@@ -96,6 +155,50 @@ const EssayResult = () => {
 
   const aiEvaluation = essayData.ai_evaluations?.[0];
   const aiScores = aiEvaluation?.scores;
+
+  const renderSuggestionText = () => {
+    if (!suggestionsData || !suggestionsData.updated_text) {
+      return <div>No suggestions available.</div>;
+    }
+
+    const text = suggestionsData.updated_text;
+    const sortedSuggestions = [...suggestionsData.suggestions].sort(
+      (a, b) => a.start_position - b.start_position
+    );
+    let parts = [];
+    let lastEnd = 0;
+
+    for (let sug of sortedSuggestions) {
+      // Add text before the suggestion
+      if (sug.start_position > lastEnd) {
+        parts.push(
+          <span key={`text-${lastEnd}`}>
+            {text.slice(lastEnd, sug.start_position)}
+          </span>
+        );
+      }
+
+      // Add the underlined suggestion text
+      parts.push(
+        <span
+          key={`sug-${sug.id}`}
+          className="underline decoration-red-500 decoration-2 cursor-pointer hover:bg-red-50"
+          onClick={() => openModal(sug)}
+          title={`Click to ${sug.action_type}: "${sug.original_text}" → "${sug.suggested_text}"`}
+        >
+          {text.slice(sug.start_position, sug.end_position)}
+        </span>
+      );
+      lastEnd = sug.end_position;
+    }
+
+    // Add remaining text after the last suggestion
+    if (lastEnd < text.length) {
+      parts.push(<span key={`text-${lastEnd}`}>{text.slice(lastEnd)}</span>);
+    }
+
+    return parts;
+  };
 
   return (
     <div className="p-4 md:p-8">
@@ -250,9 +353,32 @@ const EssayResult = () => {
             )}
           </div>
 
-          <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed max-h-[600px] overflow-y-auto">
-            {essayData?.essay_text || "No essay content available."}
-          </div>
+          <Tabs defaultValue="original">
+            <TabsList>
+              <TabsTrigger value="original">Original Essay</TabsTrigger>
+              <TabsTrigger value="suggestion">
+                Suggestion Essay ({suggestionsData?.total_suggestions || 0}{" "}
+                suggestions)
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="original">
+              <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed max-h-[600px] overflow-y-auto">
+                {essayData?.essay_text || "No essay content available."}
+              </div>
+            </TabsContent>
+            <TabsContent value="suggestion">
+              <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed max-h-[600px] overflow-y-auto">
+                <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-xs text-yellow-800">
+                    <strong>Instructions:</strong> Red underlined text indicates
+                    suggestions. Click on any underlined text to view and
+                    accept/reject the suggestion.
+                  </p>
+                </div>
+                {renderSuggestionText()}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Teacher Feedback */}
@@ -437,6 +563,90 @@ const EssayResult = () => {
           </div>
         </div>
       </div>
+
+      {/* Suggestion Modal */}
+      <Dialog
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        className="bg-white"
+      >
+        <DialogContent className="bg-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              {currentSuggestion?.type === "grammar"
+                ? "Grammar"
+                : currentSuggestion?.type === "spelling"
+                ? "Spelling"
+                : currentSuggestion?.category === "clarity"
+                ? "Clarity"
+                : currentSuggestion?.category === "word_choice"
+                ? "Word Choice"
+                : "Writing"}{" "}
+              Suggestion
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription className="space-y-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm font-semibold text-red-800 mb-2">
+                  Original Text:
+                </p>
+                <p className="text-sm text-red-700 font-mono bg-white p-2 rounded border">
+                  "{currentSuggestion?.original_text}"
+                </p>
+              </div>
+
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm font-semibold text-green-800 mb-2">
+                  Suggested Text:
+                </p>
+                <p className="text-sm text-green-700 font-mono bg-white p-2 rounded border">
+                  "{currentSuggestion?.suggested_text}"
+                </p>
+              </div>
+
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm font-semibold text-blue-800 mb-2">
+                  Explanation:
+                </p>
+                <p className="text-sm text-blue-700">
+                  {currentSuggestion?.explanation}
+                </p>
+              </div>
+
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>
+                  Confidence:{" "}
+                  <span className="font-medium">
+                    {currentSuggestion?.confidence}
+                  </span>
+                </span>
+                <span>
+                  Priority:{" "}
+                  <span className="font-medium">
+                    {currentSuggestion?.priority}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </DialogDescription>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700"
+              onClick={() => handleReject(currentSuggestion?.id)}
+            >
+              Reject
+            </Button>
+            <Button
+              className="bg-green-500 hover:bg-green-600 text-white"
+              onClick={() => handleAccept(currentSuggestion?.id)}
+            >
+              Accept
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

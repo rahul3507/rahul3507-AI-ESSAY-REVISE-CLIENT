@@ -311,7 +311,7 @@ const StudentHomePage = () => {
                   Essay Progress
                 </CardTitle>
                 <div className="text-sm text-gray-400">
-                  AI-generated based on your performance
+                  Based on your performance
                 </div>
               </div>
               <div className="">
