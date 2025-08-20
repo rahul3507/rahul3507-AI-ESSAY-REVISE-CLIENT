@@ -86,7 +86,7 @@ const StudentHomePage = () => {
         totalMark: null,
       },
       {
-        title: "Teacher Feedback",
+        title: "Teacher Assignment Feedback",
         value: dashboardData.teacher_feedback_count,
 
         totalMark: null,

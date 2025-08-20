@@ -26,6 +26,20 @@ const TeachersEssayTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Get status display text
+  const getStatusDisplay = (item) => {
+    // Check if teacher has evaluated (teacher_grammar_score exists and is not null)
+    const hasTeacherEvaluation =
+      item.teacher_grammar_score !== null &&
+      item.teacher_grammar_score !== undefined;
+
+    if (hasTeacherEvaluation) {
+      return "reviewed";
+    } else {
+      return "pending";
+    }
+  };
+
   // Fetch essays from API
   useEffect(() => {
     const fetchEssays = async () => {
@@ -46,6 +60,12 @@ const TeachersEssayTable = () => {
 
     fetchEssays();
   }, []);
+  console.log("Total essay::  ", essays);
+
+  // Calculate pending essays
+  const pendingEssaysCount = essays.filter(
+    (item) => getStatusDisplay(item) === "pending"
+  ).length;
 
   // Filter and sort data based on search term and filter option
   const filteredData = essays
@@ -104,20 +124,6 @@ const TeachersEssayTable = () => {
     }
   };
 
-  // Get status display text
-  const getStatusDisplay = (item) => {
-    // Check if teacher has evaluated (teacher_grammar_score exists and is not null)
-    const hasTeacherEvaluation =
-      item.teacher_grammar_score !== null &&
-      item.teacher_grammar_score !== undefined;
-
-    if (hasTeacherEvaluation) {
-      return "reviewed";
-    } else {
-      return "pending";
-    }
-  };
-
   if (loading) {
     return (
       <section className="">
@@ -156,10 +162,12 @@ const TeachersEssayTable = () => {
   return (
     <section className="">
       <div className="bg-transparent mt-4 border border-gray-200 rounded-xl p-6">
-        <h1 className="text-black text-lg md:text-xl font-medium mb-4">
-          Students Essay List
-        </h1>
-
+        <div className="flex flex-col md:flex-row justify-between w-full gap-6 mb-4">
+          <h1 className="text-black text-lg md:text-xl font-medium ">
+            Students Essay List ({essays.length})
+          </h1>
+          <h1>Pending Reviewed: {pendingEssaysCount}</h1>
+        </div>
         <div className="flex justify-between mb-4 relative">
           <Input
             type="text"
@@ -245,7 +253,6 @@ const TeachersEssayTable = () => {
                 </TableRow>
               ) : (
                 filteredData.map((item, index) => {
-                  const status = getStatusDisplay(item);
                   return (
                     <TableRow key={item.id || index} className="border-0">
                       <TableCell className="py-4">
@@ -279,11 +286,11 @@ const TeachersEssayTable = () => {
                       <TableCell className="flex justify-center">
                         <Button
                           className={`font-medium bg-transparent text-center flex items-center gap-1 hover:bg-gray-100 ${getFeedbackStyles(
-                            status
+                            getStatusDisplay(item)
                           )}`}
                           onClick={() => handleFeedbackClick(item)}
                         >
-                          {status}
+                          {getStatusDisplay(item)}
                           <ArrowRight className="w-4 h-4" />
                         </Button>
                       </TableCell>
