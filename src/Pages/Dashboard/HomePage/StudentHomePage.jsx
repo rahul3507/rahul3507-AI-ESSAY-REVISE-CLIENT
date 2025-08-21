@@ -92,7 +92,7 @@ const StudentHomePage = () => {
         totalMark: null,
       },
       {
-        title: "Average Score",
+        title: "Average Assignment Score",
         value: Math.round(dashboardData.average_score),
 
         totalMark: 100,
@@ -189,9 +189,6 @@ const StudentHomePage = () => {
             <Upload />
             Upload Essay
           </Button>
-          <button size="icon" className="border-[#e3e4e6] bg-transparent">
-            <Bell className="h-6 w-6" />
-          </button>
         </div>
       </div>
 

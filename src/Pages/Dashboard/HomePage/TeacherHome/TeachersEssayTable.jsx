@@ -166,7 +166,7 @@ const TeachersEssayTable = () => {
           <h1 className="text-black text-lg md:text-xl font-medium ">
             Students Essay List ({essays.length})
           </h1>
-          <h1>Pending Reviewed: {pendingEssaysCount}</h1>
+          <h1>Pending Review: {pendingEssaysCount}</h1>
         </div>
         <div className="flex justify-between mb-4 relative">
           <Input

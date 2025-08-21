@@ -58,7 +58,7 @@ const ProfileDialog = ({ teacher }) => {
         </div>
         <div className="flex items-center">
           <span className="mt-2 text-sm font-semibold bg-blue-100 text-blue-800 px-3 py-1 rounded-lg capitalize">
-            {teacher.role || "Teacher"}
+            {teacher.role || "Student"}
           </span>
         </div>
       </div>

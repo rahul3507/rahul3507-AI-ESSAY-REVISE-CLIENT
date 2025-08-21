@@ -177,8 +177,11 @@ const Signup = () => {
                 <div className="flex items-center opacity-75">
                   <input
                     type="checkbox"
-                    {...register("remember")}
+                    {...register("remember", {
+                      required: "Terms and Conditions are required",
+                    })}
                     className="mr-2"
+                    required
                   />
                   I agree to the{" "}
                   <Link

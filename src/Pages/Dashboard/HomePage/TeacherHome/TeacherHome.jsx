@@ -39,7 +39,7 @@ const TeacherHome = () => {
       totalMark: null,
     },
     {
-      title: "Total Essays Submit",
+      title: "Total Assingment Submit",
       value: dashboardData.total_essays_submitted,
       totalMark: null,
     },

@@ -33,8 +33,8 @@ export default function AssignmentForm({
   const [assignmentTitle, setAssignmentTitle] = useState(initialTitle || "");
   const [essayType, setEssayType] = useState(initialType || "");
   const [essayText, setEssayText] = useState("");
-  const [coachingLevel, setCoachingLevel] = useState("medium");
-  const [suggestionLevel, setSuggestionLevel] = useState("medium");
+  const [coachingLevel, setCoachingLevel] = useState("");
+  const [suggestionLevel, setSuggestionLevel] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
@@ -130,7 +130,7 @@ export default function AssignmentForm({
   };
 
   return (
-    <div className="w-full overflow-hidden p-2">
+    <div className="w-full overflow-auto p-2">
       <div className="space-y-2">
         <Label
           htmlFor="assignment-title"
@@ -189,7 +189,7 @@ export default function AssignmentForm({
                 placeholder="Write your essay here..."
                 value={essayText}
                 onChange={(e) => setEssayText(e.target.value)}
-                className="min-h-[130px] max-w-full resize-none border-1 focus-visible:ring-[1px]"
+                className="h-[130px] overflow-auto max-w-full resize-none border-1 focus-visible:ring-[1px]"
                 disabled={isSubmitting}
               />
             </div>
@@ -282,8 +282,8 @@ export default function AssignmentForm({
         </Label>
         <Select
           value={
-            suggestionLevel === "'Low - Conservative suggestions"
-              ? "'Low - Conservative suggestions"
+            suggestionLevel === "Low - Conservative suggestions"
+              ? "Low - Conservative suggestions"
               : suggestionLevel === "Medium - Balanced suggestions"
               ? "Medium - Balanced suggestions"
               : suggestionLevel === "High - Aggressive suggestions"
