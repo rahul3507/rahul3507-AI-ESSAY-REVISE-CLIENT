@@ -103,7 +103,7 @@ const EssayBarChart = () => {
               fontSize: "12px",
             }}
             labelStyle={{ color: "#374151", fontWeight: "600" }}
-            formatter={(value, name) => [`${value} students`, "Count"]}
+            formatter={(value, name) => [`${value} Assignments`, "Count"]}
             labelFormatter={(label) => `Score Range: ${label}`}
           />
           <Bar
