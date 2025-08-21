@@ -20,6 +20,7 @@ import {
 import { Badge } from "../../../components/ui/badge";
 import AssignmentForm from "./AssignmentForm";
 import apiClient from "../../../lib/api-client";
+import { GlowingEffect } from "../../../components/ui/glowing-effect";
 
 const SubmissionDetailsDialog = ({ submissionId }) => {
   const [submission, setSubmission] = useState(null);
@@ -301,6 +302,13 @@ const StudentAssignment = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
           {assignments.map((assignment) => (
             <Card key={assignment.id} className="shadow-lg bg-[#F5F8FF] p-0">
+              <GlowingEffect
+                spread={40}
+                glow={true}
+                disabled={false}
+                proximity={64}
+                inactiveZone={0.1}
+              />
               <CardHeader
                 className={`space-y-2 pt-4 rounded-t-xl ${getHeaderBgClass(
                   assignment.assignment_status

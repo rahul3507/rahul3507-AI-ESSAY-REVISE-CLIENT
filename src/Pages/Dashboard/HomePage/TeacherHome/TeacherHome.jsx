@@ -44,12 +44,12 @@ const TeacherHome = () => {
       totalMark: null,
     },
     {
-      title: "Pending Review",
+      title: "Pending Assignment Review",
       value: dashboardData.pending_reviews,
       totalMark: null,
     },
     {
-      title: "Average Score",
+      title: "Average Assignment Score",
       value: dashboardData.average_score,
       totalMark: 100,
     },
