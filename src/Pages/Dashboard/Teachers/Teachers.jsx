@@ -218,7 +218,7 @@ const Teachers = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-1/3"
           />
-          <div className="relative">
+          {/* <div className="relative">
             <Button
               className="bg-transparent border border-gray-200 p-2 rounded-lg hover:bg-gray-300 cursor-pointer"
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
@@ -257,7 +257,7 @@ const Teachers = () => {
                 </button>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
 
         <div className="bg-gray-50 rounded-xl p-4 overflow-x-auto">
