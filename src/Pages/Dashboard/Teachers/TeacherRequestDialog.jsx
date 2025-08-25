@@ -78,6 +78,19 @@ const TeacherRequestDialog = ({
       setAcceptingAll(false);
     }
   };
+  // Get full profile image URL - Fixed CORS issue
+  const getProfileImageUrl = (profileImg) => {
+    if (!profileImg) return "/default-avatar.png"; // Use local default image instead of external service
+
+    // If it's already a full URL, return as is
+    if (profileImg.startsWith("http")) return profileImg;
+
+    // If it's a relative path, construct the full URL
+    // Using environment variable with fallback to match your backend IP
+    const baseUrl =
+      import.meta.env.VITE_API_BASE_URL || "http://10.10.12.15:8000";
+    return `${baseUrl}${profileImg}`;
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -122,10 +135,7 @@ const TeacherRequestDialog = ({
                           <div className="flex items-center gap-3">
                             <div className="relative w-10 h-10">
                               <img
-                                src={
-                                  teacher.profileImg ||
-                                  "https://i.pravatar.cc/150?img=32"
-                                }
+                                src={getProfileImageUrl(teacher.profileImg)}
                                 alt="Profile"
                                 crossOrigin="anonymous"
                                 className="w-full h-full rounded-full object-cover bg-gray-200"
